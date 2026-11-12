@@ -1,0 +1,26 @@
+{
+  "name": "constela-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Registro de usuarias y perfiles de Constela",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node --env-file=.env --watch src/server.js",
+    "start": "node --env-file=.env src/server.js",
+    "test": "node --test test/*.test.js",
+    "check": "node --check src/app.js && node --check src/config.js && node --check src/supabase.js && node --check src/server.js"
+  },
+  "dependencies": {
+    "@fastify/helmet": "13.2.0",
+    "@fastify/rate-limit": "11.2.2",
+    "@supabase/supabase-js": "2.119.0",
+    "fastify": "5.12.8",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.16"
+  }
+}
