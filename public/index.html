@@ -8,6 +8,7 @@
   <title>Iniciar sesión · Constela</title>
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/assets/styles.css">
+  <link rel="stylesheet" href="/assets/discovery.css">
   <script type="module" src="/assets/app.js"></script>
 </head>
 <body>
@@ -80,6 +81,23 @@
           <form id="profile-form"><div class="field"><label for="profile-name">Tu nombre</label><input id="profile-name" name="name" autocomplete="name" minlength="2" maxlength="100" required></div><div class="field"><label for="profile-email">Correo electrónico</label><input id="profile-email" type="email" readonly><p class="field-hint">El correo con el que creaste tu cuenta.</p></div><button class="primary-button" type="submit"><span>Guardar cambios</span><span aria-hidden="true">↗</span></button></form>
         </article>
         <aside class="welcome-card"><span class="welcome-star" aria-hidden="true">✧</span><p class="eyebrow">ESTE ES TU PUNTO DE PARTIDA</p><h2>Todo empieza<br>con una<br><em>conexión.</em></h2><p>Tu cuenta está lista. Hoy comienza una nueva parte de tu historia.</p><span class="welcome-signature">constela.</span></aside>
+      </div>
+      <a class="discovery-profile-link" href="/descubrir" id="open-discovery"><span aria-hidden="true">✦</span><span><strong>Tu universo de habilidades</strong><br>Descubre tus estrellas o vuelve a ver tu constelación.</span><span aria-hidden="true">↗</span></a>
+    </section>
+    <section class="discovery-view" id="discovery-view" aria-label="Tu universo de habilidades" hidden>
+      <nav class="discovery-nav" aria-label="Tu espacio"><span><span aria-hidden="true">✦</span> TU UNIVERSO DE HABILIDADES</span><button type="button" class="quiet-button" id="discovery-profile">Mi perfil <span aria-hidden="true">↗</span></button></nav>
+      <div class="discovery-grid">
+        <aside class="universe-panel" aria-label="Progreso de tu constelación">
+          <div><p class="eyebrow">UNA MISIÓN DE AUTODESCUBRIMIENTO</p><h2>Siempre hubo<br>estrellas <em>en ti.</em></h2><p class="universe-caption" id="universe-caption">Vamos a conectar algunas de ellas.</p></div>
+          <svg class="universe-map" viewBox="0 0 400 360" role="img" aria-label="Constelación: seis estrellas por descubrir" id="universe-map"><defs><radialGradient id="universe-glow"><stop stop-color="#b494ff" stop-opacity=".2"/><stop offset="1" stop-color="#b494ff" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="180" r="180" fill="url(#universe-glow)"/><ellipse cx="200" cy="180" rx="150" ry="95" transform="rotate(-32 200 180)" class="universe-orbit"/><ellipse cx="200" cy="180" rx="150" ry="95" transform="rotate(35 200 180)" class="universe-orbit"/><path d="M62 205L122 88L265 60L337 178L274 286L145 279Z M122 88L274 286M62 205L337 178" class="universe-path"/><g id="universe-nodes"></g><circle cx="42" cy="110" r="2" class="universe-dust"/><circle cx="320" cy="72" r="2" class="universe-dust"/><circle cx="219" cy="319" r="2" class="universe-dust"/><circle cx="355" cy="260" r="1.5" class="universe-dust"/><circle cx="185" cy="137" r="1.5" class="universe-dust"/></svg>
+          <div class="universe-bottom"><p id="universe-count">Seis misiones. Muchas formas de aportar.</p><p>Tu historia puede sorprenderte.</p></div>
+        </aside>
+        <div class="mission-space">
+          <div class="discovery-progress" id="discovery-progress" hidden><div><span id="discovery-step"></span><span id="discovery-save-status" role="status"></span></div><progress id="mission-progress" max="6" value="0" aria-label="Misiones completadas"></progress></div>
+          <div class="notice error-notice" id="discovery-error" role="alert" hidden></div>
+          <div id="discovery-content" aria-busy="false"></div>
+          <p class="discovery-privacy">Tus respuestas y resultados son privados. Puedes continuar cuando quieras.</p>
+        </div>
       </div>
     </section>
     <noscript><p class="notice error-notice">Activa JavaScript en tu navegador para registrarte o iniciar sesión.</p></noscript>

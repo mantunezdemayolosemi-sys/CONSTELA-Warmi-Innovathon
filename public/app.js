@@ -1,3 +1,5 @@
+import { createDiscovery } from './discovery.js';
+
 const $ = (id) => document.getElementById(id);
 let currentUser = null;
 let refreshPromise = null;
@@ -40,6 +42,25 @@ async function send(path, { method = 'GET', body, refresh = false } = {}) {
   return data;
 }
 
+const discovery = createDiscovery({
+  send,
+  showAccount: () => renderAccount(currentUser),
+  sessionExpired: () => {
+    renderMode('login');
+    showAuthError('Tu sesión terminó. Inicia sesión otra vez para continuar tu misión.');
+  },
+});
+
+async function enter(data, { profile = false } = {}) {
+  renderAccount(data);
+  if (!profile) await discovery.open();
+}
+$('open-discovery').addEventListener('click', event => {
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  discovery.open();
+});
+
 function busy(form, active, label) {
   const button = form.querySelector('button[type=submit]');
   button.disabled = active;
@@ -59,6 +80,7 @@ function changeAddress(path, replace = false) {
 }
 
 function renderMode(mode, { navigate = true, focus = false } = {}) {
+  discovery.reset();
   const isRegister = mode === 'register';
   currentUser = null;
   $('account-view').hidden = true;
@@ -106,6 +128,7 @@ function renderFeedback(kind, message) {
 }
 
 function renderAccount(data) {
+  discovery.close();
   currentUser = data;
   $('auth-card').hidden = true;
   $('story').hidden = true;
@@ -156,9 +179,8 @@ loginForm.addEventListener('submit', async event => {
   busy(loginForm, true, 'Entrando…');
   try {
     await send('/web/login', { method: 'POST', body: Object.fromEntries(new FormData(loginForm)) });
-    renderAccount(await send('/web/session', { refresh: true }));
+    await enter(await send('/web/session', { refresh: true }));
     loginForm.reset();
-    $('account-title').focus({ preventScroll: true });
   } catch (error) { showAuthError(error.message); }
   finally { busy(loginForm, false, 'Iniciar sesión'); }
 });
@@ -211,14 +233,19 @@ $('logout').addEventListener('click', async () => {
     $('greeting-name').textContent = '';
     renderMode('login', { focus: true });
   } catch (error) {
-    $('profile-notice').textContent = error.message;
-    $('profile-notice').classList.add('error-notice');
-    $('profile-notice').hidden = false;
+    const notice = $('discovery-view').hidden ? $('profile-notice') : $('discovery-error');
+    notice.textContent = error.message;
+    notice.classList.add('error-notice');
+    notice.hidden = false;
   } finally { $('logout').disabled = false; }
 });
 
 function renderLocation() {
-  if (currentUser) { renderAccount(currentUser); return; }
+  if (currentUser) {
+    if (location.pathname === '/descubrir') discovery.open();
+    else renderAccount(currentUser);
+    return;
+  }
   const query = new URLSearchParams(location.search);
   if (location.pathname === '/confirmacion') {
     const failed = query.get('estado') === 'error' || query.has('error');
@@ -230,10 +257,10 @@ function renderLocation() {
 window.addEventListener('popstate', renderLocation);
 renderLocation();
 
-try { renderAccount(await send('/web/session', { refresh: true })); }
+try { await enter(await send('/web/session', { refresh: true }), { profile: location.pathname === '/cuenta' }); }
 catch (error) {
   if (error.status !== 401) showAuthError(error.message);
-  else if (location.pathname === '/cuenta') {
+  else if (['/cuenta', '/descubrir'].includes(location.pathname)) {
     renderMode('login', { navigate: true });
     showAuthError('Inicia sesión para entrar a tu espacio.');
   }
