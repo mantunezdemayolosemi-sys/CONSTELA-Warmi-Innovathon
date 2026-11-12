@@ -11,11 +11,13 @@
     "dev": "node --env-file=.env --watch src/server.js",
     "start": "node --env-file=.env src/server.js",
     "test": "node --test test/*.test.js",
-    "check": "node --check src/app.js && node --check src/config.js && node --check src/supabase.js && node --check src/server.js"
+    "check": "node --check src/app.js && node --check src/config.js && node --check src/supabase.js && node --check src/server.js && node --check src/web.js && node --check src/validation.js && node --check public/app.js"
   },
   "dependencies": {
+    "@fastify/cookie": "11.1.5",
     "@fastify/helmet": "13.2.0",
     "@fastify/rate-limit": "11.2.2",
+    "@fastify/static": "10.1.10",
     "@supabase/supabase-js": "2.119.0",
     "fastify": "5.12.8",
     "zod": "4.6.7"

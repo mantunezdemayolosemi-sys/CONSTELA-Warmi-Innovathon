@@ -1,10 +1,12 @@
 # CONSTELA · Warmi Innovathon
 
-Primera etapa: registro de usuarias y perfiles privados. API en Node.js + Fastify; autenticación y PostgreSQL en Supabase. La interfaz visual se desarrollará después.
+Registro, inicio de sesión y perfil privado de Constela. Interfaz web adaptable a celular y escritorio, API en Node.js + Fastify, autenticación y PostgreSQL en Supabase.
 
 ## Estado
 
+- Pantallas de registro, inicio de sesión, confirmación de correo y cuenta personal.
 - Registro, confirmación mediante Supabase, inicio/cierre de sesión y renovación de tokens.
+- Sesión web con cookies HttpOnly, protección de origen y renovación automática; sin tokens en localStorage.
 - Consulta y edición del nombre del perfil autenticado.
 - Migración SQL que crea perfiles automáticamente y los protege con Row Level Security (RLS).
 - Pruebas locales sin credenciales: API, SDK y permisos sobre PostgreSQL embebido.
@@ -32,7 +34,7 @@ Para desarrollar: Node.js 22 o superior y Git. En la Mac usada para iniciar este
 
    Edita `.env` para completar `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY`. `.env` está excluido de Git. No cambies `PUBLIC_API_URL` mientras uses el puerto 3000 local.
 
-8. Inicia la API:
+8. Inicia la aplicación:
 
    ```bash
    npm ci
@@ -41,11 +43,13 @@ Para desarrollar: Node.js 22 o superior y Git. En la Mac usada para iniciar este
 
    Las dependencias ya están instaladas en la Mac de desarrollo inicial; allí puedes ir directamente a `npm run dev` después de completar `.env`. El proyecto local está en `Warmi Innovathon/constela.nosync` para evitar que iCloud retire archivos mientras se ejecutan. En otra computadora puedes clonarlo con un nombre normal, preferiblemente fuera de carpetas sincronizadas. Las dependencias están excluidas de Git.
 
-9. Abre [el estado de la API](http://localhost:3000/health). Debe mostrar `status: ok`. Esta ruta comprueba que arrancó; **no comprueba la conexión con Supabase**.
+9. Abre [Crear cuenta](http://localhost:3000/registro) o [Iniciar sesión](http://localhost:3000/ingresar). El servidor sirve la interfaz y la API desde el mismo origen; no hace falta otro proceso de frontend.
+
+   También puedes abrir [el estado de la API](http://localhost:3000/health). Debe mostrar `status: ok`. Esta ruta comprueba que arrancó; **no comprueba la conexión con Supabase**.
 
 ## Primera prueba real
 
-Desde otra ventana de Terminal, crea una cuenta de prueba usando un correo que controles. El nombre es el único dato del perfil recopilado por ahora; no se solicitan DNI, teléfono ni información sensible.
+Puedes probar el registro desde la interfaz, confirmar el correo e iniciar sesión. Para probar la API por separado desde otra ventana de Terminal, crea una cuenta de prueba usando un correo que controles. El nombre es el único dato del perfil recopilado por ahora; no se solicitan DNI, teléfono ni información sensible.
 
 ```bash
 curl -i http://localhost:3000/auth/register \
@@ -53,7 +57,7 @@ curl -i http://localhost:3000/auth/register \
   -d '{"name":"Usuaria de prueba","email":"TU-CORREO@example.com","password":"Una-frase-de-prueba-123"}'
 ```
 
-Sustituye el correo. Esta contraseña es un ejemplo público: úsala solo para una cuenta desechable. No pegues tu contraseña personal en comandos ni en el chat. El registro responde `202` con un mensaje genérico, incluso si ya existe la cuenta; así no revela quién está registrada. La confirmación real se comprueba iniciando sesión después de abrir el enlace del correo. La ruta de destino solo muestra un mensaje; no valida el enlace por sí misma.
+Sustituye el correo. Esta contraseña es un ejemplo público: úsala solo para una cuenta desechable. No pegues tu contraseña personal en comandos ni en el chat. El registro responde `202` con un mensaje genérico, incluso si ya existe la cuenta; así no revela quién está registrada. La confirmación real se comprueba iniciando sesión después de abrir el enlace del correo. La ruta de destino redirige a una pantalla de confirmación y elimina el fragmento de la URL; no valida el enlace por sí misma ni crea una sesión. El inicio de sesión comprueba la confirmación contra Supabase.
 
 En Supabase verás la cuenta en **Authentication → Users** y su perfil en **Table Editor → profiles**. El perfil se crea en la misma transacción que la cuenta: un fallo al crearlo revierte también el alta de la cuenta.
 
@@ -77,7 +81,7 @@ curl http://localhost:3000/me -H 'Authorization: Bearer REEMPLAZAR_CON_ACCESS_TO
 | --- | --- | --- |
 | GET | `/health` | Estado del proceso; no consulta la base de datos. |
 | POST | `/auth/register` | `{name, email, password}` → 202; nombre 2–100, contraseña 12–128 caracteres. |
-| GET | `/auth/confirmed` | Mensaje de destino tras la confirmación por Supabase. |
+| GET | `/auth/confirmed` | Redirige a `/confirmacion` tras el enlace de Supabase; elimina el fragmento de URL. |
 | POST | `/auth/login` | `{email, password}` → `{user, session}`; credenciales inválidas → 401. |
 | POST | `/auth/refresh` | `{refresh_token}` → nuevos tokens; reemplaza ambos en el cliente. |
 | POST | `/auth/logout` | Bearer token → 204; revoca la renovación de la sesión actual. |
@@ -86,11 +90,20 @@ curl http://localhost:3000/me -H 'Authorization: Bearer REEMPLAZAR_CON_ACCESS_TO
 
 Las rutas privadas verifican la usuaria contra Supabase Auth y exigen correo confirmado. El servidor deriva el ID del token; no acepta un ID de usuaria del formulario. La base de datos vuelve a aplicar permisos con el token de esa misma usuaria. Nunca se usa una clave administrativa.
 
-El cierre de sesión revoca los refresh tokens de la sesión, pero el access token puede seguir siendo válido hasta su vencimiento. El futuro cliente debe eliminar ambos al salir. El cliente web aún no existe: el almacenamiento seguro de sesión, la protección CSRF si usa cookies y la política CORS se decidirán al implementar la interfaz. No expongas tokens en URLs ni logs.
+El cierre de sesión revoca los refresh tokens de la sesión, pero el access token puede seguir siendo válido hasta su vencimiento. La interfaz elimina ambas cookies al salir. No expongas tokens en URLs ni logs.
+
+### Sesión en el navegador
+
+Las rutas `/web/register`, `/web/login`, `/web/refresh`, `/web/logout`, `/web/session` y `/web/profile` conectan los formularios con el mismo proveedor de autenticación y las mismas validaciones. El navegador recibe datos de la usuaria; los tokens se guardan en cookies HttpOnly con SameSite=Lax, ruta `/web/` y Secure en producción. La cookie de renovación dura como máximo siete días y rota al renovar. La sesión real sigue dependiendo de su validez en Supabase.
+
+Todas las operaciones web que cambian datos exigen el encabezado Origin igual a `PUBLIC_API_URL` y rechazan peticiones cross-site. No se habilita CORS. Usa exactamente `http://localhost:3000` para abrir la aplicación local: `127.0.0.1` sería otro origen. Las respuestas usan Cache-Control: no-store. El frontend nunca guarda los tokens en localStorage ni sessionStorage.
 
 ## Estructura y decisiones
 
-- `src/app.js`: validaciones, rutas y límites de peticiones.
+- `public/`: interfaz en HTML, CSS y JavaScript; no requiere compilación.
+- `src/app.js`: rutas de API y límites de peticiones.
+- `src/web.js`: archivos de interfaz, sesiones con cookies y protección de origen.
+- `src/validation.js`: validaciones compartidas por API e interfaz.
 - `src/supabase.js`: comunicación con Auth y perfiles; cliente aislado por operación.
 - `src/config.js`: configuración sin imprimir claves.
 - `supabase/migrations/`: esquema versionado. `auth.users` pertenece a Supabase; no duplicamos contraseñas ni correos en `profiles`.
@@ -98,7 +111,7 @@ El cierre de sesión revoca los refresh tokens de la sesión, pero el access tok
 
 Por ahora se permite consultar el propio perfil y cambiar su nombre. Las altas las hace un trigger; borrar una cuenta desde administración elimina su perfil asociado. No existen roles administrativos, recuperación de contraseña, alta por Google, consentimiento legal ni más datos de negocio en esta etapa. Deben definirse antes de un lanzamiento público.
 
-Límite de desarrollo: 10 solicitudes de autenticación por IP cada 15 minutos, compartidas entre registro/login/refresh; límite global de 100/minuto. El contador está en memoria y se reinicia con el proceso. Para publicar con varias instancias hay que usar un contador compartido, configurar el proxy de confianza según el hosting y mantener también los límites de Supabase, porque Auth es accesible directamente. La API arranca solo en `127.0.0.1`; un hosting necesitará `HOST=0.0.0.0` y HTTPS.
+Límite de desarrollo: 10 solicitudes de autenticación por IP cada 15 minutos, compartidas entre registro/login/refresh dentro de cada grupo (API o web); límite global de 100/minuto. El contador está en memoria y se reinicia con el proceso. Para publicar con varias instancias hay que usar un contador compartido, configurar el proxy de confianza según el hosting y mantener también los límites de Supabase, porque Auth es accesible directamente. La API arranca solo en `127.0.0.1`; un hosting necesitará `HOST=0.0.0.0` y HTTPS.
 
 ## Validación y publicación
 
@@ -107,7 +120,7 @@ npm run check
 npm test
 ```
 
-GitHub Actions ejecutará las mismas comprobaciones al subir cambios. Además de las pruebas locales, verifica en el proyecto real: registro, recepción y apertura del correo, login, lectura/edición del perfil, refresh, logout y separación entre dos usuarias. No publiques para uso real hasta completar esa prueba y configurar SMTP.
+Las 30 pruebas cubren API, SDK, permisos de base de datos, rutas web, cookies, protección de origen, renovación y cierre de sesión. La interfaz también se comprobó en escritorio y a 375 px, con login real, persistencia al recargar y edición del perfil. GitHub Actions ejecutará las mismas comprobaciones al subir cambios. Además de las pruebas locales, verifica en el proyecto real: registro, recepción y apertura del correo, login, lectura/edición del perfil, refresh, logout y separación entre dos usuarias. No publiques para uso real hasta completar esa prueba y configurar SMTP.
 
 El código se prepara en la rama `codex/registro-usuarias`. Para subirlo hace falta permiso de escritura; el acceso de lectura basta para descargarlo, pero no para publicar cambios.
 
