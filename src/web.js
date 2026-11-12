@@ -3,6 +3,7 @@ import fastifyStatic from '@fastify/static';
 import { fileURLToPath } from 'node:url';
 import { ServiceError } from './supabase.js';
 import { registerBody, loginBody, profileBody, accepted } from './validation.js';
+import { discoveryBody, summarizeDiscovery, skills, missions } from './discovery.js';
 
 const accessName = 'constela_access';
 const refreshName = 'constela_refresh';
@@ -15,7 +16,7 @@ export async function registerWeb(app, { gateway, publicOrigin, secureCookies, a
     index: false,
     dotfiles: 'deny',
   });
-  for (const path of ['/', '/ingresar', '/registro', '/cuenta', '/confirmacion']) {
+  for (const path of ['/', '/ingresar', '/registro', '/cuenta', '/confirmacion', '/descubrir']) {
     app.get(path, (_request, reply) => reply.sendFile('index.html'));
   }
 
@@ -87,6 +88,15 @@ export async function registerWeb(app, { gateway, publicOrigin, secureCookies, a
       const body = profileBody.parse(request.body);
       const { token, user } = await identity(request);
       return { profile: await gateway.updateProfile(token, user.id, body.name) };
+    });
+    web.get('/web/discovery', async (request) => {
+      const { token, user } = await identity(request);
+      return { catalog: { version: 1, skills, missions }, discovery: summarizeDiscovery(await gateway.getDiscovery(token, user.id)) };
+    });
+    web.put('/web/discovery', async (request) => {
+      const { token } = await identity(request);
+      const body = discoveryBody.parse(request.body);
+      return { discovery: summarizeDiscovery(await gateway.saveDiscovery(token, body)) };
     });
     web.post('/web/logout', async (request, reply) => {
       try {

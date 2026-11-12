@@ -122,5 +122,24 @@ export function createGateway(config, fetchImpl = globalThis.fetch) {
         return data;
       });
     },
+    async getDiscovery(token, userId) {
+      return useClient(token, async (supabase) => {
+        const { data, error } = await supabase.from('strength_discoveries')
+          .select('version, revision, self_perception, answers, scores, reflection, completed_at, updated_at')
+          .eq('user_id', userId).maybeSingle();
+        if (error) throw new ServiceError(503, 'DISCOVERY_UNAVAILABLE', 'No pudimos cargar tu misión. Intenta de nuevo en un momento.');
+        return data;
+      });
+    },
+    async saveDiscovery(token, { revision, self_perception, answers, reflection }) {
+      return useClient(token, async (supabase) => {
+        const { data, error } = await supabase.rpc('save_strength_discovery', {
+          p_expected_revision: revision, p_self_perception: self_perception, p_answers: answers, p_reflection: reflection,
+        }).single();
+        if (error?.code === '40001') throw new ServiceError(409, 'DISCOVERY_CONFLICT', 'Tu misión cambió en otra pestaña. Recarga el progreso antes de continuar.');
+        if (error) throw new ServiceError(503, 'DISCOVERY_UNAVAILABLE', 'No pudimos guardar tu misión. Tus elecciones siguen en esta pantalla; intenta otra vez.');
+        return data;
+      });
+    },
   };
 }
