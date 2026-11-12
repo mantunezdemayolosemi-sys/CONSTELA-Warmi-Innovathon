@@ -32,7 +32,7 @@ async function setup(t, overrides = {}, options = {}) {
 
 test('la interfaz y sus rutas se sirven sin exponer archivos de configuración', async t => {
   const { app } = await setup(t);
-  for (const url of ['/', '/registro', '/ingresar', '/cuenta', '/confirmacion']) {
+  for (const url of ['/', '/registro', '/ingresar', '/cuenta', '/confirmacion', '/descubrir']) {
     const page = await app.inject(url);
     assert.equal(page.statusCode, 200);
     assert.match(page.headers['content-type'], /text\/html/);
@@ -47,14 +47,44 @@ test('la interfaz y sus rutas se sirven sin exponer archivos de configuración',
 
 test('las operaciones web rechazan CSRF, origen ausente y origen cruzado', async t => {
   const { app, calls } = await setup(t);
-  for (const url of ['/web/login', '/web/register', '/web/refresh', '/web/logout', '/web/profile']) {
+  for (const url of ['/web/login', '/web/register', '/web/refresh', '/web/logout', '/web/profile', '/web/discovery']) {
     for (const headers of [{}, { origin: 'https://otro.example' }, { origin: 'null' }, { origin, 'sec-fetch-site': 'cross-site' }]) {
-      const response = await app.inject({ method: url === '/web/profile' ? 'PATCH' : 'POST', url, headers: { cookie: authCookies, ...headers }, payload: {} });
+      const response = await app.inject({ method: url === '/web/profile' ? 'PATCH' : url === '/web/discovery' ? 'PUT' : 'POST', url, headers: { cookie: authCookies, ...headers }, payload: {} });
       assert.equal(response.statusCode, 403);
       assert.equal(response.json().error, 'INVALID_ORIGIN');
     }
   }
   assert.equal(calls.length, 0);
+});
+
+test('el catálogo y el progreso de la misión requieren una sesión verificada', async t => {
+  const { app } = await setup(t, {
+    getDiscovery: async (token, id) => { assert.equal(token, session.access_token); assert.equal(id, user.id); return null; },
+  });
+  assert.equal((await app.inject('/web/discovery')).statusCode, 401);
+  const response = await app.inject({ url: '/web/discovery', headers: { cookie: authCookies } });
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.json().catalog.missions.length, 6);
+  assert.equal(response.json().discovery, null);
+});
+
+test('la escritura de la misión valida elecciones y devuelve solo el progreso propio', async t => {
+  let saved;
+  const { app } = await setup(t, {
+    saveDiscovery: async (token, body) => {
+      assert.equal(token, session.access_token); saved = body;
+      return { ...body, revision: 1 };
+    },
+  });
+  const payload = { revision: 0, self_perception: [], answers: { team: 'analysis' } };
+  const valid = await app.inject({ method: 'PUT', url: '/web/discovery', headers: { origin, cookie: authCookies }, payload });
+  assert.equal(valid.statusCode, 200);
+  assert.equal(saved.answers.team, 'analysis');
+  assert.equal(valid.json().discovery.completed, false);
+  assert.equal(valid.json().discovery.result, null);
+  for (const bad of [{ ...payload, user_id: 'someone-else' }, { ...payload, answers: { team: 'organization' } }]) {
+    assert.equal((await app.inject({ method: 'PUT', url: '/web/discovery', headers: { origin, cookie: authCookies }, payload: bad })).statusCode, 400);
+  }
 });
 
 test('login guarda tokens solo en cookies HttpOnly y Secure en producción', async t => {

@@ -72,3 +72,27 @@ test('logout revoca solo la sesión del JWT recibido usando clave pública', asy
   });
   await gateway.logout('current-access-token');
 });
+
+test('el SDK conserva el JWT en el guardado de misiones sin aceptar identidad ni puntuaciones', async () => {
+  const calls = [];
+  const record = { revision: 1, self_perception: [], answers: {}, reflection: null };
+  const gateway = createGateway(config, async (url, init) => {
+    calls.push({ url: String(url), token: new Headers(init.headers).get('authorization'), body: init.body && JSON.parse(init.body) });
+    return json(String(url).includes('/rpc/') ? record : []);
+  });
+  assert.equal(await gateway.getDiscovery('user-jwt', id), null);
+  assert.deepEqual(await gateway.saveDiscovery('user-jwt', { ...record, revision: 0 }), record);
+  assert.ok(calls[0].url.includes(`user_id=eq.${id}`));
+  assert.ok(calls[1].url.endsWith('/rest/v1/rpc/save_strength_discovery'));
+  assert.deepEqual(calls[1].body, { p_expected_revision: 0, p_self_perception: [], p_answers: {}, p_reflection: null });
+  assert.ok(calls.every(c => c.token === 'Bearer user-jwt'));
+});
+
+test('una colisión de progreso devuelve conflicto y un fallo del proveedor no expone detalles', async () => {
+  let conflict = true;
+  const gateway = createGateway(config, async () => json({ code: conflict ? '40001' : 'XX000', message: 'private-sql-detail' }, 409));
+  const body = { revision: 1, self_perception: [], answers: {}, reflection: null };
+  await assert.rejects(gateway.saveDiscovery('jwt', body), e => e.status === 409 && e.code === 'DISCOVERY_CONFLICT');
+  conflict = false;
+  await assert.rejects(gateway.saveDiscovery('jwt', body), e => e.status === 503 && !e.message.includes('private-sql-detail'));
+});
