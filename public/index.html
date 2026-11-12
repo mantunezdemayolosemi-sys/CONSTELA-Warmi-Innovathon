@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#faf8f5">
+  <meta name="description" content="Tu próxima historia empieza en Constela. Crea tu cuenta o inicia sesión.">
+  <title>Iniciar sesión · Constela</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script type="module" src="/assets/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Ir al contenido</a>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Constela, inicio">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 1l5.2 13.8L39 20l-13.8 5.2L20 39l-5.2-13.8L1 20l13.8-5.2z"/></svg>
+      <span>constela<span class="brand-dot">.</span></span>
+    </a>
+    <span class="header-note">Un nuevo comienzo, a tu manera.</span>
+    <button class="quiet-button" id="logout" hidden>Cerrar sesión <span aria-hidden="true">↗</span></button>
+  </header>
+
+  <main id="main" class="auth-layout">
+    <section class="story" id="story" aria-labelledby="story-title">
+      <p class="eyebrow"><span class="tiny-star" aria-hidden="true">✦</span> AQUÍ EMPIEZA ALGO TUYO</p>
+      <h1 id="story-title">Tu próxima <br>historia empieza <br><em>contigo.</em><span class="heading-spark" aria-hidden="true">✧</span></h1>
+      <p class="story-description">Dale espacio a tus ideas, a tus posibilidades<br class="desktop-break"> y a todo lo que puedes llegar a ser.</p>
+      <div class="constellation" aria-hidden="true">
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <svg class="constellation-lines" viewBox="0 0 460 190"><path d="M35 125L133 45L238 110L354 35L422 112M133 45L165 164L238 110L335 154L422 112"/></svg>
+        <span class="sky-star star-one">✦</span><span class="sky-star star-two">✦</span><span class="sky-star star-three">✦</span><span class="sky-star star-four">✦</span><span class="sky-star star-five">✧</span><span class="sky-dot dot-one"></span><span class="sky-dot dot-two"></span>
+        <span class="orbit-label">las posibilidades se conectan</span>
+      </div>
+      <div class="story-footnote"><span class="footnote-symbol" aria-hidden="true">↗</span><p>Cada gran historia<br><strong>empieza con un primer paso.</strong></p></div>
+    </section>
+
+    <section class="auth-card" id="auth-card" aria-label="Acceso a Constela">
+      <nav class="mode-switch" id="mode-switch" aria-label="Elige cómo entrar">
+        <a href="/ingresar" data-mode="login" aria-current="page">Iniciar sesión</a>
+        <a href="/registro" data-mode="register">Crear cuenta</a>
+      </nav>
+      <div class="card-intro" id="card-intro">
+        <p class="eyebrow card-eyebrow">TU ESPACIO CONSTELA</p>
+        <h2 id="form-title" tabindex="-1">Qué bueno verte.</h2>
+        <p id="form-description">Ingresa a tu cuenta para continuar.</p>
+      </div>
+      <div class="notice error-notice" id="auth-error" role="alert" hidden></div>
+      <form id="login-form" class="auth-form">
+        <div class="field"><label for="login-email">Correo electrónico</label><input id="login-email" name="email" type="email" placeholder="Tu correo electrónico" autocomplete="username" maxlength="254" required></div>
+        <div class="field"><label for="login-password">Contraseña</label><div class="password-field"><input id="login-password" name="password" type="password" placeholder="Tu contraseña" autocomplete="current-password" maxlength="128" required><button type="button" class="password-toggle" data-password="login-password" aria-label="Mostrar contraseña" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="eye-slash" d="m4 3 16 18"/></svg></button></div></div>
+        <button type="submit" class="primary-button"><span>Iniciar sesión</span><span class="button-arrow" aria-hidden="true">↗</span></button>
+        <p class="form-note">¿Todavía no tienes cuenta? <a href="/registro" data-mode="register">Empieza aquí</a></p>
+      </form>
+      <form id="register-form" class="auth-form" hidden>
+        <div class="field"><label for="register-name">¿Cómo te llamas?</label><input id="register-name" name="name" type="text" placeholder="Tu nombre" autocomplete="name" minlength="2" maxlength="100" required></div>
+        <div class="field"><label for="register-email">Correo electrónico</label><input id="register-email" name="email" type="email" placeholder="Tu correo electrónico" autocomplete="email" maxlength="254" required></div>
+        <div class="field"><label for="register-password">Crea una contraseña</label><div class="password-field"><input id="register-password" name="password" type="password" placeholder="Al menos 12 caracteres" autocomplete="new-password" minlength="12" maxlength="128" aria-describedby="password-help" required><button type="button" class="password-toggle" data-password="register-password" aria-label="Mostrar contraseña" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="eye-slash" d="m4 3 16 18"/></svg></button></div><p class="field-hint" id="password-help">Usa una frase de al menos 12 caracteres.</p></div>
+        <div class="field"><label for="register-confirm">Repite tu contraseña</label><div class="password-field"><input id="register-confirm" name="confirmation" type="password" placeholder="Escríbela una vez más" autocomplete="new-password" minlength="12" maxlength="128" required><button type="button" class="password-toggle" data-password="register-confirm" aria-label="Mostrar contraseña" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="eye-slash" d="m4 3 16 18"/></svg></button></div></div>
+        <button type="submit" class="primary-button"><span>Crear mi cuenta</span><span class="button-arrow" aria-hidden="true">↗</span></button>
+        <p class="form-note">Tu siguiente paso empieza con este.</p>
+      </form>
+      <section class="feedback-panel" id="feedback-panel" aria-labelledby="feedback-title" hidden>
+        <div class="feedback-icon" id="feedback-icon" aria-hidden="true">✉</div>
+        <p class="eyebrow">UN PASO MÁS CERCA</p>
+        <h2 id="feedback-title" tabindex="-1">Revisa tu correo.</h2>
+        <p id="feedback-description"></p>
+        <p class="feedback-hint" id="feedback-hint">Revisa también tu carpeta de spam. Abre el enlace de confirmación y luego vuelve para iniciar sesión.</p>
+        <a href="/ingresar" class="primary-button" data-mode="login">Ir a iniciar sesión <span aria-hidden="true">↗</span></a>
+        <a href="/registro" class="text-link" data-mode="register">Usar otro correo</a>
+      </section>
+      <div class="card-footer" id="card-footer"><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="4" y="8" width="10" height="8" rx="2"/><path d="M6 8V5a3 3 0 0 1 6 0v3"/></svg><span>Un espacio propio. Un comienzo seguro.</span></div>
+    </section>
+
+    <section class="account-view" id="account-view" aria-labelledby="account-title" hidden>
+      <div class="account-heading"><div><p class="eyebrow">TU ESPACIO CONSTELA</p><h1 id="account-title" tabindex="-1">Hola, <span id="greeting-name"></span><span class="greeting-star" aria-hidden="true">✦</span></h1><p>Qué bueno que ya estás aquí.</p></div><span class="account-badge"><span aria-hidden="true"></span>Cuenta activa</span></div>
+      <div class="account-grid">
+        <article class="profile-card"><div class="profile-card-heading"><div class="avatar" id="profile-avatar" aria-hidden="true">C</div><div><h2>Tu perfil</h2><p>Este espacio empieza por ti.</p></div></div>
+          <div class="notice" id="profile-notice" role="status" hidden></div>
+          <form id="profile-form"><div class="field"><label for="profile-name">Tu nombre</label><input id="profile-name" name="name" autocomplete="name" minlength="2" maxlength="100" required></div><div class="field"><label for="profile-email">Correo electrónico</label><input id="profile-email" type="email" readonly><p class="field-hint">El correo con el que creaste tu cuenta.</p></div><button class="primary-button" type="submit"><span>Guardar cambios</span><span aria-hidden="true">↗</span></button></form>
+        </article>
+        <aside class="welcome-card"><span class="welcome-star" aria-hidden="true">✧</span><p class="eyebrow">ESTE ES TU PUNTO DE PARTIDA</p><h2>Todo empieza<br>con una<br><em>conexión.</em></h2><p>Tu cuenta está lista. Hoy comienza una nueva parte de tu historia.</p><span class="welcome-signature">constela.</span></aside>
+      </div>
+    </section>
+    <noscript><p class="notice error-notice">Activa JavaScript en tu navegador para registrarte o iniciar sesión.</p></noscript>
+  </main>
+  <footer class="site-footer"><span>© <span id="year">2026</span> Constela</span><span>Hecha para lo que viene. <span aria-hidden="true">✦</span></span></footer>
+</body>
+</html>
