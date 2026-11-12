@@ -4,7 +4,11 @@ import { buildApp } from './app.js';
 
 try {
   const config = readConfig();
-  const app = await buildApp({ gateway: createGateway(config), logger: true });
+  const app = await buildApp({
+    gateway: createGateway(config), logger: true,
+    publicOrigin: new URL(config.PUBLIC_API_URL).origin,
+    secureCookies: config.NODE_ENV === 'production',
+  });
   for (const signal of ['SIGINT', 'SIGTERM']) {
     process.once(signal, async () => { await app.close(); });
   }

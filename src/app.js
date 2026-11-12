@@ -3,17 +3,10 @@ import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import { z } from 'zod';
 import { ServiceError } from './supabase.js';
+import { registerWeb } from './web.js';
+import { registerBody, loginBody, refreshBody, profileBody, accepted } from './validation.js';
 
-const name = z.string().trim().min(2).max(100);
-const email = z.string().trim().toLowerCase().pipe(z.email().max(254));
-const password = z.string().min(12).max(128);
-const registerBody = z.strictObject({ name, email, password });
-const loginBody = z.strictObject({ email, password: z.string().min(1).max(128) });
-const refreshBody = z.strictObject({ refresh_token: z.string().min(1).max(4096) });
-const profileBody = z.strictObject({ name });
-const accepted = { message: 'Si el correo puede registrarse, recibirás un enlace para confirmar tu cuenta. Si ya tienes cuenta, inicia sesión.' };
-
-export async function buildApp({ gateway, logger = false, authLimit = 10 }) {
+export async function buildApp({ gateway, logger = false, authLimit = 10, publicOrigin = 'http://localhost:3000', secureCookies = false }) {
   const app = Fastify({
     logger,
     bodyLimit: 16 * 1024,
@@ -50,9 +43,10 @@ export async function buildApp({ gateway, logger = false, authLimit = 10 }) {
   });
 
   app.get('/health', async () => ({ status: 'ok', service: 'constela-api' }));
-  app.get('/auth/confirmed', async () => ({
-    message: 'Si confirmaste tu correo en el enlace de Supabase, ya puedes iniciar sesión en Constela.',
-  }));
+  app.get('/auth/confirmed', async (request, reply) =>
+    reply.redirect(request.query.error ? '/confirmacion?estado=error#' : '/confirmacion#'));
+
+  await registerWeb(app, { gateway, publicOrigin, secureCookies, authLimit });
 
   await app.register(async (auth) => {
     // Presupuesto compartido entre registro, login y renovación por IP.
