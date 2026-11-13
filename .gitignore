@@ -8,3 +8,4 @@ coverage/
 .DS_Store
 .supabase/
 supabase/.temp/
+.cache/
