@@ -22,7 +22,7 @@ La misión guarda el progreso al continuar, permite volver a las respuestas y co
 
 Los resultados son una exploración personal, no una medición psicológica, certificación o clasificación para oportunidades. Un cero indica otras elecciones en estas historias, no falta de habilidad. El cierre incluye pequeños ejercicios sugeridos; todavía no existe entrega, evaluación ni evidencia de retos.
 
-En un proyecto nuevo, aplica los archivos de [`supabase/migrations/`](../supabase/migrations/) en orden 001 a 005. Las cinco ya se ejecutaron en el proyecto de desarrollo de Constela: no repetirlas. Para actualizar otro proyecto aplica únicamente las que todavía falten. La redacción y el catálogo de habilidades están en `src/discovery.js`; la interfaz en `public/discovery.js` y `public/discovery.css`. Las migraciones 004/005 corrigen los conflictos para que PostgREST responda HTTP 409 sin reintentar un error de serialización.
+En un proyecto nuevo, aplica los archivos de [`supabase/migrations/`](../supabase/migrations/) en orden 001 a 007. Las siete ya se ejecutaron en el proyecto de desarrollo de Constela: no repetirlas. Para actualizar otro proyecto aplica únicamente las que todavía falten. La redacción y el catálogo de habilidades están en `src/discovery.js`; la interfaz en `public/discovery.js` y `public/discovery.css`. Las migraciones 004/005 corrigen los conflictos HTTP 409; 006 añade tipos de cuenta, retos y empleos simulados; 007 añade propuestas privadas y estrellas de práctica. [Recorridos, datos y API de organizaciones](RETOS.md).
 
 ## Qué instalar
 
@@ -132,7 +132,7 @@ npm run check
 npm test
 ```
 
-Las 58 pruebas cubren API, SDK, permisos de base de datos, rutas web, cookies, protección de origen, renovación, cierre de sesión, catálogo de habilidades, resultados, progreso privado, intereses, conflictos, extracción de oportunidades, fallos de fuentes, robots, redirecciones y filtro obligatorio de Lima para la demo. La interfaz anterior se comprobó en escritorio y a 375 px; el incremento de galaxias y oportunidades tiene evidencia en [OPORTUNIDADES.md](OPORTUNIDADES.md). GitHub Actions ejecutará las mismas comprobaciones al subir cambios. Además de las pruebas locales, verifica el recorrido en el proyecto real. Para otras direcciones de correo sigue pendiente configurar SMTP.
+Las 77 pruebas cubren tipos de cuenta, publicaciones y guardados privados además de API, SDK, permisos de base de datos, rutas web, cookies, protección de origen, renovación, cierre de sesión, catálogo de habilidades, resultados, progreso privado, intereses, conflictos, extracción de oportunidades, fallos de fuentes, robots, redirecciones y filtro obligatorio de Lima para la demo. La interfaz anterior se comprobó en escritorio y a 375 px; el incremento de galaxias y oportunidades tiene evidencia en [OPORTUNIDADES.md](OPORTUNIDADES.md). GitHub Actions ejecutará las mismas comprobaciones al subir cambios. Además de las pruebas locales, verifica el recorrido en el proyecto real. Para otras direcciones de correo sigue pendiente configurar SMTP.
 
 El código se prepara en la rama `codex/registro-usuarias`. Para subirlo hace falta permiso de escritura; el acceso de lectura basta para descargarlo, pero no para publicar cambios.
 

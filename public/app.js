@@ -1,5 +1,6 @@
 import { createDiscovery } from './discovery.js';
 import { createExplorer } from './explore.js';
+import { createCommunity } from './community.js';
 
 const $ = (id) => document.getElementById(id);
 let currentUser = null;
@@ -59,6 +60,11 @@ const explorer = createExplorer({
   navigate: path => { changeAddress(path); activateSpace(path); },
   sessionExpired: () => { renderMode('login'); showAuthError('Tu sesión terminó. Inicia sesión para continuar.'); },
 });
+const community = createCommunity({send,
+  navigate:path=>{changeAddress(path);activateSpace(path);},
+  sessionExpired:()=>{renderMode('login');showAuthError('Tu sesión terminó. Inicia sesión para continuar.');},
+});
+const isPublisher=()=>['company','entrepreneur'].includes(currentUser?.profile.account_type);
 
 function activateSpace(path) {
   document.querySelectorAll('#member-nav a').forEach(link => {
@@ -67,10 +73,12 @@ function activateSpace(path) {
   });
 }
 async function goSpace(path) {
-  if (!currentUser || explorer.isSaving()) return;
+  if (!currentUser || explorer.isSaving() || community.isSaving()) return;
   const active = ++spaceEpoch;
   if (path === '/cuenta') return renderAccount(currentUser);
-  discovery.close(); explorer.close();
+  discovery.close(); explorer.close(); community.close();
+  if(['/retos','/empleos','/publicar'].includes(path))return community.open(path,{profile:currentUser.profile});
+  if(isPublisher() && ['/descubrir','/galaxias','/oportunidades'].includes(path))return community.open('/publicar',{profile:currentUser.profile});
   if (path === '/galaxias') return explorer.openGalaxies();
   if (path === '/oportunidades') return explorer.openOpportunities();
   try {
@@ -86,7 +94,7 @@ async function goSpace(path) {
 }
 async function enter(data, { path = '/descubrir' } = {}) {
   renderAccount(data);
-  if (path !== '/cuenta') await goSpace(['/galaxias','/oportunidades'].includes(path)?path:'/descubrir');
+  if (path !== '/cuenta') await goSpace(['/galaxias','/oportunidades','/retos','/empleos','/publicar'].includes(path)?path:isPublisher()?'/publicar':'/descubrir');
 }
 $('open-discovery').addEventListener('click', event => {
   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -120,8 +128,10 @@ function renderMode(mode, { navigate = true, focus = false } = {}) {
   spaceEpoch++;
   discovery.reset();
   explorer.reset();
+  community.reset();
   $('member-nav').hidden = true;
   const isRegister = mode === 'register';
+  if(isRegister)updateRegistrationType();
   currentUser = null;
   $('account-view').hidden = true;
   $('logout').hidden = true;
@@ -171,7 +181,11 @@ function renderAccount(data) {
   spaceEpoch++;
   discovery.close();
   explorer.close();
+  community.close();
   currentUser = data;
+  const publishing=isPublisher();
+  document.querySelectorAll('.publisher-link').forEach(link=>{link.hidden=!publishing;});
+  document.querySelectorAll('.learner-link, [data-space="/galaxias"], [data-space="/descubrir"], [data-space="/oportunidades"]').forEach(link=>{link.hidden=publishing;});
   $('member-nav').hidden = false;
   activateSpace('/cuenta');
   $('auth-card').hidden = true;
@@ -184,6 +198,7 @@ function renderAccount(data) {
   $('profile-avatar').textContent = Array.from(name.trim())[0]?.toUpperCase() || 'C';
   $('profile-name').value = name;
   $('profile-email').value = data.user.email;
+  $('profile-account-kind').textContent=publishing?`${data.profile.account_type==='company'?'Empresa':'Emprendedora'} · ${data.profile.organization_name} · Cuenta sin verificación empresarial`:'Cuenta de usuaria · Tu recorrido de descubrimiento';
   $('profile-notice').hidden = true;
   document.title = 'Tu espacio · Constela';
   changeAddress('/cuenta', true);
@@ -229,6 +244,13 @@ loginForm.addEventListener('submit', async event => {
   finally { busy(loginForm, false, 'Iniciar sesión'); }
 });
 
+function updateRegistrationType(){
+  const publishing=registerForm.elements.account_type.value!=='learner';
+  $('register-organization-field').hidden=!publishing;
+  $('register-organization').disabled=!publishing;
+  $('register-organization').required=publishing;
+}
+registerForm.querySelectorAll('[name=account_type]').forEach(input=>input.addEventListener('change',updateRegistrationType));
 registerForm.addEventListener('submit', async event => {
   event.preventDefault();
   validatePasswords();
@@ -236,9 +258,10 @@ registerForm.addEventListener('submit', async event => {
   $('auth-error').hidden = true;
   busy(registerForm, true, 'Creando tu cuenta…');
   try {
-    const { name, email, password } = Object.fromEntries(new FormData(registerForm));
-    const data = await send('/web/register', { method: 'POST', body: { name, email, password } });
+    const { name, email, password, account_type, organization_name='' } = Object.fromEntries(new FormData(registerForm));
+    const data = await send('/web/register', { method: 'POST', body: { name, email, password, account_type, organization_name } });
     registerForm.reset();
+    updateRegistrationType();
     validatePasswords();
     changeAddress('/registro?enviado=1');
     renderFeedback('email', data.message);
@@ -277,7 +300,7 @@ $('logout').addEventListener('click', async () => {
     $('greeting-name').textContent = '';
     renderMode('login', { focus: true });
   } catch (error) {
-    const notice = !$('explore-view').hidden ? $('explore-error') : $('discovery-view').hidden ? $('profile-notice') : $('discovery-error');
+    const notice = !$('community-view').hidden ? $('community-error') : !$('explore-view').hidden ? $('explore-error') : $('discovery-view').hidden ? $('profile-notice') : $('discovery-error');
     notice.textContent = error.message;
     notice.classList.add('error-notice');
     notice.hidden = false;
@@ -303,7 +326,7 @@ renderLocation();
 try { const path=location.pathname; await enter(await send('/web/session', { refresh: true }), { path }); }
 catch (error) {
   if (error.status !== 401) showAuthError(error.message);
-  else if (['/cuenta', '/descubrir', '/galaxias', '/oportunidades'].includes(location.pathname)) {
+  else if (['/cuenta', '/descubrir', '/galaxias', '/oportunidades', '/retos', '/empleos', '/publicar'].includes(location.pathname)) {
     renderMode('login', { navigate: true });
     showAuthError('Inicia sesión para entrar a tu espacio.');
   }

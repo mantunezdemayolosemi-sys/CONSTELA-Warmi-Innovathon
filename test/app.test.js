@@ -32,7 +32,7 @@ test('registro normaliza nombre/correo y nunca devuelve contraseña o sesión', 
   const { app, calls } = await fixture(t);
   const response = await app.inject({ method: 'POST', url: '/auth/register', payload: { ...valid, name: ' Ana ', email: ' ANA@example.com ' } });
   assert.equal(response.statusCode, 202);
-  assert.deepEqual(calls, [valid]);
+  assert.deepEqual(calls, [{...valid,account_type:'learner',organization_name:''}]);
   assert.equal(response.headers['cache-control'], 'no-store');
   assert.ok(!response.body.includes(valid.password));
   assert.ok(!response.body.includes('access_token'));

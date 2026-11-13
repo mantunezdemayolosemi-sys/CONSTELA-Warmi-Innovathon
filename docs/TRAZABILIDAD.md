@@ -1,6 +1,6 @@
 # Trazabilidad y evidencia
 
-La suite contiene 58 pruebas tras incorporar la spec 003 y su ajuste para Lima. Las secciones 001/002 se incorporaron retrospectivamente; no se afirma que una comprobación manual sea una prueba automatizada.
+La suite contiene 77 pruebas tras incorporar la spec 004. Las secciones 001/002 se incorporaron retrospectivamente; no se afirma que una comprobación manual sea una prueba automatizada.
 
 Ejecutar desde la raíz: `npm run check` y `npm test`. La [CI](../.github/workflows/test.yml) ejecuta esos comandos con Node.js 22. Los planes y requisitos están en [specs/](../specs/README.md).
 
@@ -45,6 +45,18 @@ Ejecutar desde la raíz: `npm run check` y `npm test`. La [CI](../.github/workfl
 | RF-7–8 | Normalización, matching y `public/explore.js` | `opportunities.test.js`: intereses, explorar todo, filtros, expiración y caché; QA real con vacío y catálogo completo |
 | RF-10 | Rutas web e interfaz | `opportunities.test.js`: autenticación, origen e identidad; revisión visual local |
 | RF-11 | Filtro `inLima`, adaptador hack0 y UI | `opportunities.test.js`: país PE, distrito identificado, exclusión de otras ciudades y países, virtuales y datos desconocidos incluso con `scope=all`; sincronización local de 12 fichas |
+
+## 004 · Retos y organizaciones
+
+| Requisitos | Implementación | Evidencia |
+| --- | --- | --- |
+| RF-1–2 | Registro, perfiles, navegación y migración 006 | `community.test.js`, `community-database.test.js`, contrato de alta en `supabase.test.js`; revisión del campo condicional y panel con perfil QA local ficticio |
+| RF-3–4 | Catálogo, detalle, filtros y guardados | Pruebas de matching y privacidad; guardado real con cuenta QA conservando estado anterior; detalle visible en la sesión existente |
+| RF-5–7 | RPC de publicación/cierre y RLS | Pruebas de suplantación, permisos entre identidades, caducidad y origen; transacción reversible de publicación/cierre en Supabase |
+| RF-8 | DOM con `textContent`, formulario y estados | Suite anterior conservada; navegador QA local comprueba reto, cierre y empleo; sin nuevas dependencias |
+| RF-9 | `challenge_practices`, RPC idempotente, constelación y celebración | Premio único y privacidad en PGlite/API/SDK; prueba real reversible, recuperación de estrella y propuesta en navegador QA local |
+
+Límites y distinción entre pruebas reales y fixtures: [RETOS.md](RETOS.md).
 
 ## Verificación real de datos anteriores
 

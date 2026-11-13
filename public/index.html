@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/assets/styles.css">
   <link rel="stylesheet" href="/assets/discovery.css">
   <link rel="stylesheet" href="/assets/explore.css">
+  <link rel="stylesheet" href="/assets/community.css">
   <script type="module" src="/assets/app.js"></script>
 </head>
 <body>
@@ -27,6 +28,9 @@
     <a href="/galaxias" data-space="/galaxias">Mis galaxias</a>
     <a href="/descubrir" data-space="/descubrir">Mis habilidades</a>
     <a href="/oportunidades" data-space="/oportunidades">Oportunidades</a>
+    <a href="/retos" data-space="/retos">Retos</a>
+    <a href="/empleos" data-space="/empleos">Empleos</a>
+    <a href="/publicar" data-space="/publicar" class="publisher-link" hidden>Mis publicaciones</a>
   </nav>
 
   <main id="main" class="auth-layout">
@@ -61,6 +65,12 @@
         <p class="form-note">¿Todavía no tienes cuenta? <a href="/registro" data-mode="register">Empieza aquí</a></p>
       </form>
       <form id="register-form" class="auth-form" hidden>
+        <fieldset class="account-types"><legend>¿Cómo quieres usar Constela?</legend>
+          <label><input type="radio" name="account_type" value="learner" checked><span><strong>Soy usuaria</strong><small>Descubrir habilidades y practicar.</small></span></label>
+          <label><input type="radio" name="account_type" value="company"><span><strong>Soy empresa</strong><small>Publicar retos y oportunidades.</small></span></label>
+          <label><input type="radio" name="account_type" value="entrepreneur"><span><strong>Soy emprendedora</strong><small>Conectar mi proyecto con talento.</small></span></label>
+        </fieldset>
+        <div class="field" id="register-organization-field" hidden><label for="register-organization">Nombre de tu empresa o emprendimiento</label><input id="register-organization" name="organization_name" minlength="2" maxlength="100" autocomplete="organization" disabled><p class="field-hint">El nombre aparecerá en tus publicaciones. Esta demo publica simulaciones.</p></div>
         <div class="field"><label for="register-name">¿Cómo te llamas?</label><input id="register-name" name="name" type="text" placeholder="Tu nombre" autocomplete="name" minlength="2" maxlength="100" required></div>
         <div class="field"><label for="register-email">Correo electrónico</label><input id="register-email" name="email" type="email" placeholder="Tu correo electrónico" autocomplete="email" maxlength="254" required></div>
         <div class="field"><label for="register-password">Crea una contraseña</label><div class="password-field"><input id="register-password" name="password" type="password" placeholder="Al menos 12 caracteres" autocomplete="new-password" minlength="12" maxlength="128" aria-describedby="password-help" required><button type="button" class="password-toggle" data-password="register-password" aria-label="Mostrar contraseña" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="eye-slash" d="m4 3 16 18"/></svg></button></div><p class="field-hint" id="password-help">Usa una frase de al menos 12 caracteres.</p></div>
@@ -89,9 +99,12 @@
         </article>
         <aside class="welcome-card"><span class="welcome-star" aria-hidden="true">✧</span><p class="eyebrow">ESTE ES TU PUNTO DE PARTIDA</p><h2>Todo empieza<br>con una<br><em>conexión.</em></h2><p>Tu cuenta está lista. Hoy comienza una nueva parte de tu historia.</p><span class="welcome-signature">constela.</span></aside>
       </div>
-      <a class="discovery-profile-link" href="/descubrir" id="open-discovery"><span aria-hidden="true">✦</span><span><strong>Tu universo de habilidades</strong><br>Descubre tus estrellas o vuelve a ver tu constelación.</span><span aria-hidden="true">↗</span></a>
+      <p class="account-kind" id="profile-account-kind"></p>
+      <a class="discovery-profile-link learner-link" href="/descubrir" id="open-discovery"><span aria-hidden="true">✦</span><span><strong>Tu universo de habilidades</strong><br>Descubre tus estrellas o vuelve a ver tu constelación.</span><span aria-hidden="true">↗</span></a>
       <a class="discovery-profile-link" href="/galaxias" data-space="/galaxias"><span aria-hidden="true">🌌</span><span><strong>Editar mis galaxias</strong><br>Tus intereses pueden cambiar. Descubre nuevos caminos.</span><span aria-hidden="true">↗</span></a>
       <a class="discovery-profile-link" href="/oportunidades" data-space="/oportunidades"><span aria-hidden="true">↗</span><span><strong>Explorar oportunidades</strong><br>Encuentra convocatorias relacionadas con tus intereses.</span><span aria-hidden="true">↗</span></a>
+      <a class="discovery-profile-link" href="/retos" data-space="/retos"><span aria-hidden="true">✧</span><span><strong>Retos de empresas y emprendedoras</strong><br>Practica con casos simulados y enciende nuevas estrellas.</span><span aria-hidden="true">↗</span></a>
+      <a class="discovery-profile-link publisher-link" href="/publicar" data-space="/publicar" hidden><span aria-hidden="true">＋</span><span><strong>Publicar un reto o una oportunidad</strong><br>Conecta tu empresa o emprendimiento con la comunidad.</span><span aria-hidden="true">↗</span></a>
     </section>
     <section class="discovery-view" id="discovery-view" aria-label="Tu universo de habilidades" hidden>
       <nav class="discovery-nav" aria-label="Tu espacio"><span><span aria-hidden="true">✦</span> TU UNIVERSO DE HABILIDADES</span><button type="button" class="quiet-button" id="discovery-profile">Mi perfil <span aria-hidden="true">↗</span></button></nav>
@@ -112,6 +125,10 @@
     <section class="explore-view" id="explore-view" aria-label="Galaxias y oportunidades" hidden>
       <div class="notice error-notice" id="explore-error" role="alert" hidden></div>
       <div id="explore-content" aria-busy="false"></div>
+    </section>
+    <section class="explore-view" id="community-view" aria-label="Retos y publicaciones de la comunidad" hidden>
+      <div class="notice error-notice" id="community-error" role="alert" hidden></div>
+      <div id="community-content" aria-busy="false"></div>
     </section>
     <noscript><p class="notice error-notice">Activa JavaScript en tu navegador para registrarte o iniciar sesión.</p></noscript>
   </main>

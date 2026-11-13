@@ -13,6 +13,42 @@ const json = (body, status = 200) => new Response(JSON.stringify(body), {
   status, headers: { 'content-type': 'application/json', 'x-supabase-api-version': '2024-01-01' },
 });
 
+test('SDK comunitario mantiene JWT, RPC de publicación y guardados de la identidad indicada',async()=>{
+  const calls=[];
+  const gateway=createGateway(config,async(url,init)=>{
+    const path=new URL(url).pathname;
+    calls.push({path,method:init.method,token:new Headers(init.headers).get('authorization'),body:init.body&&JSON.parse(init.body)});
+    if(path.endsWith('/publish_community_post'))return json({id:'post',is_simulation:true});
+    if(path.endsWith('/close_community_post')||init.method==='POST'||init.method==='DELETE')return new Response(null,{status:204});
+    return json(path.endsWith('/challenge_saves')?[{post_id:'post'}]:[]);
+  });
+  assert.equal((await gateway.publishCommunityPost('verified',{title:'Prueba'})).is_simulation,true);
+  await gateway.closeCommunityPost('verified',id);
+  await gateway.saveChallenge('verified',id,id,true);
+  await gateway.saveChallenge('verified',id,id,false);
+  assert.deepEqual(await gateway.getSavedChallenges('verified',id),['post']);
+  await gateway.getCommunityPosts('verified',id,true);
+  assert.ok(calls.every(call=>call.token==='Bearer verified'));
+  assert.deepEqual(calls[0].body,{p_post:{title:'Prueba'}});
+  assert.deepEqual(calls[1].body,{p_id:id});
+  assert.deepEqual(calls[2].body,{user_id:id,post_id:id});
+  assert.equal(calls[3].method,'DELETE');
+});
+test('SDK de estrellas transmite la práctica por RPC y recupera solo la propuesta propia',async()=>{
+  const calls=[];const gateway=createGateway(config,async(url,init)=>{
+    calls.push({url:String(url),token:new Headers(init.headers).get('authorization'),body:init.body&&JSON.parse(init.body)});
+    return json(String(url).includes('/rpc/')?{post_id:id,awarded:true}:[{post_id:id,proposal:'Privada'}]);
+  });
+  const body={proposal:'Una propuesta privada de prueba',reflection:'Una reflexión de prueba'};
+  assert.equal((await gateway.completePractice('verified',id,body)).awarded,true);
+  assert.equal((await gateway.getPractice('verified',id,id)).proposal,'Privada');
+  await gateway.getPractices('verified',id);
+  assert.ok(calls.every(c=>c.token==='Bearer verified'));
+  assert.deepEqual(calls[0].body,{p_post_id:id,p_proposal:body.proposal,p_reflection:body.reflection});
+  assert.ok(calls[1].url.includes(`user_id=eq.${id}`)&&calls[1].url.includes(`post_id=eq.${id}`));
+  assert.ok(!calls[2].url.includes('proposal'));
+});
+
 test('SDK envía alta con metadatos y destino de confirmación, sin pedir sesión', async () => {
   const calls = [];
   const gateway = createGateway(config, async (url, init) => {
@@ -24,6 +60,10 @@ test('SDK envía alta con metadatos y destino de confirmación, sin pedir sesió
   assert.ok(calls[0].url.includes('/auth/v1/signup'));
   assert.ok(calls[0].url.includes('redirect_to=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fconfirmed'));
   assert.equal(calls[0].body.data.display_name, 'Ana');
+  assert.equal(calls[0].body.data.account_type, 'learner');
+  await gateway.register({name:'Luz',email:user.email,password:'frase-larga-123',account_type:'entrepreneur',organization_name:'Proyecto ficticio'});
+  assert.equal(calls[1].body.data.organization_name,'Proyecto ficticio');
+  assert.equal(calls[1].body.data.account_type,'entrepreneur');
 });
 
 test('SDK verifica identidad remota y rechaza un correo sin confirmar', async () => {
