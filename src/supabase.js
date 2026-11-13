@@ -131,12 +131,28 @@ export function createGateway(config, fetchImpl = globalThis.fetch) {
         return data;
       });
     },
+    async getInterests(token, userId) {
+      return useClient(token, async (supabase) => {
+        const { data, error } = await supabase.from('interest_profiles')
+          .select('revision, updated_at, user_interests(interest_id)').eq('user_id', userId).maybeSingle();
+        if (error) throw new ServiceError(503, 'INTERESTS_UNAVAILABLE', 'No pudimos cargar tus galaxias. Intenta otra vez.');
+        return data ? { revision: data.revision, updated_at: data.updated_at, galaxies: data.user_interests.map(g => g.interest_id) } : null;
+      });
+    },
+    async saveInterests(token, { revision, galaxies }) {
+      return useClient(token, async (supabase) => {
+        const { data, error } = await supabase.rpc('save_user_interests', { p_expected_revision: revision, p_galaxies: galaxies });
+        if (['40001', 'PT409'].includes(error?.code)) throw new ServiceError(409, 'INTERESTS_CONFLICT', 'Tus galaxias cambiaron en otra pestaña. Recárgalas antes de guardar.');
+        if (error) throw new ServiceError(503, 'INTERESTS_UNAVAILABLE', 'No pudimos guardar tus galaxias. Tu selección sigue aquí; intenta otra vez.');
+        return data;
+      });
+    },
     async saveDiscovery(token, { revision, self_perception, answers, reflection }) {
       return useClient(token, async (supabase) => {
         const { data, error } = await supabase.rpc('save_strength_discovery', {
           p_expected_revision: revision, p_self_perception: self_perception, p_answers: answers, p_reflection: reflection,
         }).single();
-        if (error?.code === '40001') throw new ServiceError(409, 'DISCOVERY_CONFLICT', 'Tu misión cambió en otra pestaña. Recarga el progreso antes de continuar.');
+        if (['40001', 'PT409'].includes(error?.code)) throw new ServiceError(409, 'DISCOVERY_CONFLICT', 'Tu misión cambió en otra pestaña. Recarga el progreso antes de continuar.');
         if (error) throw new ServiceError(503, 'DISCOVERY_UNAVAILABLE', 'No pudimos guardar tu misión. Tus elecciones siguen en esta pantalla; intenta otra vez.');
         return data;
       });

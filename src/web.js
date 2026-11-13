@@ -4,11 +4,13 @@ import { fileURLToPath } from 'node:url';
 import { ServiceError } from './supabase.js';
 import { registerBody, loginBody, profileBody, accepted } from './validation.js';
 import { discoveryBody, summarizeDiscovery, skills, missions } from './discovery.js';
+import { galaxies, interestsBody } from './interests.js';
+import { opportunitiesQuery, recommend } from './opportunities.js';
 
 const accessName = 'constela_access';
 const refreshName = 'constela_refresh';
 
-export async function registerWeb(app, { gateway, publicOrigin, secureCookies, authLimit }) {
+export async function registerWeb(app, { gateway, opportunities, publicOrigin, secureCookies, authLimit }) {
   await app.register(cookie);
   await app.register(fastifyStatic, {
     root: fileURLToPath(new URL('../public/', import.meta.url)),
@@ -16,7 +18,7 @@ export async function registerWeb(app, { gateway, publicOrigin, secureCookies, a
     index: false,
     dotfiles: 'deny',
   });
-  for (const path of ['/', '/ingresar', '/registro', '/cuenta', '/confirmacion', '/descubrir']) {
+  for (const path of ['/', '/ingresar', '/registro', '/cuenta', '/confirmacion', '/descubrir', '/galaxias', '/oportunidades']) {
     app.get(path, (_request, reply) => reply.sendFile('index.html'));
   }
 
@@ -92,6 +94,22 @@ export async function registerWeb(app, { gateway, publicOrigin, secureCookies, a
     web.get('/web/discovery', async (request) => {
       const { token, user } = await identity(request);
       return { catalog: { version: 1, skills, missions }, discovery: summarizeDiscovery(await gateway.getDiscovery(token, user.id)) };
+    });
+    web.get('/web/interests', async (request) => {
+      const { token, user } = await identity(request);
+      return { catalog: galaxies, interests: await gateway.getInterests(token, user.id) };
+    });
+    web.put('/web/interests', async (request) => {
+      const { token } = await identity(request);
+      return { interests: await gateway.saveInterests(token, interestsBody.parse(request.body)) };
+    });
+    web.get('/web/opportunities', async (request) => {
+      const { token, user } = await identity(request);
+      const filters = opportunitiesQuery.parse(request.query);
+      const [interests, discovery] = await Promise.all([
+        gateway.getInterests(token, user.id), gateway.getDiscovery(token, user.id),
+      ]);
+      return recommend(opportunities.get(), interests, summarizeDiscovery(discovery), filters);
     });
     web.put('/web/discovery', async (request) => {
       const { token } = await identity(request);

@@ -6,7 +6,7 @@ import { ServiceError } from './supabase.js';
 import { registerWeb } from './web.js';
 import { registerBody, loginBody, refreshBody, profileBody, accepted } from './validation.js';
 
-export async function buildApp({ gateway, logger = false, authLimit = 10, publicOrigin = 'http://localhost:3000', secureCookies = false }) {
+export async function buildApp({ gateway, opportunities = { get: () => ({ items: [], sources: [] }) }, logger = false, authLimit = 10, publicOrigin = 'http://localhost:3000', secureCookies = false }) {
   const app = Fastify({
     logger,
     bodyLimit: 16 * 1024,
@@ -46,7 +46,7 @@ export async function buildApp({ gateway, logger = false, authLimit = 10, public
   app.get('/auth/confirmed', async (request, reply) =>
     reply.redirect(request.query.error ? '/confirmacion?estado=error#' : '/confirmacion#'));
 
-  await registerWeb(app, { gateway, publicOrigin, secureCookies, authLimit });
+  await registerWeb(app, { gateway, opportunities, publicOrigin, secureCookies, authLimit });
 
   await app.register(async (auth) => {
     // Presupuesto compartido entre registro, login y renovación por IP.
