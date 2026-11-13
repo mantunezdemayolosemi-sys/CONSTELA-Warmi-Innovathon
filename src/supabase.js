@@ -52,12 +52,12 @@ export function createGateway(config, fetchImpl = globalThis.fetch) {
   };
 
   return {
-    async register({ name, email, password }) {
+    async register({ name, email, password, account_type='learner', organization_name='' }) {
       return useClient(undefined, async (supabase) => {
         const { error } = await supabase.auth.signUp({
           email, password,
           options: {
-            data: { display_name: name },
+            data: { display_name: name, account_type, organization_name },
             emailRedirectTo: `${config.PUBLIC_API_URL.replace(/\/$/, '')}/auth/confirmed`,
           },
         });
@@ -107,7 +107,7 @@ export function createGateway(config, fetchImpl = globalThis.fetch) {
     async getProfile(token, userId) {
       return useClient(token, async (supabase) => {
         const { data, error } = await supabase.from('profiles')
-          .select('id, display_name, created_at, updated_at').eq('id', userId).maybeSingle();
+          .select('id, display_name, account_type, organization_name, created_at, updated_at').eq('id', userId).maybeSingle();
         if (error) throw new ServiceError(503, 'PROFILE_UNAVAILABLE', 'No pudimos consultar tu perfil.');
         if (!data) throw new ServiceError(404, 'PROFILE_NOT_FOUND', 'No encontramos tu perfil.');
         return data;
@@ -116,10 +116,68 @@ export function createGateway(config, fetchImpl = globalThis.fetch) {
     async updateProfile(token, userId, name) {
       return useClient(token, async (supabase) => {
         const { data, error } = await supabase.from('profiles').update({ display_name: name })
-          .eq('id', userId).select('id, display_name, created_at, updated_at').maybeSingle();
+          .eq('id', userId).select('id, display_name, account_type, organization_name, created_at, updated_at').maybeSingle();
         if (error) throw new ServiceError(503, 'PROFILE_UNAVAILABLE', 'No pudimos guardar tu perfil.');
         if (!data) throw new ServiceError(404, 'PROFILE_NOT_FOUND', 'No encontramos tu perfil.');
         return data;
+      });
+    },
+    async getCommunityPosts(token, userId, mine=false) {
+      return useClient(token, async supabase=>{
+        let query=supabase.from('community_posts').select('id, organization_name, kind, title, description, deliverable, effort, compensation, level, mode, galaxies, skills, deadline, status, is_simulation, created_at');
+        query=mine?query.eq('owner_id',userId):query.eq('status','open').gt('deadline',new Date().toISOString());
+        const {data,error}=await query.order('created_at',{ascending:false}).limit(100);
+        if(error)throw new ServiceError(503,'COMMUNITY_UNAVAILABLE','No pudimos cargar las publicaciones. Intenta otra vez.');
+        return data;
+      });
+    },
+    async getPractices(token,userId) {
+      return useClient(token,async supabase=>{
+        const {data,error}=await supabase.from('challenge_practices').select('post_id, completed_at, practiced_skills').eq('user_id',userId);
+        if(error)throw new ServiceError(503,'PRACTICE_UNAVAILABLE','No pudimos cargar tus estrellas de práctica.');
+        return data;
+      });
+    },
+    async getPractice(token,userId,id) {
+      return useClient(token,async supabase=>{
+        const {data,error}=await supabase.from('challenge_practices').select('post_id, proposal, reflection, practiced_skills, completed_at').eq('user_id',userId).eq('post_id',id).maybeSingle();
+        if(error)throw new ServiceError(503,'PRACTICE_UNAVAILABLE','No pudimos cargar tu práctica.');
+        return data;
+      });
+    },
+    async completePractice(token,id,body) {
+      return useClient(token,async supabase=>{
+        const {data,error}=await supabase.rpc('complete_challenge_practice',{p_post_id:id,p_proposal:body.proposal,p_reflection:body.reflection});
+        if(error)throw new ServiceError(error.code==='PT409'?409:error.code==='42501'?403:503,'PRACTICE_UNAVAILABLE','No pudimos registrar tu práctica. Revisa si el reto sigue abierto y vuelve a intentarlo.');
+        return data;
+      });
+    },
+    async getSavedChallenges(token,userId) {
+      return useClient(token,async supabase=>{
+        const {data,error}=await supabase.from('challenge_saves').select('post_id').eq('user_id',userId);
+        if(error)throw new ServiceError(503,'COMMUNITY_UNAVAILABLE','No pudimos cargar tus retos guardados.');
+        return data.map(row=>row.post_id);
+      });
+    },
+    async publishCommunityPost(token,body) {
+      return useClient(token,async supabase=>{
+        const {data,error}=await supabase.rpc('publish_community_post',{p_post:body}).single();
+        if(error)throw new ServiceError(error.code==='42501'?403:503,'PUBLICATION_FAILED','No pudimos publicar. Revisa los datos y vuelve a intentarlo.');
+        return data;
+      });
+    },
+    async closeCommunityPost(token,id) {
+      return useClient(token,async supabase=>{
+        const {error}=await supabase.rpc('close_community_post',{p_id:id});
+        if(error)throw new ServiceError(error.code==='PT404'?404:503,'PUBLICATION_FAILED','No pudimos cerrar esta publicación.');
+      });
+    },
+    async saveChallenge(token,userId,id,save) {
+      return useClient(token,async supabase=>{
+        const {error}=save
+          ?await supabase.from('challenge_saves').upsert({user_id:userId,post_id:id},{onConflict:'user_id,post_id',ignoreDuplicates:true})
+          :await supabase.from('challenge_saves').delete().eq('user_id',userId).eq('post_id',id);
+        if(error)throw new ServiceError(error.code==='42501'?403:503,'SAVE_FAILED','No pudimos cambiar el guardado. El reto puede estar cerrado o vencido.');
       });
     },
     async getDiscovery(token, userId) {

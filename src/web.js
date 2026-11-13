@@ -6,6 +6,7 @@ import { registerBody, loginBody, profileBody, accepted } from './validation.js'
 import { discoveryBody, summarizeDiscovery, skills, missions } from './discovery.js';
 import { galaxies, interestsBody } from './interests.js';
 import { opportunitiesQuery, recommend } from './opportunities.js';
+import { publisher, communityQuery, publicationBody, practiceBody, postId, filterCommunity } from './community.js';
 
 const accessName = 'constela_access';
 const refreshName = 'constela_refresh';
@@ -18,7 +19,7 @@ export async function registerWeb(app, { gateway, opportunities, publicOrigin, s
     index: false,
     dotfiles: 'deny',
   });
-  for (const path of ['/', '/ingresar', '/registro', '/cuenta', '/confirmacion', '/descubrir', '/galaxias', '/oportunidades']) {
+  for (const path of ['/', '/ingresar', '/registro', '/cuenta', '/confirmacion', '/descubrir', '/galaxias', '/oportunidades', '/retos', '/empleos', '/publicar']) {
     app.get(path, (_request, reply) => reply.sendFile('index.html'));
   }
 
@@ -79,6 +80,53 @@ export async function registerWeb(app, { gateway, opportunities, publicOrigin, s
       });
     });
 
+    async function communityIdentity(request, role) {
+      const identityData=await identity(request);
+      const profile=await gateway.getProfile(identityData.token,identityData.user.id);
+      if(role==='publisher' && !publisher(profile) || role==='learner' && publisher(profile))
+        throw new ServiceError(403,'ACCOUNT_TYPE_REQUIRED',role==='publisher'?'Esta acción corresponde a empresas y emprendedoras.':'Los guardados pertenecen al recorrido de usuaria.');
+      return {...identityData,profile};
+    }
+    web.get('/web/community',async request=>{
+      const {token,user,profile}=await communityIdentity(request);
+      const query=communityQuery.parse(request.query);
+      if(query.scope==='mine' && !publisher(profile))throw new ServiceError(403,'ACCOUNT_TYPE_REQUIRED','Esta sección corresponde a cuentas que publican.');
+      const [posts,interests,saved,practices]=await Promise.all([
+        gateway.getCommunityPosts(token,user.id,query.scope==='mine'),
+        publisher(profile)?null:gateway.getInterests(token,user.id),
+        publisher(profile)?[]:gateway.getSavedChallenges(token,user.id),
+        publisher(profile)?[]:gateway.getPractices(token,user.id),
+      ]);
+      return {posts:filterCommunity(posts,interests,saved,query),catalog:galaxies.filter(g=>g.id!=='explore'),skills,practices,can_publish:publisher(profile)};
+    });
+    web.get('/web/community/:id/practice',async request=>{
+      const {token,user}=await communityIdentity(request,'learner');
+      const practice=await gateway.getPractice(token,user.id,postId.parse(request.params.id));
+      if(!practice)throw new ServiceError(404,'PRACTICE_NOT_FOUND','Todavía no registraste una práctica en este reto.');
+      return {practice};
+    });
+    web.post('/web/community/:id/practice',async(request,reply)=>{
+      const {token}=await communityIdentity(request,'learner');
+      const practice=await gateway.completePractice(token,postId.parse(request.params.id),practiceBody.parse(request.body));
+      return reply.code(200).send({practice});
+    });
+    web.post('/web/community',async(request,reply)=>{
+      const {token}=await communityIdentity(request,'publisher');
+      const post=await gateway.publishCommunityPost(token,publicationBody.parse(request.body));
+      return reply.code(201).send({post});
+    });
+    web.patch('/web/community/:id/close',async(request,reply)=>{
+      const {token}=await communityIdentity(request,'publisher');
+      if(!request.body || Object.keys(request.body).length)throw new ServiceError(400,'INVALID_BODY','Envía un cuerpo vacío.');
+      await gateway.closeCommunityPost(token,postId.parse(request.params.id));
+      return reply.code(204).send();
+    });
+    for(const method of ['PUT','DELETE'])web.route({method,url:'/web/community/:id/save',handler:async(request,reply)=>{
+      const {token,user}=await communityIdentity(request,'learner');
+      if(!request.body || Object.keys(request.body).length)throw new ServiceError(400,'INVALID_BODY','Envía un cuerpo vacío.');
+      await gateway.saveChallenge(token,user.id,postId.parse(request.params.id),method==='PUT');
+      return reply.code(204).send();
+    }});
     web.get('/web/session', async (request) => {
       const { token, user } = await identity(request);
       return {
