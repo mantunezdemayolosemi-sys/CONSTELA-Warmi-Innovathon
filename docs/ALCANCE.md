@@ -11,7 +11,7 @@ Fuente de visión: [documento del Grupo 1](https://docs.google.com/document/d/1C
 | Logo y avatar personalizable | Identidad gráfica provisional; personalización pendiente | Definir diseño y abrir una nueva spec |
 | Arquetipos como Creadora o Estratega | Mencionados en la visión, no implementados | Decidir con el equipo si se incorporan; el test actual muestra habilidades, no tipos de personalidad |
 | Galaxias de interés | Implementadas con selección privada de hasta cinco y edición | Spec 003 |
-| Oportunidades y convocatorias | Implementación inicial con scraping de MLH y Global Hack Week, caché y filtros | Spec 003; cobertura mayormente tecnológica; ampliar fuentes y sumar retos externos sigue pendiente |
+| Oportunidades y convocatorias | Demo de Lima Metropolitana con scraping público de hack0, caché y filtros | Spec 003:RF-11; cobertura mayormente tecnológica; ampliar fuentes y sumar retos externos sigue pendiente |
 | Retos de desarrollo y de organizaciones | Pendiente | Definir publicación, entrega, evaluación y estados de evidencia |
 | Estrellas, insignias y niveles por actividades | Pendiente | Diseñar reglas y distinguir identificación, práctica y demostración |
 | Portafolio compartible y descargable | Pendiente | Definir formato, privacidad, evidencias y exportación |

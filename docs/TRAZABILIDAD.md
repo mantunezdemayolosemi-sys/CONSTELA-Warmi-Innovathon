@@ -1,6 +1,6 @@
 # Trazabilidad y evidencia
 
-La suite contiene 54 pruebas tras incorporar la spec 003. Las secciones 001/002 se incorporaron retrospectivamente; no se afirma que una comprobación manual sea una prueba automatizada.
+La suite contiene 58 pruebas tras incorporar la spec 003 y su ajuste para Lima. Las secciones 001/002 se incorporaron retrospectivamente; no se afirma que una comprobación manual sea una prueba automatizada.
 
 Ejecutar desde la raíz: `npm run check` y `npm test`. La [CI](../.github/workflows/test.yml) ejecuta esos comandos con Node.js 22. Los planes y requisitos están en [specs/](../specs/README.md).
 
@@ -44,6 +44,7 @@ Ejecutar desde la raíz: `npm run check` y `npm test`. La [CI](../.github/workfl
 | RF-5–6, RF-9 | `src/opportunities.js`, `src/server.js`, script de sincronización | `opportunities.test.js`: extracción de HTML, cambios de estructura, robots, host de redirección, fallos y deduplicación; sincronización real de 26 registros |
 | RF-7–8 | Normalización, matching y `public/explore.js` | `opportunities.test.js`: intereses, explorar todo, filtros, expiración y caché; QA real con vacío y catálogo completo |
 | RF-10 | Rutas web e interfaz | `opportunities.test.js`: autenticación, origen e identidad; revisión visual local |
+| RF-11 | Filtro `inLima`, adaptador hack0 y UI | `opportunities.test.js`: país PE, distrito identificado, exclusión de otras ciudades y países, virtuales y datos desconocidos incluso con `scope=all`; sincronización local de 12 fichas |
 
 ## Verificación real de datos anteriores
 

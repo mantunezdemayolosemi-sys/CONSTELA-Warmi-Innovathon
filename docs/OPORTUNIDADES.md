@@ -10,16 +10,19 @@ Las migraciones 003, 004 y 005 ya se aplicaron al proyecto de desarrollo. No vol
 
 El catálogo de oportunidades contiene solo metadatos públicos y se guarda en JSON, separado de los intereses privados: [`data/opportunities.json`](../data/opportunities.json) es la copia inicial verificada; `.cache/opportunities.json` es la copia de ejecución, ignorada por Git. Esto evita entregar a las usuarias permisos para escribir un catálogo global o introducir una clave administrativa. No hay una tabla global de oportunidades en Supabase en este incremento. Antes de alojar varias instancias se deberá acordar almacenamiento compartido y una tarea de actualización persistente.
 
-## Fuentes activas y cobertura
+## Fuentes activas y cobertura · ajuste para Lima
 
 | Fuente pública | Qué se extrae | Adaptador |
 | --- | --- | --- |
-| [Calendario MLH](https://www.mlh.com/events) | Próximos hackathones: nombre, enlace, fechas, modalidad y lugar | JSON público incluido en el HTML, sin ejecutar JavaScript |
-| [Global Hack Week](https://ghw.mlh.com/) | Semanas de eventos virtuales con nombre, fechas y enlace | Tarjetas HTML públicas |
+| [hack0](https://hack0.dev/) | Fichas de eventos de distritos de Lima, país, modalidad, fechas y enlace del organizador | Tarjetas públicas de la portada y JSON-LD de cada ficha, sin ejecutar JavaScript |
 
-Primera sincronización: 12 de noviembre de 2026, hora de Lima; 26 registros vigentes por fecha del evento. No se copian imágenes, descripciones extensas, cuentas, perfiles ni datos de participantes. Las temáticas se asignan con reglas de palabras completas sobre nombre y etiquetas públicas; MLH/GHW tienen tecnología como tema base. Las etiquetas de Constela son aproximaciones temáticas, no clasificaciones emitidas por el organizador. Añadir otra fuente exige revisar sus reglas, crear un adaptador, ampliar la validación y probarlo.
+El 12 de noviembre de 2026 Maricielo precisó que la demo debe mostrar **Lima, Perú**. La sincronización local recuperó 12 fichas vigentes por fecha del evento. La portada permite descubrir un máximo de 24 rutas de fichas peruanas con distrito de Lima; se consulta cada ficha con una pausa de 250 ms y se valida su JSON-LD. Se exige país PE, localidad de Lima Metropolitana, modalidad presencial o híbrida, evento no cancelado y fecha de fin disponible. Se excluyen otras ciudades, provincias como Cañete, virtuales globales y registros antiguos sin ubicación estructurada. No basta que el título mencione Lima o que la hora esté expresada en Lima.
 
-Cobertura limitada: principalmente tecnología y hackathones internacionales. No hay todavía una fuente activa para retos externos ni cobertura suficiente de todas las galaxias o eventos de Perú. El filtro de retos muestra un estado vacío hasta incorporar una fuente válida. No se fabrican convocatorias ni se reutilizan ejemplos de la propuesta como eventos reales. Devpost, DrivenData y UNESCO no se activaron para scraping por sus restricciones publicadas; deben utilizarse acuerdos, APIs autorizadas u otras fuentes para ampliarlos.
+El filtro se aplica en el servidor, también a «Todo Lima» y «Quiero explorar». Si no hay coincidencias locales se muestra un vacío, sin recurrir al catálogo extranjero. La copia versionada y la caché se sustituyeron por datos de Lima. MLH/GHW dejaron de ser fuentes activas de la demo; sus parsers se conservan para compatibilidad y pruebas del recolector, sin solicitudes a esas fuentes durante la sincronización actual.
+
+No se copian imágenes, descripciones extensas, cuentas, perfiles ni datos de participantes. Las temáticas se asignan con reglas sobre nombre y etiquetas públicas; hack0 es una agenda tecnológica. Las etiquetas de Constela son aproximaciones temáticas. Cada tarjeta ofrece la ficha de procedencia y el enlace del organizador publicado allí. La API de hack0 requiere token y no se usa; se consultan únicamente las páginas HTML públicas permitidas por [robots.txt](https://hack0.dev/robots.txt).
+
+Cobertura limitada: agenda principalmente tecnológica de Lima. No hay todavía una fuente activa para retos externos ni cobertura suficiente de todas las galaxias. El filtro de retos puede mostrar un vacío. No se fabrican convocatorias ni se reutilizan ejemplos de la propuesta como eventos reales. Devpost, DrivenData y UNESCO no se activaron por sus restricciones publicadas.
 
 ## Actualización
 
@@ -27,11 +30,11 @@ Cobertura limitada: principalmente tecnología y hackathones internacionales. No
 npm run opportunities:sync
 ```
 
-Sincroniza solo las dos fuentes fijas; no necesita `.env` ni credenciales. El comando informa estado por fuente y cantidad; devuelve salida distinta de cero si falla alguna fuente o la caché no se puede guardar. Para renovar intencionalmente la copia pública versionada: `npm run opportunities:sync -- --snapshot`; solo la escribe si ambas fuentes responden correctamente.
+Sincroniza solo la fuente local activa; no necesita `.env` ni credenciales. El comando informa estado por fuente y cantidad; devuelve salida distinta de cero si falla una fuente, queda una ficha sin actualizar o no puede guardar la caché. Para renovar intencionalmente la copia pública versionada: `npm run opportunities:sync -- --snapshot`; solo la escribe con una sincronización completa.
 
-El servidor carga la copia local al arrancar, inicia una sincronización en segundo plano y la repite cada 12 horas mientras el proceso esté activo. No ejecuta scraping por cada usuaria ni envía sus intereses a las fuentes. Lee `robots.txt` en cada actualización; bloquea destinos/redirecciones fuera de la lista, limita respuestas a 2 MB y cada solicitud a 12 segundos. No sigue enlaces de los eventos, inicia sesión en fuentes ni acepta URLs de usuarias.
+El servidor carga la copia local al arrancar, inicia una sincronización en segundo plano y la repite cada 12 horas mientras el proceso esté activo. No ejecuta scraping por cada usuaria ni envía sus intereses a las fuentes. Lee `robots.txt` en cada actualización; bloquea destinos/redirecciones fuera de hack0.dev y rutas ajenas a portada, robots y fichas descubiertas; limita respuestas a 2 MB y solicitudes a 12 segundos. No visita los enlaces externos de inscripción, inicia sesión en fuentes ni acepta URLs de usuarias.
 
-Si una fuente falla o cambia su HTML conserva su última copia útil. Un `Disallow` elimina sus resultados. Copias de más de 24 horas se señalan; datos de más de siete días y eventos terminados no se muestran. Fechas sin hora se conservan hasta acabar ese día en todas las zonas horarias; la interfaz no inventa una hora. El JSON se guarda mediante archivo temporal y renombrado.
+Si una fuente falla conserva su última copia útil. Si falla una ficha concreta conserva únicamente su copia anterior sin renovar su fecha y marca actualización parcial. Un `Disallow` elimina los resultados afectados. Las copias antiguas también deben pasar el filtro de Lima. Copias de más de 24 horas se señalan; datos de más de siete días y eventos terminados no se muestran. El JSON se guarda mediante archivo temporal único y renombrado, para evitar que el comando manual y el servidor escriban el mismo archivo temporal.
 
 ## Recomendaciones e interfaz
 
@@ -41,7 +44,8 @@ Se muestran primero las oportunidades con más galaxias coincidentes y luego por
 
 ## Verificación
 
-- 54 pruebas sin credenciales: parser, fuentes caídas, deduplicación, robots, redirecciones, fechas, filtros, coincidencias, RLS, revisión, contrato del SDK y protección de rutas/origen, además de la suite anterior.
+- 58 pruebas sin credenciales: suite anterior y cuatro nuevas comprobaciones de descubrimiento local, país/localidad/modalidad, exclusión geográfica incluso con catálogo completo y retención de fichas caídas sin reutilizar fuentes retiradas.
+- Ajuste Lima comprobado en la sesión existente: aparecen 12 oportunidades con sede local y «Todo Lima» conserva la restricción. No se cambiaron galaxias ni respuestas de la usuaria.
 - Prueba real con la cuenta QA autorizada: guardar, recuperar, editar, vacío para arte/cultura, catálogo completo, conflicto HTTP 409 y cierre de sesión. Misión anterior idéntica antes y después. No se modificaron intereses ni respuestas de la cuenta de Maricielo durante QA.
 - Migraciones verificadas con «Success. No rows returned» en Supabase. Consulta posterior: ninguna solicitud antigua de `save_user_interests` en espera.
 - Revisión visual de galaxias en una ventana estrecha y del catálogo en escritorio. En una sesión QA independiente se comprobó el límite de cinco, exploración exclusiva, edición, guardado y regreso al catálogo con filtro de eventos. La selección sin guardar de Maricielo se conservó. La aprobación del equipo y el despliegue remoto siguen pendientes.

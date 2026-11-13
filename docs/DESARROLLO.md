@@ -132,7 +132,7 @@ npm run check
 npm test
 ```
 
-Las 54 pruebas cubren API, SDK, permisos de base de datos, rutas web, cookies, protección de origen, renovación, cierre de sesión, catálogo de habilidades, resultados, progreso privado, intereses, conflictos de revisión, extracción de oportunidades, fallos de fuentes, robots, redirecciones y filtros. La interfaz anterior se comprobó en escritorio y a 375 px; el incremento de galaxias y oportunidades tiene evidencia en [OPORTUNIDADES.md](OPORTUNIDADES.md). GitHub Actions ejecutará las mismas comprobaciones al subir cambios. Además de las pruebas locales, verifica el recorrido en el proyecto real. Para otras direcciones de correo sigue pendiente configurar SMTP.
+Las 58 pruebas cubren API, SDK, permisos de base de datos, rutas web, cookies, protección de origen, renovación, cierre de sesión, catálogo de habilidades, resultados, progreso privado, intereses, conflictos, extracción de oportunidades, fallos de fuentes, robots, redirecciones y filtro obligatorio de Lima para la demo. La interfaz anterior se comprobó en escritorio y a 375 px; el incremento de galaxias y oportunidades tiene evidencia en [OPORTUNIDADES.md](OPORTUNIDADES.md). GitHub Actions ejecutará las mismas comprobaciones al subir cambios. Además de las pruebas locales, verifica el recorrido en el proyecto real. Para otras direcciones de correo sigue pendiente configurar SMTP.
 
 El código se prepara en la rama `codex/registro-usuarias`. Para subirlo hace falta permiso de escritura; el acceso de lectura basta para descargarlo, pero no para publicar cambios.
 
