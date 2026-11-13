@@ -18,6 +18,7 @@ Cuenta → galaxias de interés → percepción de habilidades → seis misiones
 - **RF-8:** Permitir ver recomendaciones o todo el catálogo y filtrar por tipo y modalidad. Ocultar convocatorias vencidas; señalar datos ausentes, copia antigua y fuentes temporalmente indisponibles. No presentar datos ficticios como oportunidades reales.
 - **RF-9:** Ejecutar una sincronización al iniciar el servidor y cada 12 horas mientras esté activo, con comando manual. El catálogo público se conserva como JSON local; los intereses se guardan en la base de datos. Documentar que alojamiento y proceso permanente siguen pendientes.
 - **RF-10:** Mantener sesión segura, control de origen, navegación con teclado, diseño móvil, estados de carga/error/vacío y protección frente a contenido o enlaces inseguros.
+- **RF-11 · Ajuste para la demo:** Por solicitud de Maricielo, mostrar únicamente oportunidades presenciales o híbridas con sede identificada en Lima Metropolitana, Perú. El filtro se aplica en el servidor a recomendaciones y «Todo el catálogo». Ni un nombre que mencione Lima ni la hora de Lima prueban ubicación. Registros antiguos sin país/ciudad confirmados, virtuales globales y otras ciudades se excluyen. La fuente activa pasa a la agenda pública de hack0; se muestran la página de procedencia y el enlace del organizador. Mantener caducidad, privacidad y actualización existentes.
 
 ## Límites
 

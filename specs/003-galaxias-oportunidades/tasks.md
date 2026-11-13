@@ -8,3 +8,9 @@
 - [x] G6 · Documentación y entrega local verificadas; 34 archivos publicados en `codex/galaxias-oportunidades`. [PR #3](https://github.com/mantunezdemayolosemi-sys/CONSTELA-Warmi-Innovathon/pull/3) abierto contra la adaptación del PR #2. Sin merge ni despliegue remoto.
 
 Revisión y merge humanos pendientes. No se han creado asignaciones ni aprobaciones.
+
+## Ajuste Lima para la demo (RF-11)
+
+- [x] L1 · Agenda pública hack0: sincronización completa de 12 fichas vigentes con país PE, localidad de Lima y enlace original del organizador.
+- [x] L2 · Filtro obligatorio en servidor para recomendaciones, «Todo Lima» y «Quiero explorar»; pruebas excluyen otras ciudades/países, ubicación desconocida y virtuales globales.
+- [x] L3 · Interfaz, copia y documentación actualizadas. `npm run check` y 58 pruebas pasan. Revisión en la sesión existente confirma 12 oportunidades y «Todo Lima», sin cambiar sus galaxias ni respuestas.
