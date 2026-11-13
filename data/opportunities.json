@@ -1,0 +1,441 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "52b60f9f90e74bda7a7fb43f",
+      "title": "Emory Hacks",
+      "url": "https://emoryhacks.com/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-11-13T19:00:00Z",
+      "ends_at": "2026-11-15T18:00:00Z",
+      "mode": "in_person",
+      "location": "Atlanta, GA, US",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "4d147abeb686ca9d5d6e2b14",
+      "title": "UniHack",
+      "url": "https://unihack.eu/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-11-13T20:00:00Z",
+      "ends_at": "2026-11-15T22:00:00Z",
+      "mode": "in_person",
+      "location": "Timișoara, Timiș, RO",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "cfa0e9d8d5be50f01bb21196",
+      "title": "Junction",
+      "url": "https://hackjunction.com/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-11-13T21:00:00Z",
+      "ends_at": "2026-11-15T21:00:00Z",
+      "mode": "in_person",
+      "location": "Espoo, Uusimaa, FI",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "733133d361d273d40cf0aaf0",
+      "title": "HackPrinceton Fall 2026",
+      "url": "https://www.hackprinceton.com/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-11-13T21:00:00Z",
+      "ends_at": "2026-11-15T21:00:00Z",
+      "mode": "in_person",
+      "location": "Princeton, New Jersey, US",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "3f901b6e3dafcd32d2c69a57",
+      "title": "NASA's Space Apps Challenge NYC",
+      "url": "https://www.spaceappschallenge.org/2026/local-events/new-york/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology",
+        "science"
+      ],
+      "starts_at": "2026-11-13T21:30:00Z",
+      "ends_at": "2026-11-15T21:30:00Z",
+      "mode": "hybrid",
+      "location": "Brooklyn, New York, US",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "88ff1ce5a16b08d6356c17e4",
+      "title": "HackUMass",
+      "url": "https://www.hackumass.com/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-11-13T23:30:00Z",
+      "ends_at": "2026-11-15T21:30:00Z",
+      "mode": "in_person",
+      "location": "Amherst, MA, US",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "a6fcc81b83baa1d20ba87d31",
+      "title": "HackUTA",
+      "url": "https://hackuta.com/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-11-14T14:00:00Z",
+      "ends_at": "2026-11-15T22:30:00Z",
+      "mode": "in_person",
+      "location": "Arlington, Texas, US",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "1c44362639a36357ea9ad3ea",
+      "title": "SanD Hacks",
+      "url": "https://hackathon.csesatucsd.com/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-11-14T14:00:00Z",
+      "ends_at": "2026-11-15T20:00:00Z",
+      "mode": "in_person",
+      "location": "La Jolla, CA, US",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "6046dcfdbd934d05cd3f68b4",
+      "title": "Hack The Nest",
+      "url": "https://hackthenest.tech/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-11-14T14:00:00Z",
+      "ends_at": "2026-11-15T21:00:00Z",
+      "mode": "in_person",
+      "location": "Ypsilanti, Michigan, US",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "ce0474e80e84621a0cb9a06a",
+      "title": "DurHack",
+      "url": "https://durhack.com/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-11-14T14:30:00Z",
+      "ends_at": "2026-11-15T23:00:00Z",
+      "mode": "in_person",
+      "location": "Durham, County Durham, GB",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "5367f7e7fc8124664795d12a",
+      "title": "sunhacks",
+      "url": "https://2026.sunhacks.io/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-11-14T15:00:00Z",
+      "ends_at": "2026-11-15T20:00:00Z",
+      "mode": "in_person",
+      "location": "Tempe, Arizona, US",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "4aaf25611c5af979dbbf8350",
+      "title": "Hack Western 13",
+      "url": "https://hackwestern.com/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-11-20T23:00:00Z",
+      "ends_at": "2026-11-22T20:00:00Z",
+      "mode": "in_person",
+      "location": "London, Ontario, CA",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "8879cf9fdf36501e000da492",
+      "title": "Tech For Community 2026",
+      "url": "https://tecnurtur.org/hackathon",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology",
+        "social"
+      ],
+      "starts_at": "2026-11-21T14:00:00Z",
+      "ends_at": "2026-11-22T18:00:00Z",
+      "mode": "in_person",
+      "location": "St. John's, Newfoundland and Labrador / Avalon Peninsula, CA",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "d4db05a27742d16efb81c58c",
+      "title": "WHACK (Wellesley Hackathon)",
+      "url": "https://www.wellesleyhacks.org/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-11-21T14:00:00Z",
+      "ends_at": "2026-11-22T20:00:00Z",
+      "mode": "in_person",
+      "location": "Wellesley , Massachesetts, US",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "7c47998e4b3c861bf24ba4fd",
+      "title": "BostonHacks",
+      "url": "https://bostonhacks.org/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-11-21T15:00:00Z",
+      "ends_at": "2026-11-22T17:00:00Z",
+      "mode": "in_person",
+      "location": "Boston, MA, US",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "c295eb9342998233f5e26fdb",
+      "title": "HackEPS",
+      "url": "https://hackeps.dev/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-11-28T01:11:11Z",
+      "ends_at": "2026-11-29T23:59:59Z",
+      "mode": "in_person",
+      "location": "Lleida, Lleida, Spain, ES",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "20af79fc12dac52aa6b19b84",
+      "title": "HackSheffield11",
+      "url": "https://hacksheffield.uk/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-11-28T14:00:00Z",
+      "ends_at": "2026-11-29T22:00:00Z",
+      "mode": "in_person",
+      "location": "Sheffield, South Yorkshire, GB",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "d4277694157fe5d144a60df2",
+      "title": "Hack Cats",
+      "url": "https://hackkstate.tech/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-12-04T22:00:00Z",
+      "ends_at": "2026-12-06T17:00:00Z",
+      "mode": "in_person",
+      "location": "Manhattan, Kansas, US",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "b957d7da9aa2a0c138abed3a",
+      "title": "DeltaHacks",
+      "url": "https://www.deltahacks.com/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2027-01-09T13:00:00Z",
+      "ends_at": "2027-01-10T22:00:00Z",
+      "mode": "in_person",
+      "location": "Hamilton, Ontario, CA",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "3b8b78b57a09361ff8f906d2",
+      "title": "UofTHacks",
+      "url": "https://uofthacks.com/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2027-01-15T01:11:11Z",
+      "ends_at": "2027-01-17T23:59:59Z",
+      "mode": "in_person",
+      "location": "Toronto, Ontario, CA",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "1ec9eaa65442cec280629866",
+      "title": "uOttaHack 9",
+      "url": "https://2027.uottahack.ca/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2027-01-15T01:11:11Z",
+      "ends_at": "2027-01-17T23:59:59Z",
+      "mode": "in_person",
+      "location": "Ottawa, Ontario , CA",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "35238f7ec5d16bcec979440d",
+      "title": "QWER Hacks",
+      "url": "https://www.qwerhacks.com/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2027-01-16T01:11:11Z",
+      "ends_at": "2027-01-17T23:59:59Z",
+      "mode": "in_person",
+      "location": "Los Angeles, CA, US",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "82c6ddb415d894ba4ebc1310",
+      "title": "nwHacks",
+      "url": "https://nwhacks.io/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2027-01-16T14:00:00Z",
+      "ends_at": "2027-01-17T23:00:00Z",
+      "mode": "in_person",
+      "location": "Vancouver, British Columbia, CA",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "44469f2f60bbbd0934e00409",
+      "title": "HackBI X",
+      "url": "https://hackbi.org/",
+      "source_id": "mlh",
+      "type": "hackathon",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2027-01-16T14:00:00Z",
+      "ends_at": "2027-01-17T16:30:00Z",
+      "mode": "in_person",
+      "location": "Alexandria, Virginia, US",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "8fa44f040439a07448464160",
+      "title": "Global Hack Week: Builders Week",
+      "url": "https://ghw.mlh.com/events/builders-week",
+      "source_id": "ghw",
+      "type": "event",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-11-06",
+      "ends_at": "2026-11-12",
+      "mode": "online",
+      "location": "En línea · consulta idioma y requisitos",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    },
+    {
+      "id": "99e280bb3952cea4af7871e1",
+      "title": "Global Hack Week: Open Source Week",
+      "url": "https://ghw.mlh.com/events/open-source-copy",
+      "source_id": "ghw",
+      "type": "event",
+      "galaxies": [
+        "technology"
+      ],
+      "starts_at": "2026-12-04",
+      "ends_at": "2026-12-10",
+      "mode": "online",
+      "location": "En línea · consulta idioma y requisitos",
+      "deadline": null,
+      "checked_at": "2026-11-13T03:41:10.757Z"
+    }
+  ],
+  "sources": [
+    {
+      "id": "mlh",
+      "name": "Major League Hacking",
+      "url": "https://www.mlh.com/events",
+      "checked_at": "2026-11-13T03:41:10.757Z",
+      "succeeded_at": "2026-11-13T03:41:10.757Z",
+      "status": "ok"
+    },
+    {
+      "id": "ghw",
+      "name": "Global Hack Week · MLH",
+      "url": "https://ghw.mlh.com/",
+      "checked_at": "2026-11-13T03:41:10.757Z",
+      "succeeded_at": "2026-11-13T03:41:10.757Z",
+      "status": "ok"
+    }
+  ]
+}
