@@ -50,10 +50,10 @@ Las casillas indican implementación existente, no aprobación humana ni desplie
 - [x] Resultados con empates y «la estrella que no veías». (002:RF-6 a RF-8)
 - [x] Reflexión final y ejercicios sugeridos. (002:RF-9, RF-11)
 - [x] Doce opciones de galaxias, elección privada de hasta cinco y edición independiente. (003:RF-1–4)
-- [x] Scraping real de MLH y Global Hack Week, actualización cada 12 horas con el servidor activo y caché por fuente. (003:RF-5–6, RF-9)
+- [x] Scraping de la agenda pública de hack0 para Lima, actualización cada 12 horas con el servidor activo y caché por fuente. (003:RF-5–6, RF-9, RF-11)
 - [x] Recomendaciones por intereses, catálogo completo, filtros, enlace original y fecha de consulta. (003:RF-7–8)
 
-La cobertura inicial está concentrada en tecnología. No se inventan oportunidades para llenar otras galaxias. Fechas de eventos y afinidad temática no garantizan inscripción abierta ni elegibilidad. [Fuentes, datos y funcionamiento](docs/OPORTUNIDADES.md).
+La demo muestra únicamente sedes presenciales o híbridas identificadas en **Lima Metropolitana, Perú**, incluso en «Todo Lima». La cobertura inicial está concentrada en tecnología. No se inventan oportunidades para llenar otras galaxias. Fechas de eventos y afinidad temática no garantizan inscripción abierta ni elegibilidad. [Fuentes, datos y funcionamiento](docs/OPORTUNIDADES.md).
 
 Detalles y estado de revisión: [índice de especificaciones](specs/README.md).
 
@@ -93,7 +93,7 @@ npm run check
 npm test
 ```
 
-La suite actual tiene **54 pruebas automatizadas** y no necesita credenciales ni correos reales. Para actualizar manualmente el catálogo público: `npm run opportunities:sync`. Instrucciones completas de conexión, API y publicación: [guía técnica](docs/DESARROLLO.md).
+La suite actual tiene **58 pruebas automatizadas** y no necesita credenciales ni correos reales. Para actualizar manualmente el catálogo público: `npm run opportunities:sync`. Instrucciones completas de conexión, API y publicación: [guía técnica](docs/DESARROLLO.md).
 
 ## Cómo lo construimos
 
