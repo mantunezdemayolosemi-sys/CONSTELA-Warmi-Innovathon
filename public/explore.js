@@ -129,14 +129,14 @@ export function createExplorer({send,showDiscovery,showAccount,showOpportunities
     status.append(el('p','',data.coverage));
     data.sources.forEach(source=>{
       const p=el('p');const link=el('a','',source.name);link.href=source.url;link.target='_blank';link.rel='noopener noreferrer';
-      p.append(link,document.createTextNode(` · Última consulta correcta: ${date(source.succeeded_at)}${source.status==='ok'?'':source.status==='blocked'?' · Recolección detenida por la fuente.':' · No se pudo actualizar; usamos la última copia disponible.'}`)); status.append(p);
+      p.append(link,document.createTextNode(` · Última consulta completa: ${date(source.succeeded_at)}${source.status==='ok'?'':source.status==='blocked'?' · Recolección detenida por la fuente.':source.status==='partial'?' · Algunas convocatorias no se pudieron actualizar.':' · No se pudo actualizar; usamos la última copia disponible.'}`)); status.append(p);
     });
     if(!data.sources.length) status.append(el('p','','Todavía no hay una sincronización disponible.'));
     const count=el('p','opportunity-count',`${data.items.length} ${data.items.length===1?'oportunidad disponible':'oportunidades disponibles'}`);count.setAttribute('role','status');results.append(count);
     if(!data.items.length) {
       const empty=el('div','opportunity-empty');
-      empty.append(el('span','empty-star','✧'),el('h2','','Todavía hay mundos por descubrir.'),el('p','',filters.scope==='recommended'?'No encontramos convocatorias vigentes que coincidan con tus galaxias y filtros. Puedes ver todo el catálogo o cambiar los filtros.':'No hay convocatorias vigentes con estos filtros. Prueba otra modalidad o tipo de oportunidad.'));
-      if(filters.scope!=='all')empty.append(button('Explorar todo el catálogo',()=>{filters.scope='all';content.querySelector('select[name=scope]').value='all';loadOpportunities();}));
+      empty.append(el('span','empty-star','✧'),el('h2','','Todavía hay mundos por descubrir.'),el('p','',filters.scope==='recommended'?'No encontramos convocatorias vigentes en Lima para tus galaxias y filtros. Puedes ver el catálogo de Lima o cambiar los filtros.':'No hay convocatorias vigentes en Lima con estos filtros. Prueba otra modalidad o tipo de oportunidad.'));
+      if(filters.scope!=='all')empty.append(button('Explorar todo el catálogo de Lima',()=>{filters.scope='all';content.querySelector('select[name=scope]').value='all';loadOpportunities();}));
       results.append(empty);return;
     }
     const grid=el('div','opportunity-grid');
@@ -151,21 +151,22 @@ export function createExplorer({send,showDiscovery,showAccount,showOpportunities
       if(o.practice)card.append(el('p','explore-fine',o.practice));
       const source=data.sources.find(s=>s.id===o.source_id);
       card.append(el('p','opportunity-source',`${source?.name??'Fuente pública'} · Consultado ${date(o.checked_at)}${o.stale?' · Copia sin actualización reciente':''}`));
+      if(o.source_url) { const provenance=el('a','opportunity-provenance','Ver ficha de la agenda ↗');provenance.href=o.source_url;provenance.target='_blank';provenance.rel='noopener noreferrer';card.append(provenance); }
       card.append(el('p','explore-fine',o.deadline?`Cierre de inscripción: ${date(o.deadline)}`:'Cierre de inscripción por verificar en la convocatoria.'));
       const link=el('a','opportunity-link','Ver convocatoria original ↗'); link.href=o.url;link.target='_blank';link.rel='noopener noreferrer';link.setAttribute('aria-label',`Ver convocatoria original: ${o.title} (abre otra pestaña)`);card.append(link);grid.append(card);
     });results.append(grid);
   }
   async function openOpportunities() {
     const active=show('/oportunidades'); document.title='Explora tu universo · Constela';
-    heading('EXPLORA TU UNIVERSO','Tu curiosidad tiene nuevos caminos.','Encuentra hackathones y eventos para explorar. Una coincidencia temática no confirma que cumplas los requisitos: revísalos siempre en la convocatoria original.');
+    heading('EXPLORA TU UNIVERSO · LIMA, PERÚ','Tu próximo paso, en Lima.','Explora hackathones, talleres y eventos con sede presencial o híbrida en Lima Metropolitana. Revisa siempre los requisitos y la disponibilidad en la convocatoria original.');
     try {
       const data=await send('/web/interests',{refresh:true});if(active!==epoch)return;
       catalog=data.catalog;
       if(!data.interests) return openGalaxies({onboarding:true});
       const interestLine=el('p','opportunity-interests');interestLine.id='opportunity-interests';
-      content.append(interestLine,button('Editar mis galaxias',()=>openGalaxies(),'text-action'));
+      content.append(el('p','opportunity-area','📍 Lima, Perú · También al explorar todo el catálogo'),interestLine,button('Editar mis galaxias',()=>openGalaxies(),'text-action'));
       const controls=el('div','opportunity-filters');
-      controls.append(filter('Mostrar','scope',[['recommended','Para mis galaxias'],['all','Todo el catálogo']]),filter('Tipo','type',[['all','Todos los tipos'],['hackathon','Hackathones'],['event','Eventos'],['challenge','Retos']]),filter('Modalidad','mode',[['all','Todas las modalidades'],['online','En línea'],['in_person','Presencial'],['hybrid','Híbrida']]));
+      controls.append(filter('Mostrar','scope',[['recommended','Para mis galaxias'],['all','Todo Lima']]),filter('Tipo','type',[['all','Todos los tipos'],['hackathon','Hackathones'],['event','Eventos'],['challenge','Retos']]),filter('Modalidad','mode',[['all','Presencial e híbrida'],['in_person','Presencial'],['hybrid','Híbrida']]));
       const sources=el('details','opportunity-sources');sources.id='opportunity-sources';
       const results=el('div');results.id='opportunity-results';
       content.append(controls,sources,results); focus(); await loadOpportunities();
