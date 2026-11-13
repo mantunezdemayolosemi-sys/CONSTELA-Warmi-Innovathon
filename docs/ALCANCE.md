@@ -12,10 +12,10 @@ Fuente de visión: [documento del Grupo 1](https://docs.google.com/document/d/1C
 | Arquetipos como Creadora o Estratega | Mencionados en la visión, no implementados | Decidir con el equipo si se incorporan; el test actual muestra habilidades, no tipos de personalidad |
 | Galaxias de interés | Implementadas con selección privada de hasta cinco y edición | Spec 003 |
 | Oportunidades y convocatorias | Demo de Lima Metropolitana con scraping público de hack0, caché y filtros | Spec 003:RF-11; cobertura mayormente tecnológica; ampliar fuentes y sumar retos externos sigue pendiente |
-| Retos de desarrollo y de organizaciones | Pendiente | Definir publicación, entrega, evaluación y estados de evidencia |
-| Estrellas, insignias y niveles por actividades | Pendiente | Diseñar reglas y distinguir identificación, práctica y demostración |
+| Retos de desarrollo y de organizaciones | Seis retos ficticios, filtros, detalle, guardados y publicación por organizaciones | Spec 004; propuestas y reflexión privadas implementadas; archivos/evaluación y evidencia verificada pendientes |
+| Estrellas, insignias y niveles por actividades | Estrella única por propuesta/reflexión de práctica, constelación e hitos de 3/6 retos | Spec 004:RF-9; evaluación e insignias profesionales pendientes |
 | Portafolio compartible y descargable | Pendiente | Definir formato, privacidad, evidencias y exportación |
-| Perfiles y convocatorias de organizaciones | Pendiente | Definir roles, permisos y publicación de oportunidades |
+| Perfiles y convocatorias de organizaciones | Registro empresa/emprendedora, panel y retos/empleos simulados | Spec 004; verificación empresarial y vacantes reales pendientes |
 | Mentorías | Participante previsto en la visión | Definir alcance antes de implementarlo |
 | Demo remota | Pendiente | Seleccionar alojamiento con Node.js, HTTPS y correo |
 

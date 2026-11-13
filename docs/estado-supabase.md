@@ -25,3 +25,11 @@ Antes de publicar la plataforma, sustituye las URLs locales por las URLs HTTPS r
 ## Incremento de galaxias · 12 de noviembre de 2026
 
 Aplicadas 003 (catálogo, relaciones privadas y RPC), 004 (conflicto de intereses PT409) y 005 (mismo ajuste para misiones históricas). Las anteriores se conservan y no se volvieron a ejecutar. Intereses propios, edición, recuperación y rechazo de revisiones antiguas comprobados mediante la sesión QA autorizada. El test previo se mantuvo idéntico. RLS, límites y aislamiento entre identidades se comprueban además en PGlite. El catálogo público de oportunidades usa un archivo JSON, sin clave administrativa ni permisos globales de escritura para usuarias. Detalle en [oportunidades](OPORTUNIDADES.md).
+
+## Retos y cuentas publicadoras · 006
+
+Aplicada una sola vez `202611130006_community_demo.sql`: tipos de cuenta, organización, publicaciones simuladas y guardados privados. Cuentas previas conservadas como usuarias. La cuenta QA autorizada comprobó guardado real sin alterar su test/intereses. Publicación y cierre comprobados en una transacción con `rollback`, sin dejar publicaciones temporales ni cambios de tipo. Ocho semillas ficticias (seis retos y dos empleos). No se crearon nuevas cuentas Auth ni se cambiaron credenciales. [Detalle y límites de prueba](RETOS.md).
+
+## Estrellas de práctica · 007
+
+Aplicada `202611130007_practice_stars.sql` una sola vez. Propuestas/reflexiones privadas; estrella única derivada de cada práctica registrada. La RPC comprueba identidad, tipo, contenido y reto activo. Prueba de premio/reintento en transacción reversible: sin prácticas QA permanentes ni cambios al progreso de Maricielo. La recuperación visual de estrella y propuesta se comprobó con fixtures locales; el recorrido de autodescubrimiento se conserva.
