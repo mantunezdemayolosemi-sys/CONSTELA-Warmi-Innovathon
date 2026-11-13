@@ -1,0 +1,49 @@
+name: Reportar un fallo
+description: Explica cómo reproducir un comportamiento incorrecto
+title: "[Bug] "
+body:
+  - type: textarea
+    id: actual
+    attributes:
+      label: Qué sucede
+      description: Describe lo que observas, sin publicar contraseñas ni información de tu cuenta.
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: Qué esperabas
+      description: Si corresponde, cita el requisito de la spec.
+    validations:
+      required: true
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Pasos para reproducir
+      placeholder: "1. Abrir la página\n2. Realizar la acción\n3. Observar el resultado"
+    validations:
+      required: true
+  - type: input
+    id: entorno
+    attributes:
+      label: Entorno
+      placeholder: "Celular o computadora, navegador, ruta y rama. Si es localhost, confirma que npm start está activo."
+    validations:
+      required: true
+  - type: textarea
+    id: evidencia
+    attributes:
+      label: Evidencia
+      description: Captura o mensaje de error sin datos personales, claves ni tokens.
+    validations:
+      required: false
+  - type: dropdown
+    id: impacto
+    attributes:
+      label: Impacto
+      options:
+        - Impide continuar el recorrido
+        - Permite continuar con dificultad
+        - Detalle de presentación
+    validations:
+      required: true

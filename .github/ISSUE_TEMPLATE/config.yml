@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Guía de colaboración de Constela
+    url: https://github.com/mantunezdemayolosemi-sys/CONSTELA-Warmi-Innovathon/blob/main/CONTRIBUTING.md
+    about: Revisa el flujo de specs, tareas, ramas y revisión humana.

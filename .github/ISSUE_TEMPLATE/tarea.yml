@@ -1,0 +1,51 @@
+name: Tarea de Constela
+description: Trabajo acotado vinculado a una spec y a un resultado comprobable
+title: "[Tarea] "
+body:
+  - type: markdown
+    attributes:
+      value: "Una tarea por área y una rama por issue. El equipo acuerda responsable y revisora. No incluyas claves, correos de prueba ni datos personales de usuarias."
+  - type: textarea
+    id: objetivo
+    attributes:
+      label: Qué hay que hacer
+      description: Describe el cambio y el beneficio concreto.
+      placeholder: Ajustar el texto de una misión según la revisión del equipo.
+    validations:
+      required: true
+  - type: input
+    id: trazabilidad
+    attributes:
+      label: Spec, requisitos y tarea
+      description: Usa identificadores completos. Para documentación, enlaza su criterio de finalización.
+      placeholder: "002:RF-3, 002:T7 · specs/002-universo-habilidades/spec.md"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área principal
+      options:
+        - Diseño
+        - Frontend
+        - Backend y datos
+        - Pruebas
+        - Despliegue
+        - Docs y pitch
+    validations:
+      required: true
+  - type: textarea
+    id: aceptacion
+    attributes:
+      label: Hecho cuando
+      description: Resultado verificable y comprobaciones necesarias.
+      placeholder: "El texto acordado aparece en la misión y las pruebas pasan."
+    validations:
+      required: true
+  - type: textarea
+    id: dependencias
+    attributes:
+      label: Dependencias y fuera de alcance
+      description: Enlaza issues o PRs previos e indica la rama base acordada si todavía depende del PR funcional.
+    validations:
+      required: false

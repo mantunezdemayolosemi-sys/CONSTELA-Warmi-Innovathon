@@ -1,137 +1,144 @@
-# CONSTELA · Warmi Innovathon
+# CONSTELA
 
-Registro, inicio de sesión, perfil privado y misión de autodescubrimiento de Constela. Interfaz web adaptable a celular y escritorio, API en Node.js + Fastify, autenticación y PostgreSQL en Supabase.
+> **Warmi Innovathon 2026 · Grupo 1**
+>
+> **Eje 2: Orientación laboral — Talento visible y autonomía económica**
+>
+> Demo actual: local · Demo publicada: pendiente · Mentora: por confirmar
 
-## Estado
+![Tu universo de habilidades en Constela](docs/captura.png)
 
-- Pantallas de registro, inicio de sesión, confirmación de correo y cuenta personal.
-- Registro, confirmación mediante Supabase, inicio/cierre de sesión y renovación de tokens.
-- Sesión web con cookies HttpOnly, protección de origen y renovación automática; sin tokens en localStorage.
-- Consulta y edición del nombre del perfil autenticado.
-- Migración SQL que crea perfiles automáticamente y los protege con Row Level Security (RLS).
-- Pruebas locales sin credenciales: API, SDK y permisos sobre PostgreSQL embebido.
-- **Supabase conectado:** migración ejecutada, permisos y triggers comprobados también en la base real. Consulta [`docs/estado-supabase.md`](docs/estado-supabase.md).
-- **Registro real probado:** se creó y confirmó una cuenta de prueba por correo; también se verificaron login, perfil, renovación y cierre de sesión.
-- **Pendiente:** configurar SMTP para registrar usuarias externas al equipo de Supabase. Las pruebas automatizadas locales no envían emails.
+*Captura de la implementación local. La identidad visual es provisional.*
 
-## Tu universo de habilidades
+## El problema
 
-Al iniciar sesión se abre `/descubrir`: la usuaria puede reconocer hasta tres habilidades iniciales (o ninguna), recorrer seis misiones de cuatro elecciones y descubrir su constelación. Cada habilidad aparece cuatro veces; cada respuesta suma un punto. Se muestran hasta tres fortalezas y todas las empatadas en el corte. «La estrella que no veías» compara las elecciones con la percepción inicial e incluye todos los empates de la mayor puntuación no seleccionada inicialmente. Si no hay diferencia, el mensaje lo reconoce sin inventar una fortaleza nueva.
+El talento de muchas mujeres no se refleja en un CV tradicional, especialmente cuando no tienen experiencia formal o regresan al mercado laboral. El reto del equipo es hacer visibles sus capacidades y conectarlas con oportunidades de crecimiento y financiamiento. La población considerada incluye jóvenes sin experiencia formal, mujeres en reinserción laboral, profesionales en sectores masculinizados y emprendedoras.
 
-La misión guarda el progreso al continuar, permite volver a las respuestas y conserva una reflexión final. Los resultados se derivan de las respuestas y se recalculan también en PostgreSQL al guardarlas. La tabla `strength_discoveries` usa RLS y escritura mediante una función que toma la identidad de la sesión; no acepta un ID ni puntuaciones del cliente. La revisión impide que una pestaña antigua sobrescriba otro avance.
+Contexto y fuentes: [reto](docs/RETO.md) y [documento de trabajo del Grupo 1](https://docs.google.com/document/d/1ChiZJkQcohItuXl21GZ8o8ZgV1FMcWghAtaYn8sB8TY/edit).
 
-Los resultados son una exploración personal, no una medición psicológica, certificación o clasificación para oportunidades. Un cero indica otras elecciones en estas historias, no falta de habilidad. El cierre incluye pequeños ejercicios sugeridos; todavía no existe entrega, evaluación ni evidencia de retos.
+## Nuestra solución
 
-En un proyecto que ya tenga perfiles, ejecuta una sola vez [`202611120002_create_strength_discoveries.sql`](supabase/migrations/202611120002_create_strength_discoveries.sql). Ya se ejecutó en el proyecto de desarrollo de Constela. La redacción y el catálogo versionado están en `src/discovery.js`; la interfaz en `public/discovery.js` y `public/discovery.css`.
+Constela es una plataforma web para descubrir habilidades, practicarlas y convertir experiencias en evidencias. El primer recorrido invita a reconocer fortalezas mediante situaciones cotidianas: la usuaria toma decisiones y conecta su constelación personal.
 
-## Qué instalar
+**¿Para quién es?** Mujeres que desean reconocer sus capacidades y acercarse a nuevas oportunidades, desde celular o computadora.
 
-Para desarrollar: Node.js 22 o superior y Git. En la Mac usada para iniciar este repositorio ya están instalados. VS Code es opcional. Supabase funciona en el navegador: no hace falta instalar PostgreSQL, Docker ni la CLI para estos primeros pasos.
+**¿Qué la hace distinta?** «La estrella que no veías» compara lo que la usuaria reconocía al inicio con las habilidades que aparecieron en sus decisiones. Los resultados son posibilidades por explorar, no un diagnóstico ni una certificación.
 
-## Crear y conectar la base de datos
+La versión actual implementa cuenta, perfil privado y misión de habilidades. Avatar, retos evaluados, portafolio y oportunidades pertenecen a [siguientes etapas](docs/ALCANCE.md).
 
-1. Entra a [Supabase](https://supabase.com/dashboard), crea una cuenta y selecciona **New project**. Ponle `Constela`, elige una región cercana a tus usuarias y guarda la contraseña de la base de datos en tu gestor de contraseñas. No la pegues en el chat ni en GitHub. Revisa las condiciones del plan antes de aceptar.
-2. Cuando termine de crearse, abre **SQL Editor → New query**. Copia todo el contenido de [`supabase/migrations/202611120001_create_profiles.sql`](supabase/migrations/202611120001_create_profiles.sql) y ejecútalo **una sola vez**, en el proyecto nuevo. La transacción evita dejar tablas a medias si ocurre un error. No contiene borrados de tablas existentes. Después ejecuta [`supabase/migrations/202611120002_create_strength_discoveries.sql`](supabase/migrations/202611120002_create_strength_discoveries.sql) para habilitar las misiones; no repitas migraciones ya aplicadas.
-3. En **Authentication**, habilita **Email**, mantén **Confirm email** activado y configura longitud mínima de contraseña de **12**. No habilites accesos anónimos. La misma longitud debe exigirse en Supabase, porque un cliente puede llamar directamente a Auth.
-4. En **Authentication → URL Configuration**, configura Site URL y Redirect URLs con `http://localhost:3000/auth/confirmed`. Es el destino de confirmación local; al publicar habrá que cambiarlo por HTTPS y retirar la URL local del entorno público.
-5. Configura el envío de correo. El proveedor predeterminado de Supabase está limitado a direcciones autorizadas del equipo y tiene límites bajos; para registrar otras usuarias necesitas **SMTP propio**. Mantén la confirmación de correo activa. Consulta la [guía oficial de SMTP](https://supabase.com/docs/guides/auth/auth-smtp). Al probar con el proveedor predeterminado usa una dirección autorizada de tu equipo.
-6. En **Connect** o **Settings → API Keys**, copia Project URL y la clave **publishable** (`sb_publishable_...`). También se admite la clave legacy `anon`. Este proyecto rechaza claves `secret` y `service_role` porque omiten protecciones de acceso.
-7. En la carpeta del proyecto ejecuta:
+## Demo
 
-   ```bash
-   cp .env.example .env
-   ```
+**Todavía no hay un enlace remoto publicado.** La aplicación funciona en la computadora donde se ejecuta el servidor.
 
-   Edita `.env` para completar `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY`. `.env` está excluido de Git. No cambies `PUBLIC_API_URL` mientras uses el puerto 3000 local.
+Pruébala en tres pasos:
 
-8. Inicia la aplicación:
+1. Inicia el servidor con `npm start` y abre [Crear cuenta](http://localhost:3000/registro). El proyecto local de desarrollo ya está conectado a Supabase.
+2. Confirma el correo e [inicia sesión](http://localhost:3000/ingresar). El proveedor de correo actual admite pruebas con direcciones autorizadas del equipo de Supabase; falta SMTP para otras usuarias.
+3. Recorre las seis misiones y revisa tus resultados. El progreso guardado se recupera al volver; desde **Mi perfil** puedes editar tu nombre y cerrar sesión.
 
-   ```bash
-   npm ci
-   npm run dev
-   ```
+La conexión y las pruebas reales se documentan en [estado de Supabase](docs/estado-supabase.md). No compartas credenciales de prueba en issues, capturas o PRs.
 
-   Las dependencias ya están instaladas en la Mac de desarrollo inicial; allí puedes ir directamente a `npm run dev` después de completar `.env`. El proyecto local está en `Warmi Innovathon/constela.nosync` para evitar que iCloud retire archivos mientras se ejecutan. En otra computadora puedes clonarlo con un nombre normal, preferiblemente fuera de carpetas sincronizadas. Las dependencias están excluidas de Git.
+## Funcionalidades
 
-9. Abre [Crear cuenta](http://localhost:3000/registro) o [Iniciar sesión](http://localhost:3000/ingresar). El servidor sirve la interfaz y la API desde el mismo origen; no hace falta otro proceso de frontend.
+Las casillas indican implementación existente, no aprobación humana ni despliegue público.
 
-   También puedes abrir [el estado de la API](http://localhost:3000/health). Debe mostrar `status: ok`. Esta ruta comprueba que arrancó; **no comprueba la conexión con Supabase**.
+- [x] Registro, confirmación y acceso con correo. (001:RF-1 a RF-3, RF-10)
+- [x] Sesión web, renovación y cierre de sesión. (001:RF-4, RF-7 a RF-9)
+- [x] Lectura y edición del perfil propio. (001:RF-5, RF-6)
+- [x] Percepción inicial y seis misiones equilibradas. (002:RF-1 a RF-3)
+- [x] Progreso privado que se puede retomar. (002:RF-4, RF-5, RF-10)
+- [x] Resultados con empates y «la estrella que no veías». (002:RF-6 a RF-8)
+- [x] Reflexión final y ejercicios sugeridos. (002:RF-9, RF-11)
 
-## Primera prueba real
+Detalles y estado de revisión: [índice de especificaciones](specs/README.md).
 
-Puedes probar el registro desde la interfaz, confirmar el correo e iniciar sesión. Para probar la API por separado desde otra ventana de Terminal, crea una cuenta de prueba usando un correo que controles. El nombre es el único dato del perfil recopilado por ahora; no se solicitan DNI, teléfono ni información sensible.
+## Tecnologías
 
-```bash
-curl -i http://localhost:3000/auth/register \
-  -H 'Content-Type: application/json' \
-  -d '{"name":"Usuaria de prueba","email":"TU-CORREO@example.com","password":"Una-frase-de-prueba-123"}'
-```
+| Parte | Herramienta |
+| --- | --- |
+| Frontend | HTML, CSS, JavaScript y SVG |
+| Backend | Node.js 22 o superior y Fastify |
+| Autenticación y datos | Supabase Auth y PostgreSQL con RLS |
+| Pruebas | `node:test`, Fastify inject y PGlite |
+| CI | GitHub Actions: `npm ci`, `npm run check`, `npm test` |
+| Despliegue | Servidor local; alojamiento remoto por definir |
+| Asistencia de IA | Codex para implementación y verificación; reglas del repositorio para cualquier asistente |
 
-Sustituye el correo. Esta contraseña es un ejemplo público: úsala solo para una cuenta desechable. No pegues tu contraseña personal en comandos ni en el chat. El registro responde `202` con un mensaje genérico, incluso si ya existe la cuenta; así no revela quién está registrada. La confirmación real se comprueba iniciando sesión después de abrir el enlace del correo. La ruta de destino redirige a una pantalla de confirmación y elimina el fragmento de la URL; no valida el enlace por sí misma ni crea una sesión. El inicio de sesión comprueba la confirmación contra Supabase.
+## Cómo ejecutarlo
 
-En Supabase verás la cuenta en **Authentication → Users** y su perfil en **Table Editor → profiles**. El perfil se crea en la misma transacción que la cuenta: un fallo al crearlo revierte también el alta de la cuenta.
-
-Después de confirmar el correo:
+Esta adaptación se revisa en `codex/adaptar-plantilla-warmi`, basada en la rama funcional `codex/registro-usuarias`. `main` todavía no contiene la aplicación del PR #1.
 
 ```bash
-curl -i http://localhost:3000/auth/login \
-  -H 'Content-Type: application/json' \
-  -d '{"email":"TU-CORREO@example.com","password":"Una-frase-de-prueba-123"}'
+git clone --branch codex/adaptar-plantilla-warmi https://github.com/mantunezdemayolosemi-sys/CONSTELA-Warmi-Innovathon.git CONSTELA
+cd CONSTELA
+npm ci
+cp .env.example .env
 ```
 
-La respuesta contiene `session.access_token` y `session.refresh_token`. Son credenciales: no las compartas. Para consultar tu perfil:
+Completa `.env` en tu computadora con la URL y la clave **publishable** de un proyecto Supabase autorizado. Nunca copies `.env` al repositorio ni uses una clave administrativa. En un proyecto nuevo aplica las dos migraciones en orden; en el proyecto de desarrollo actual **ya están aplicadas**.
 
 ```bash
-curl http://localhost:3000/me -H 'Authorization: Bearer REEMPLAZAR_CON_ACCESS_TOKEN'
+npm start
 ```
 
-## Rutas disponibles
-
-| Método | Ruta | Datos / comportamiento |
-| --- | --- | --- |
-| GET | `/health` | Estado del proceso; no consulta la base de datos. |
-| POST | `/auth/register` | `{name, email, password}` → 202; nombre 2–100, contraseña 12–128 caracteres. |
-| GET | `/auth/confirmed` | Redirige a `/confirmacion` tras el enlace de Supabase; elimina el fragmento de URL. |
-| POST | `/auth/login` | `{email, password}` → `{user, session}`; credenciales inválidas → 401. |
-| POST | `/auth/refresh` | `{refresh_token}` → nuevos tokens; reemplaza ambos en el cliente. |
-| POST | `/auth/logout` | Bearer token → 204; revoca la renovación de la sesión actual. |
-| GET | `/me` | Bearer token → `{user, profile}`. |
-| PATCH | `/me` | Bearer token y `{name}` → `{profile}`. |
-
-Las rutas privadas verifican la usuaria contra Supabase Auth y exigen correo confirmado. El servidor deriva el ID del token; no acepta un ID de usuaria del formulario. La base de datos vuelve a aplicar permisos con el token de esa misma usuaria. Nunca se usa una clave administrativa.
-
-El cierre de sesión revoca los refresh tokens de la sesión, pero el access token puede seguir siendo válido hasta su vencimiento. La interfaz elimina ambas cookies al salir. No expongas tokens en URLs ni logs.
-
-### Sesión en el navegador
-
-Las rutas `/web/register`, `/web/login`, `/web/refresh`, `/web/logout`, `/web/session` y `/web/profile` conectan los formularios con el mismo proveedor de autenticación y las mismas validaciones. El navegador recibe datos de la usuaria; los tokens se guardan en cookies HttpOnly con SameSite=Lax, ruta `/web/` y Secure en producción. La cookie de renovación dura como máximo siete días y rota al renovar. La sesión real sigue dependiendo de su validez en Supabase.
-
-Todas las operaciones web que cambian datos exigen el encabezado Origin igual a `PUBLIC_API_URL` y rechazan peticiones cross-site. No se habilita CORS. Usa exactamente `http://localhost:3000` para abrir la aplicación local: `127.0.0.1` sería otro origen. Las respuestas usan Cache-Control: no-store. El frontend nunca guarda los tokens en localStorage ni sessionStorage.
-
-## Estructura y decisiones
-
-- `public/`: interfaz en HTML, CSS y JavaScript; no requiere compilación.
-- `src/app.js`: rutas de API y límites de peticiones.
-- `src/web.js`: archivos de interfaz, sesiones con cookies y protección de origen.
-- `src/validation.js`: validaciones compartidas por API e interfaz.
-- `src/supabase.js`: comunicación con Auth y perfiles; cliente aislado por operación.
-- `src/config.js`: configuración sin imprimir claves.
-- `supabase/migrations/`: esquema versionado. `auth.users` pertenece a Supabase; no duplicamos contraseñas ni correos en `profiles`.
-- `test/`: API con proveedor simulado, integración HTTP del SDK y PostgreSQL embebido con esquema Auth simulado.
-
-Por ahora se permite consultar el propio perfil y cambiar su nombre. Las altas las hace un trigger; borrar una cuenta desde administración elimina su perfil asociado. No existen roles administrativos, recuperación de contraseña, alta por Google, consentimiento legal ni más datos de negocio en esta etapa. Deben definirse antes de un lanzamiento público.
-
-Límite de desarrollo: 10 solicitudes de autenticación por IP cada 15 minutos, compartidas entre registro/login/refresh dentro de cada grupo (API o web); límite global de 100/minuto. El contador está en memoria y se reinicia con el proceso. Para publicar con varias instancias hay que usar un contador compartido, configurar el proxy de confianza según el hosting y mantener también los límites de Supabase, porque Auth es accesible directamente. La API arranca solo en `127.0.0.1`; un hosting necesitará `HOST=0.0.0.0` y HTTPS.
-
-## Validación y publicación
+Mantén esa Terminal abierta y entra a [http://localhost:3000/ingresar](http://localhost:3000/ingresar). `localhost` en otra computadora apunta a esa otra computadora. Para desarrollo con recarga automática existe `npm run dev`; si el observador falla con `EMFILE`, utiliza `npm start`.
 
 ```bash
 npm run check
 npm test
 ```
 
-Las 43 pruebas cubren API, SDK, permisos de base de datos, rutas web, cookies, protección de origen, renovación, cierre de sesión, equilibrio del catálogo, resultados, empates, progreso privado y conflictos de revisión. La interfaz también se comprobó en escritorio y a 375 px, con login real, persistencia al recargar y edición del perfil. GitHub Actions ejecutará las mismas comprobaciones al subir cambios. Además de las pruebas locales, verifica en el proyecto real: registro, recepción y apertura del correo, login, lectura/edición del perfil, refresh, logout y separación entre dos usuarias. No publiques para uso real hasta completar esa prueba y configurar SMTP.
+La suite actual tiene **43 pruebas automatizadas** y no necesita credenciales ni correos reales. Instrucciones completas de conexión, API y publicación: [guía técnica](docs/DESARROLLO.md).
 
-El código se prepara en la rama `codex/registro-usuarias`. Para subirlo hace falta permiso de escritura; el acceso de lectura basta para descargarlo, pero no para publicar cambios.
+## Cómo lo construimos
 
-Referencias: [gestión de perfiles](https://supabase.com/docs/guides/auth/managing-user-data), [contraseñas y confirmación](https://supabase.com/docs/guides/auth/passwords), [RLS](https://supabase.com/docs/guides/database/postgres/row-level-security), [claves de API](https://supabase.com/docs/guides/api/api-keys).
+Adoptamos la estructura **Spec-Driven Development (SDD)** del kit de la Innovathon sobre una aplicación que ya estaba implementada. Las specs 001 y 002 documentan el comportamiento actual; el equipo debe revisarlas y aprobarlas. Para nuevos cambios, primero se acuerda la spec y después se implementa.
+
+| Fase | Dónde queda |
+| --- | --- |
+| Principios | [Constitución](docs/constitution.md) |
+| Reto y alcance | [Reto](docs/RETO.md) · [Siguientes etapas](docs/ALCANCE.md) |
+| Requisitos | [Registro y perfil](specs/001-registro-perfil/spec.md) · [Universo de habilidades](specs/002-universo-habilidades/spec.md) |
+| Plan y tareas | [Plan 001](specs/001-registro-perfil/plan.md) · [Tareas 001](specs/001-registro-perfil/tasks.md) · [Plan 002](specs/002-universo-habilidades/plan.md) · [Tareas 002](specs/002-universo-habilidades/tasks.md) |
+| Código | [Interfaz](public/) · [Servidor](src/) · [Migraciones](supabase/migrations/) |
+| Pruebas | [Suite](test/) · [Trazabilidad](docs/TRAZABILIDAD.md) · [CI](.github/workflows/test.yml) |
+| Despliegue | [Guía técnica](docs/DESARROLLO.md) · Pendiente de publicación |
+| Pitch | [Guion de trabajo](docs/pitch.md) |
+
+## Cómo nos dividimos el trabajo
+
+**Grupo 1.** Integrantes tomadas del documento compartido por el equipo:
+
+| Integrante | Aporte o responsabilidad | GitHub |
+| --- | --- | --- |
+| Fatima de los Angeles Chavez Arce | Por acordar con el equipo | Pendiente |
+| Mikella Cueva Marca | Por acordar con el equipo | Pendiente |
+| Maricielo Antúnez de Mayolo Seminario | Avance actual de registro, datos y coordinación del prototipo | [@mantunezdemayolosemi-sys](https://github.com/mantunezdemayolosemi-sys) |
+| Tyra Rivera Delgado | Por acordar con el equipo | Pendiente |
+
+Nombre propio del equipo, mentora, usuarios de GitHub restantes y tablero de Projects: pendientes de confirmar. El reparto lo decide el equipo. La [guía de colaboración](CONTRIBUTING.md) propone cómo organizar tareas y revisiones sin asignarlas automáticamente.
+
+## Cómo trabajamos
+
+- Cada cambio funcional se relaciona con una spec y requisitos identificables.
+- Las nuevas tareas se gestionan con un issue, una rama y un PR revisado por una compañera.
+- El trabajo histórico conserva el vínculo al [PR #1](https://github.com/mantunezdemayolosemi-sys/CONSTELA-Warmi-Innovathon/pull/1); no se inventan issues ni aprobaciones retroactivas.
+- La IA asiste; el equipo decide responsabilidades, aprobación y merge.
+
+Reglas: [CONTRIBUTING.md](CONTRIBUTING.md) y [AGENTS.md](AGENTS.md). Flujo: [SDD](docs/FLUJO-SDD.md). Detalle de la incorporación del kit: [adaptación](docs/ADAPTACION-PLANTILLA.md).
+
+## Checklist de entrega
+
+- [x] Problema, solución, integrantes y estado del prototipo documentados.
+- [x] Specs, planes, tareas y matriz de pruebas del comportamiento existente.
+- [x] Comandos locales de comprobación y CI existentes.
+- [x] Repositorio público y archivos de entorno excluidos de Git.
+- [ ] Confirmar briefing, fechas, criterios del jurado y mentora.
+- [ ] Confirmar GitHub de cada integrante y acordar tareas y revisiones.
+- [ ] Revisar y aprobar specs y PRs; integrar a `main` mediante revisión humana.
+- [ ] Crear tablero y tareas del siguiente incremento.
+- [ ] Configurar SMTP y publicar demo HTTPS funcional.
+- [ ] Ensayar pitch y demo, contrastando cifras de investigación con sus fuentes.
+- [ ] Completar aportes y PRs revisados de todas las integrantes.
+
+Créditos de la plantilla y aviso de licencia: [NOTICE.md](NOTICE.md).
