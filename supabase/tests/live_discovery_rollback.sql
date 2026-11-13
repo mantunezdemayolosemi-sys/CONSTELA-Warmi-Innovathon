@@ -25,7 +25,7 @@ begin
   begin
     perform public.save_strength_discovery(1, '[]', '{}', null);
     raise exception 'Se permitió sobrescribir otra revisión';
-  exception when serialization_failure then null;
+  exception when sqlstate 'PT409' then null;
   end;
   begin
     update public.strength_discoveries set scores = '{}' where user_id = auth.uid();
