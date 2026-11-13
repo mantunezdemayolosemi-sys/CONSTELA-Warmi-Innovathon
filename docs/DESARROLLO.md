@@ -1,6 +1,6 @@
 # Guía técnica de Constela
 
-Registro, inicio de sesión, perfil privado y misión de autodescubrimiento de Constela. Interfaz web adaptable a celular y escritorio, API en Node.js + Fastify, autenticación y PostgreSQL en Supabase.
+Registro, inicio de sesión, perfil privado, galaxias, misión de autodescubrimiento y oportunidades de Constela. Interfaz web adaptable a celular y escritorio, API en Node.js + Fastify, autenticación y PostgreSQL en Supabase. Ver [fuentes y actualización del catálogo](OPORTUNIDADES.md).
 
 ## Estado
 
@@ -16,13 +16,13 @@ Registro, inicio de sesión, perfil privado y misión de autodescubrimiento de C
 
 ## Tu universo de habilidades
 
-Al iniciar sesión se abre `/descubrir`: la usuaria puede reconocer hasta tres habilidades iniciales (o ninguna), recorrer seis misiones de cuatro elecciones y descubrir su constelación. Cada habilidad aparece cuatro veces; cada respuesta suma un punto. Se muestran hasta tres fortalezas y todas las empatadas en el corte. «La estrella que no veías» compara las elecciones con la percepción inicial e incluye todos los empates de la mayor puntuación no seleccionada inicialmente. Si no hay diferencia, el mensaje lo reconoce sin inventar una fortaleza nueva.
+Al iniciar sesión se solicitan primero las galaxias si todavía no se eligieron; después se abre `/descubrir`: la usuaria puede reconocer hasta tres habilidades iniciales (o ninguna), recorrer seis misiones de cuatro elecciones y descubrir su constelación. Cada habilidad aparece cuatro veces; cada respuesta suma un punto. Se muestran hasta tres fortalezas y todas las empatadas en el corte. «La estrella que no veías» compara las elecciones con la percepción inicial e incluye todos los empates de la mayor puntuación no seleccionada inicialmente. Si no hay diferencia, el mensaje lo reconoce sin inventar una fortaleza nueva.
 
 La misión guarda el progreso al continuar, permite volver a las respuestas y conserva una reflexión final. Los resultados se derivan de las respuestas y se recalculan también en PostgreSQL al guardarlas. La tabla `strength_discoveries` usa RLS y escritura mediante una función que toma la identidad de la sesión; no acepta un ID ni puntuaciones del cliente. La revisión impide que una pestaña antigua sobrescriba otro avance.
 
 Los resultados son una exploración personal, no una medición psicológica, certificación o clasificación para oportunidades. Un cero indica otras elecciones en estas historias, no falta de habilidad. El cierre incluye pequeños ejercicios sugeridos; todavía no existe entrega, evaluación ni evidencia de retos.
 
-En un proyecto que ya tenga perfiles, ejecuta una sola vez [`202611120002_create_strength_discoveries.sql`](../supabase/migrations/202611120002_create_strength_discoveries.sql). Ya se ejecutó en el proyecto de desarrollo de Constela. La redacción y el catálogo versionado están en `src/discovery.js`; la interfaz en `public/discovery.js` y `public/discovery.css`.
+En un proyecto nuevo, aplica los archivos de [`supabase/migrations/`](../supabase/migrations/) en orden 001 a 005. Las cinco ya se ejecutaron en el proyecto de desarrollo de Constela: no repetirlas. Para actualizar otro proyecto aplica únicamente las que todavía falten. La redacción y el catálogo de habilidades están en `src/discovery.js`; la interfaz en `public/discovery.js` y `public/discovery.css`. Las migraciones 004/005 corrigen los conflictos para que PostgREST responda HTTP 409 sin reintentar un error de serialización.
 
 ## Qué instalar
 
@@ -31,7 +31,7 @@ Para desarrollar: Node.js 22 o superior y Git. En la Mac usada para iniciar este
 ## Crear y conectar la base de datos
 
 1. Entra a [Supabase](https://supabase.com/dashboard), crea una cuenta y selecciona **New project**. Ponle `Constela`, elige una región cercana a tus usuarias y guarda la contraseña de la base de datos en tu gestor de contraseñas. No la pegues en el chat ni en GitHub. Revisa las condiciones del plan antes de aceptar.
-2. Cuando termine de crearse, abre **SQL Editor → New query**. Copia todo el contenido de [`supabase/migrations/202611120001_create_profiles.sql`](../supabase/migrations/202611120001_create_profiles.sql) y ejecútalo **una sola vez**, en el proyecto nuevo. La transacción evita dejar tablas a medias si ocurre un error. No contiene borrados de tablas existentes. Después ejecuta [`supabase/migrations/202611120002_create_strength_discoveries.sql`](../supabase/migrations/202611120002_create_strength_discoveries.sql) para habilitar las misiones; no repitas migraciones ya aplicadas.
+2. Cuando termine de crearse, abre **SQL Editor → New query**. Ejecuta los cinco archivos de [`supabase/migrations/`](../supabase/migrations/) en orden por nombre, una sola vez por archivo en el proyecto nuevo. En proyectos existentes aplica solo archivos pendientes. El proyecto actual ya tiene los cinco; no vuelvas a aplicarlos.
 3. En **Authentication**, habilita **Email**, mantén **Confirm email** activado y configura longitud mínima de contraseña de **12**. No habilites accesos anónimos. La misma longitud debe exigirse en Supabase, porque un cliente puede llamar directamente a Auth.
 4. En **Authentication → URL Configuration**, configura Site URL y Redirect URLs con `http://localhost:3000/auth/confirmed`. Es el destino de confirmación local; al publicar habrá que cambiarlo por HTTPS y retirar la URL local del entorno público.
 5. Configura el envío de correo. El proveedor predeterminado de Supabase está limitado a direcciones autorizadas del equipo y tiene límites bajos; para registrar otras usuarias necesitas **SMTP propio**. Mantén la confirmación de correo activa. Consulta la [guía oficial de SMTP](https://supabase.com/docs/guides/auth/auth-smtp). Al probar con el proveedor predeterminado usa una dirección autorizada de tu equipo.
@@ -132,7 +132,7 @@ npm run check
 npm test
 ```
 
-Las 43 pruebas cubren API, SDK, permisos de base de datos, rutas web, cookies, protección de origen, renovación, cierre de sesión, equilibrio del catálogo, resultados, empates, progreso privado y conflictos de revisión. La interfaz también se comprobó en escritorio y a 375 px, con login real, persistencia al recargar y edición del perfil. GitHub Actions ejecutará las mismas comprobaciones al subir cambios. Además de las pruebas locales, verifica en el proyecto real: registro, recepción y apertura del correo, login, lectura/edición del perfil, refresh, logout y separación entre dos usuarias. No publiques para uso real hasta completar esa prueba y configurar SMTP.
+Las 54 pruebas cubren API, SDK, permisos de base de datos, rutas web, cookies, protección de origen, renovación, cierre de sesión, catálogo de habilidades, resultados, progreso privado, intereses, conflictos de revisión, extracción de oportunidades, fallos de fuentes, robots, redirecciones y filtros. La interfaz anterior se comprobó en escritorio y a 375 px; el incremento de galaxias y oportunidades tiene evidencia en [OPORTUNIDADES.md](OPORTUNIDADES.md). GitHub Actions ejecutará las mismas comprobaciones al subir cambios. Además de las pruebas locales, verifica el recorrido en el proyecto real. Para otras direcciones de correo sigue pendiente configurar SMTP.
 
 El código se prepara en la rama `codex/registro-usuarias`. Para subirlo hace falta permiso de escritura; el acceso de lectura basta para descargarlo, pero no para publicar cambios.
 
