@@ -11,7 +11,7 @@
     "dev": "node --env-file=.env --watch src/server.js",
     "start": "node --env-file=.env src/server.js",
     "test": "node --test test/*.test.js",
-    "check": "node --check src/app.js && node --check src/config.js && node --check src/supabase.js && node --check src/server.js && node --check src/web.js && node --check src/validation.js && node --check public/app.js && node --check src/discovery.js && node --check public/discovery.js && node --check src/interests.js && node --check src/opportunities.js && node --check public/explore.js && node --check scripts/sync-opportunities.js",
+    "check": "node --check src/app.js && node --check src/config.js && node --check src/supabase.js && node --check src/server.js && node --check src/web.js && node --check src/validation.js && node --check public/app.js && node --check src/discovery.js && node --check public/discovery.js && node --check src/interests.js && node --check src/opportunities.js && node --check public/explore.js && node --check src/community.js && node --check public/community.js && node --check scripts/sync-opportunities.js",
     "opportunities:sync": "node scripts/sync-opportunities.js"
   },
   "dependencies": {
