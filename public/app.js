@@ -1,7 +1,9 @@
 import { createDiscovery } from './discovery.js';
+import { createExplorer } from './explore.js';
 
 const $ = (id) => document.getElementById(id);
 let currentUser = null;
+let spaceEpoch = 0;
 let refreshPromise = null;
 const loginForm = $('login-form');
 const registerForm = $('register-form');
@@ -45,21 +47,56 @@ async function send(path, { method = 'GET', body, refresh = false } = {}) {
 const discovery = createDiscovery({
   send,
   showAccount: () => renderAccount(currentUser),
+  showOpportunities: () => goSpace('/oportunidades'),
   sessionExpired: () => {
     renderMode('login');
     showAuthError('Tu sesión terminó. Inicia sesión otra vez para continuar tu misión.');
   },
 });
+const explorer = createExplorer({
+  send, showAccount: () => renderAccount(currentUser),
+  showDiscovery: () => goSpace('/descubrir'), showOpportunities: () => goSpace('/oportunidades'),
+  navigate: path => { changeAddress(path); activateSpace(path); },
+  sessionExpired: () => { renderMode('login'); showAuthError('Tu sesión terminó. Inicia sesión para continuar.'); },
+});
 
-async function enter(data, { profile = false } = {}) {
+function activateSpace(path) {
+  document.querySelectorAll('#member-nav a').forEach(link => {
+    if (link.dataset.space === path) link.setAttribute('aria-current','page');
+    else link.removeAttribute('aria-current');
+  });
+}
+async function goSpace(path) {
+  if (!currentUser || explorer.isSaving()) return;
+  const active = ++spaceEpoch;
+  if (path === '/cuenta') return renderAccount(currentUser);
+  discovery.close(); explorer.close();
+  if (path === '/galaxias') return explorer.openGalaxies();
+  if (path === '/oportunidades') return explorer.openOpportunities();
+  try {
+    const { interests } = await send('/web/interests', {refresh:true});
+    if (!currentUser || active !== spaceEpoch) return;
+    if (!interests) return explorer.openGalaxies({onboarding:true});
+    activateSpace('/descubrir'); await discovery.open();
+  } catch(error) {
+    if (active !== spaceEpoch) return;
+    if (error.status===401) { renderMode('login'); showAuthError('Inicia sesión para continuar.'); }
+    else await explorer.openGalaxies({onboarding:true});
+  }
+}
+async function enter(data, { path = '/descubrir' } = {}) {
   renderAccount(data);
-  if (!profile) await discovery.open();
+  if (path !== '/cuenta') await goSpace(['/galaxias','/oportunidades'].includes(path)?path:'/descubrir');
 }
 $('open-discovery').addEventListener('click', event => {
   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
   event.preventDefault();
-  discovery.open();
+  goSpace('/descubrir');
 });
+document.querySelectorAll('[data-space]').forEach(link => link.addEventListener('click',event=>{
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault(); goSpace(link.dataset.space);
+}));
 
 function busy(form, active, label) {
   const button = form.querySelector('button[type=submit]');
@@ -80,7 +117,10 @@ function changeAddress(path, replace = false) {
 }
 
 function renderMode(mode, { navigate = true, focus = false } = {}) {
+  spaceEpoch++;
   discovery.reset();
+  explorer.reset();
+  $('member-nav').hidden = true;
   const isRegister = mode === 'register';
   currentUser = null;
   $('account-view').hidden = true;
@@ -128,8 +168,12 @@ function renderFeedback(kind, message) {
 }
 
 function renderAccount(data) {
+  spaceEpoch++;
   discovery.close();
+  explorer.close();
   currentUser = data;
+  $('member-nav').hidden = false;
+  activateSpace('/cuenta');
   $('auth-card').hidden = true;
   $('story').hidden = true;
   $('account-view').hidden = false;
@@ -233,7 +277,7 @@ $('logout').addEventListener('click', async () => {
     $('greeting-name').textContent = '';
     renderMode('login', { focus: true });
   } catch (error) {
-    const notice = $('discovery-view').hidden ? $('profile-notice') : $('discovery-error');
+    const notice = !$('explore-view').hidden ? $('explore-error') : $('discovery-view').hidden ? $('profile-notice') : $('discovery-error');
     notice.textContent = error.message;
     notice.classList.add('error-notice');
     notice.hidden = false;
@@ -242,8 +286,7 @@ $('logout').addEventListener('click', async () => {
 
 function renderLocation() {
   if (currentUser) {
-    if (location.pathname === '/descubrir') discovery.open();
-    else renderAccount(currentUser);
+    goSpace(location.pathname);
     return;
   }
   const query = new URLSearchParams(location.search);
@@ -257,10 +300,10 @@ function renderLocation() {
 window.addEventListener('popstate', renderLocation);
 renderLocation();
 
-try { await enter(await send('/web/session', { refresh: true }), { profile: location.pathname === '/cuenta' }); }
+try { const path=location.pathname; await enter(await send('/web/session', { refresh: true }), { path }); }
 catch (error) {
   if (error.status !== 401) showAuthError(error.message);
-  else if (['/cuenta', '/descubrir'].includes(location.pathname)) {
+  else if (['/cuenta', '/descubrir', '/galaxias', '/oportunidades'].includes(location.pathname)) {
     renderMode('login', { navigate: true });
     showAuthError('Inicia sesión para entrar a tu espacio.');
   }

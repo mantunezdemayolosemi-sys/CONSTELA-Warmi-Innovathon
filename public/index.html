@@ -9,6 +9,7 @@
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/assets/styles.css">
   <link rel="stylesheet" href="/assets/discovery.css">
+  <link rel="stylesheet" href="/assets/explore.css">
   <script type="module" src="/assets/app.js"></script>
 </head>
 <body>
@@ -21,6 +22,12 @@
     <span class="header-note">Un nuevo comienzo, a tu manera.</span>
     <button class="quiet-button" id="logout" hidden>Cerrar sesión <span aria-hidden="true">↗</span></button>
   </header>
+  <nav id="member-nav" class="member-nav" aria-label="Tu recorrido en Constela" hidden>
+    <a href="/cuenta" data-space="/cuenta">Mi perfil</a>
+    <a href="/galaxias" data-space="/galaxias">Mis galaxias</a>
+    <a href="/descubrir" data-space="/descubrir">Mis habilidades</a>
+    <a href="/oportunidades" data-space="/oportunidades">Oportunidades</a>
+  </nav>
 
   <main id="main" class="auth-layout">
     <section class="story" id="story" aria-labelledby="story-title">
@@ -83,6 +90,8 @@
         <aside class="welcome-card"><span class="welcome-star" aria-hidden="true">✧</span><p class="eyebrow">ESTE ES TU PUNTO DE PARTIDA</p><h2>Todo empieza<br>con una<br><em>conexión.</em></h2><p>Tu cuenta está lista. Hoy comienza una nueva parte de tu historia.</p><span class="welcome-signature">constela.</span></aside>
       </div>
       <a class="discovery-profile-link" href="/descubrir" id="open-discovery"><span aria-hidden="true">✦</span><span><strong>Tu universo de habilidades</strong><br>Descubre tus estrellas o vuelve a ver tu constelación.</span><span aria-hidden="true">↗</span></a>
+      <a class="discovery-profile-link" href="/galaxias" data-space="/galaxias"><span aria-hidden="true">🌌</span><span><strong>Editar mis galaxias</strong><br>Tus intereses pueden cambiar. Descubre nuevos caminos.</span><span aria-hidden="true">↗</span></a>
+      <a class="discovery-profile-link" href="/oportunidades" data-space="/oportunidades"><span aria-hidden="true">↗</span><span><strong>Explorar oportunidades</strong><br>Encuentra convocatorias relacionadas con tus intereses.</span><span aria-hidden="true">↗</span></a>
     </section>
     <section class="discovery-view" id="discovery-view" aria-label="Tu universo de habilidades" hidden>
       <nav class="discovery-nav" aria-label="Tu espacio"><span><span aria-hidden="true">✦</span> TU UNIVERSO DE HABILIDADES</span><button type="button" class="quiet-button" id="discovery-profile">Mi perfil <span aria-hidden="true">↗</span></button></nav>
@@ -99,6 +108,10 @@
           <p class="discovery-privacy">Tus respuestas y resultados son privados. Puedes continuar cuando quieras.</p>
         </div>
       </div>
+    </section>
+    <section class="explore-view" id="explore-view" aria-label="Galaxias y oportunidades" hidden>
+      <div class="notice error-notice" id="explore-error" role="alert" hidden></div>
+      <div id="explore-content" aria-busy="false"></div>
     </section>
     <noscript><p class="notice error-notice">Activa JavaScript en tu navegador para registrarte o iniciar sesión.</p></noscript>
   </main>
