@@ -10,7 +10,8 @@ Fuente de visión: [documento del Grupo 1](https://docs.google.com/document/d/1C
 | Constelación que ilumina las seis misiones | Implementada para ese recorrido | Spec 002; no representa aún niveles por retos |
 | Logo y avatar personalizable | Identidad gráfica provisional; personalización pendiente | Definir diseño y abrir una nueva spec |
 | Arquetipos como Creadora o Estratega | Mencionados en la visión, no implementados | Decidir con el equipo si se incorporan; el test actual muestra habilidades, no tipos de personalidad |
-| Oportunidades y convocatorias | Pendiente | Definir fuentes, permisos, datos, actualización y filtros antes de recopilar información |
+| Galaxias de interés | Implementadas con selección privada de hasta cinco y edición | Spec 003 |
+| Oportunidades y convocatorias | Demo de Lima Metropolitana con scraping público de hack0, caché y filtros | Spec 003:RF-11; cobertura mayormente tecnológica; ampliar fuentes y sumar retos externos sigue pendiente |
 | Retos de desarrollo y de organizaciones | Pendiente | Definir publicación, entrega, evaluación y estados de evidencia |
 | Estrellas, insignias y niveles por actividades | Pendiente | Diseñar reglas y distinguir identificación, práctica y demostración |
 | Portafolio compartible y descargable | Pendiente | Definir formato, privacidad, evidencias y exportación |
@@ -24,6 +25,6 @@ Fuente de visión: [documento del Grupo 1](https://docs.google.com/document/d/1C
 2. Elegir el recorrido mínimo que se mostrará en la entrega y completar fechas y criterios oficiales.
 3. Acordar responsables de diseño, frontend, backend/datos, pruebas, publicación y presentación.
 4. Priorizar SMTP y publicación para que la demo pueda probarse fuera de la Mac.
-5. Escribir la siguiente spec antes de desarrollar avatar, retos, oportunidades o portafolio.
+5. Revisar spec 003, ampliar las fuentes de oportunidades y escribir nuevas specs antes de desarrollar avatar, retos evaluados o portafolio.
 
 Este orden es una propuesta de trabajo; el equipo decide alcance y reparto. No constituye asignación de tareas a personas ni promesa de que toda la visión estará lista para la entrega.

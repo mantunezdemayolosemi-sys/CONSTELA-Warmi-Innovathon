@@ -1,6 +1,6 @@
 # Trazabilidad y evidencia
 
-La suite existente contiene 43 pruebas. Esta matriz se incorpora retrospectivamente: sus nombres originales se conservan y no se afirma que una comprobación manual sea una prueba automatizada.
+La suite contiene 58 pruebas tras incorporar la spec 003 y su ajuste para Lima. Las secciones 001/002 se incorporaron retrospectivamente; no se afirma que una comprobación manual sea una prueba automatizada.
 
 Ejecutar desde la raíz: `npm run check` y `npm test`. La [CI](../.github/workflows/test.yml) ejecuta esos comandos con Node.js 22. Los planes y requisitos están en [specs/](../specs/README.md).
 
@@ -23,7 +23,7 @@ Ejecutar desde la raíz: `npm run check` y `npm test`. La [CI](../.github/workfl
 
 | RF | Código principal | Evidencia automatizada | Comprobación manual previa |
 | --- | --- | --- | --- |
-| RF-1 | `public/app.js`, `public/discovery.js` | `web.test.js` comprueba ruta y catálogo autenticado; no ejecuta el navegador | Inicio de sesión abre automáticamente `/descubrir` |
+| RF-1 | `public/app.js`, `public/discovery.js` | `web.test.js` comprueba ruta y catálogo autenticado; no ejecuta el navegador | Inicio de sesión abre `/descubrir` una vez elegidas las galaxias (spec 003) |
 | RF-2 | `src/discovery.js`, SQL, interfaz | [discovery.test.js](../test/discovery.test.js): límite y duplicados; [discovery-database.test.js](../test/discovery-database.test.js): opciones inválidas | Límite de tres y alternativa sin selección |
 | RF-3 | Catálogo en `src/discovery.js` | `discovery.test.js`: seis misiones, cuatro opciones distintas, cuatro oportunidades por habilidad | Recorrido completo con tarjetas y caminos |
 | RF-4 | `src/web.js`, gateway y SQL | `web.test.js`: guardado; `supabase.test.js`: RPC con JWT; `discovery-database.test.js`: persistencia | Primera misión ilumina una estrella |
@@ -35,7 +35,18 @@ Ejecutar desde la raíz: `npm run check` y `npm test`. La [CI](../.github/workfl
 | RF-10 | Identidad web, RLS y RPC | `web.test.js`, `supabase.test.js`, `discovery-database.test.js`: identidad, permisos y revisión obsoleta | Prueba transaccional real entre dos identidades temporales |
 | RF-11 | `public/discovery.js` | Reglas de resultados en `discovery.test.js`; el texto y la presentación requieren revisión manual | Ejercicios como invitaciones y distinción identificada/practicada/demostrada |
 
-## Verificación real de datos
+## Spec 003 · Galaxias y oportunidades
+
+| RF | Código | Evidencia |
+| --- | --- | --- |
+| RF-1–3 | `src/interests.js`, migraciones 003/004, gateway | `interests-database.test.js`: catálogo equivalente, máximo cinco, exploración exclusiva, aislamiento, identidad y revisión; `supabase.test.js`: JWT y contrato RPC |
+| RF-4 | `public/app.js`, `public/explore.js` | Comprobación visual de selección previa y edición; prueba QA conserva la misión anterior |
+| RF-5–6, RF-9 | `src/opportunities.js`, `src/server.js`, script de sincronización | `opportunities.test.js`: extracción de HTML, cambios de estructura, robots, host de redirección, fallos y deduplicación; sincronización real de 26 registros |
+| RF-7–8 | Normalización, matching y `public/explore.js` | `opportunities.test.js`: intereses, explorar todo, filtros, expiración y caché; QA real con vacío y catálogo completo |
+| RF-10 | Rutas web e interfaz | `opportunities.test.js`: autenticación, origen e identidad; revisión visual local |
+| RF-11 | Filtro `inLima`, adaptador hack0 y UI | `opportunities.test.js`: país PE, distrito identificado, exclusión de otras ciudades y países, virtuales y datos desconocidos incluso con `scope=all`; sincronización local de 12 fichas |
+
+## Verificación real de datos anteriores
 
 - [live_profiles_rollback.sql](../supabase/tests/live_profiles_rollback.sql): trigger y permisos de perfil en Supabase real.
 - [live_discovery_rollback.sql](../supabase/tests/live_discovery_rollback.sql): resultado, reflexión, revisión y aislamiento de misiones en Supabase real.

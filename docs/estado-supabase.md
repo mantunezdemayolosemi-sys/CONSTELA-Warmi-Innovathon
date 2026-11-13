@@ -21,3 +21,7 @@ Se completó un registro real con un correo autorizado por la usuaria: la API re
 La prueba `supabase/tests/live_profiles_rollback.sql` permite comprobar los triggers y RLS en el proyecto real sin conservar cuentas de prueba y sin enviar correos. No crea credenciales de acceso; inserta filas temporales dentro de una transacción y las revierte.
 
 Antes de publicar la plataforma, sustituye las URLs locales por las URLs HTTPS reales.
+
+## Incremento de galaxias · 12 de noviembre de 2026
+
+Aplicadas 003 (catálogo, relaciones privadas y RPC), 004 (conflicto de intereses PT409) y 005 (mismo ajuste para misiones históricas). Las anteriores se conservan y no se volvieron a ejecutar. Intereses propios, edición, recuperación y rechazo de revisiones antiguas comprobados mediante la sesión QA autorizada. El test previo se mantuvo idéntico. RLS, límites y aislamiento entre identidades se comprueban además en PGlite. El catálogo público de oportunidades usa un archivo JSON, sin clave administrativa ni permisos globales de escritura para usuarias. Detalle en [oportunidades](OPORTUNIDADES.md).

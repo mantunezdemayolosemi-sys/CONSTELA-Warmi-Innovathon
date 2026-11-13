@@ -6,7 +6,7 @@ const element = (tag, className, text) => {
   return node;
 };
 
-export function createDiscovery({ send, showAccount, sessionExpired }) {
+export function createDiscovery({ send, showAccount, showOpportunities, sessionExpired }) {
   const view = byId('discovery-view');
   const content = byId('discovery-content');
   let catalog;
@@ -236,7 +236,7 @@ export function createDiscovery({ send, showAccount, sessionExpired }) {
     const stages = element('ol', 'skill-stages');
     ['Identificada en tus elecciones', 'Por practicar en un reto', 'Por demostrar con evidencia'].forEach(text => stages.append(element('li', '', text))); content.append(stages);
     const actions = element('div', 'result-actions');
-    actions.append(button('Volver a explorar mis respuestas', () => { step = 0; mission(); focusTitle(true); }, 'secondary-button'), button('Ir a mi perfil ↗', showAccount)); content.append(actions);
+    actions.append(button('Volver a explorar mis respuestas', () => { step = 0; mission(); focusTitle(true); }, 'secondary-button'), button('Explorar mis oportunidades ↗', showOpportunities)); content.append(actions);
     paragraph('Tu constelación no es una etiqueta definitiva. Puede crecer y cambiar con nuevas experiencias.', 'mission-fine-print');
   }
   async function open() {

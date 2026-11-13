@@ -90,9 +90,24 @@ test('el SDK conserva el JWT en el guardado de misiones sin aceptar identidad ni
 
 test('una colisión de progreso devuelve conflicto y un fallo del proveedor no expone detalles', async () => {
   let conflict = true;
-  const gateway = createGateway(config, async () => json({ code: conflict ? '40001' : 'XX000', message: 'private-sql-detail' }, 409));
+  const gateway = createGateway(config, async () => json({ code: conflict ? 'PT409' : 'XX000', message: 'private-sql-detail' }, 409));
   const body = { revision: 1, self_perception: [], answers: {}, reflection: null };
   await assert.rejects(gateway.saveDiscovery('jwt', body), e => e.status === 409 && e.code === 'DISCOVERY_CONFLICT');
   conflict = false;
   await assert.rejects(gateway.saveDiscovery('jwt', body), e => e.status === 503 && !e.message.includes('private-sql-detail'));
+});
+
+test('galaxias: conserva identidad al leer relaciones y escribe sin ID con conflicto PT409', async () => {
+  const calls=[]; let conflict=false;
+  const gateway=createGateway(config,async(url,init)=>{
+    calls.push({url:String(url),token:new Headers(init.headers).get('authorization'),body:init.body&&JSON.parse(init.body)});
+    if(conflict)return json({code:'PT409',message:'Interest revision conflict'},409);
+    return json(String(url).includes('/rpc/')?{revision:2,galaxies:['data']}:[{revision:1,updated_at:'2026-11-12',user_interests:[{interest_id:'technology'}]}]);
+  });
+  assert.deepEqual((await gateway.getInterests('own-jwt',id)).galaxies,['technology']);
+  await gateway.saveInterests('own-jwt',{revision:1,galaxies:['data']});
+  assert.ok(calls[0].url.includes(`user_id=eq.${id}`));
+  assert.deepEqual(calls[1].body,{p_expected_revision:1,p_galaxies:['data']});
+  assert.ok(calls.every(call=>call.token==='Bearer own-jwt'));
+  conflict=true;await assert.rejects(gateway.saveInterests('own-jwt',{revision:1,galaxies:['data']}),e=>e.status===409&&e.code==='INTERESTS_CONFLICT');
 });

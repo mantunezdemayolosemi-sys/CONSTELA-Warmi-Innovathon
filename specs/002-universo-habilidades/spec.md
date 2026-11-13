@@ -23,7 +23,7 @@ Una usuaria con cuenta y correo confirmado, desde celular o computadora. Cada cu
 
 ## Requisitos funcionales (EARS)
 
-- RF-1: CUANDO la usuaria inicia sesión correctamente, EL SISTEMA abre su misión o sus resultados guardados.
+- RF-1: CUANDO la usuaria inicia sesión correctamente y ya eligió sus galaxias, EL SISTEMA abre su misión o sus resultados guardados. Si todavía no tiene intereses, primero los solicita (003:RF-4).
 - RF-2: ANTES de comenzar las misiones, EL SISTEMA permite seleccionar de cero a tres habilidades reconocidas inicialmente, sin duplicados.
 - RF-3: EL SISTEMA presenta seis misiones de cuatro opciones, con cuatro oportunidades de elección para cada una de las seis habilidades.
 - RF-4: CUANDO se continúa desde una misión con una opción elegida, EL SISTEMA guarda esa elección y actualiza la constelación de progreso.

@@ -16,6 +16,7 @@ before(async () => {
     create function auth.uid() returns uuid language sql stable as $$ select (auth.jwt() ->> 'sub')::uuid $$;
     insert into auth.users values ('${ana}'), ('${luz}');`);
   await db.exec(await readFile(new URL('../supabase/migrations/202611120002_create_strength_discoveries.sql', import.meta.url), 'utf8'));
+  await db.exec(await readFile(new URL('../supabase/migrations/202611120005_discovery_conflict_http.sql', import.meta.url), 'utf8'));
 });
 after(() => db.close());
 async function asUser(id, operation, role = 'authenticated', extra = {}) {
@@ -58,8 +59,8 @@ test('SQL calcula los resultados, completa las seis misiones y guarda la reflexi
 });
 
 test('una revisión antigua no pisa el progreso guardado desde otra pestaña', async () => {
-  await assert.rejects(asUser(ana, async () => { await save(0); await save(0); }), e => e.code === '40001');
-  await assert.rejects(asUser(ana, async () => { await save(0); await save(1); await save(1); }), e => e.code === '40001');
+  await assert.rejects(asUser(ana, async () => { await save(0); await save(0); }), e => e.code === 'PT409');
+  await assert.rejects(asUser(ana, async () => { await save(0); await save(1); await save(1); }), e => e.code === 'PT409');
 });
 
 test('ni evadiendo el servidor se aceptan respuestas inválidas o puntuaciones falsas', async () => {
