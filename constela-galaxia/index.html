@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#08040f">
+<meta name="description" content="Constela: tu talento, hecho constelación. Demo conceptual del Grupo 1 para la Warmi Innovathon, Eje 2.">
+<title>Constela · Tu talento, hecho constelación</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%23b79cff' d='M20 1l5.2 13.8L39 20l-13.8 5.2L20 39l-5.2-13.8L1 20l13.8-5.2z'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+<noscript><style>.revelar{opacity:1;transform:none}.constelacion-marcador,.test{display:block}</style></noscript>
+</head>
+<body>
+
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+
+<canvas id="cielo" aria-hidden="true"></canvas>
+<div class="aurora" aria-hidden="true">
+  <span class="aurora-1"></span>
+  <span class="aurora-2"></span>
+  <span class="aurora-3"></span>
+</div>
+<div class="grano" aria-hidden="true"></div>
+<div class="brillo-cursor" id="brillo-cursor" aria-hidden="true"></div>
+
+<header class="barra">
+  <a class="marca" href="#inicio" aria-label="Constela, inicio">
+    <svg class="marca-icono" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 1l5.2 13.8L39 20l-13.8 5.2L20 39l-5.2-13.8L1 20l13.8-5.2z"/></svg>
+    <span>constela<span class="punto">.</span></span>
+  </a>
+
+  <nav class="menu" id="menu" aria-label="Secciones">
+    <a href="#problema">El vacío</a>
+    <a href="#como">Cómo funciona</a>
+    <a href="#test">Descúbrete</a>
+    <a href="#retos">Retos</a>
+    <a href="#impacto">Impacto</a>
+  </nav>
+
+  <div class="barra-acciones">
+    <button class="boton-calma" id="calma" aria-pressed="false" title="Pausar o reanudar el movimiento del cielo">
+      <span class="calma-icono" aria-hidden="true">✧</span><span class="calma-texto">Calma</span>
+    </button>
+    <button class="boton-ghost" data-abrir="login">Entrar</button>
+    <button class="boton-primario chico" data-abrir="registro">Crear cuenta</button>
+    <button class="usuario" id="usuario" hidden aria-label="Abrir mi constelación">
+      <span class="usuario-orbita" aria-hidden="true"><span class="usuario-orbita-punto"></span></span>
+      <span class="usuario-nombre" data-nombre-corto>Exploradora</span>
+      <span class="usuario-nivel" data-nivel>Nv. 1</span>
+    </button>
+    <button class="boton-menu" id="boton-menu" aria-expanded="false" aria-controls="menu" aria-label="Abrir menú de secciones">
+      <span aria-hidden="true">☰</span>
+    </button>
+  </div>
+</header>
+
+<main id="contenido">
+
+  <!-- ───────────────────────── HERO ───────────────────────── -->
+  <section class="hero" id="inicio">
+    <div class="hero-halo" aria-hidden="true"></div>
+
+    <div class="hero-texto">
+      <p class="eyebrow revelar"><span class="chispa" aria-hidden="true">✦</span> Warmi Innovathon · Eje 2 · Grupo 1</p>
+      <h1 class="revelar">
+        Tu talento ya <em>existe</em>.<br>
+        Vamos a hacerlo <span class="palabra-luz">constelación</span>.
+      </h1>
+      <p class="hero-sub revelar">
+        No necesitas un CV perfecto para demostrar lo que sabes hacer.
+        Convierte tus experiencias cotidianas en evidencias reales, y conecta con
+        oportunidades que sí te vean.
+      </p>
+
+      <div class="hero-acciones revelar">
+        <button class="boton-primario" data-abrir="registro">
+          <span>Encender mi primera estrella</span><span aria-hidden="true">✦</span>
+        </button>
+        <a class="boton-ghost grande" href="#test">Probar el test <span aria-hidden="true">↘</span></a>
+      </div>
+
+      <ul class="hero-datos revelar" aria-label="Datos de contexto">
+        <li><strong>54</strong><span>de 60 estudios señalan barreras financieras para emprender</span></li>
+        <li><strong>77.3%</strong><span>de las emprendedoras peruanas opera en la informalidad</span></li>
+        <li><strong>+20%</strong><span>contratan más mujeres las empresas lideradas por mujeres</span></li>
+      </ul>
+
+      <p class="hero-nota revelar">Pasa el mouse por las estrellas de la constelación. Se encienden cuando las tocas.</p>
+    </div>
+
+    <div class="hero-visual revelar">
+      <svg class="sello" viewBox="0 0 220 220" aria-hidden="true">
+        <defs>
+          <path id="orbita-texto" d="M110,110 m-86,0 a86,86 0 1,1 172,0 a86,86 0 1,1 -172,0"/>
+        </defs>
+        <text>
+          <textPath href="#orbita-texto" startOffset="0">TALENTO VISIBLE · AUTONOMÍA ECONÓMICA · EVIDENCIAS REALES · </textPath>
+        </text>
+      </svg>
+
+      <div class="constelacion" id="constelacion">
+        <svg viewBox="0 0 560 420" class="constelacion-svg" role="group" aria-label="Constelación de habilidades: enciende las que reconozcas en ti">
+          <line class="arista" data-nodos="organizo comunico" x1="120" y1="90" x2="300" y2="60"></line>
+          <line class="arista" data-nodos="comunico creo" x1="300" y1="60" x2="470" y2="140"></line>
+          <line class="arista" data-nodos="creo resuelvo" x1="470" y1="140" x2="420" y2="320"></line>
+          <line class="arista" data-nodos="resuelvo lidero" x1="420" y1="320" x2="230" y2="360"></line>
+          <line class="arista" data-nodos="lidero organizo" x1="230" y1="360" x2="120" y2="90"></line>
+          <line class="arista" data-nodos="lidero conecto" x1="230" y1="360" x2="60" y2="280"></line>
+          <line class="arista" data-nodos="conecto organizo" x1="60" y1="280" x2="120" y2="90"></line>
+          <line class="arista" data-nodos="comunico resuelvo" x1="300" y1="60" x2="420" y2="320"></line>
+
+          <g class="nodo" data-skill="organizo" tabindex="0" role="button" aria-pressed="false" aria-label="Encender la habilidad organizo">
+            <circle class="nodo-aura" cx="120" cy="90" r="30"></circle>
+            <circle class="nodo-punto" cx="120" cy="90" r="7"></circle>
+            <text x="120" y="126" text-anchor="middle">organizo</text>
+          </g>
+          <g class="nodo" data-skill="comunico" tabindex="0" role="button" aria-pressed="false" aria-label="Encender la habilidad comunico">
+            <circle class="nodo-aura" cx="300" cy="60" r="30"></circle>
+            <circle class="nodo-punto" cx="300" cy="60" r="7"></circle>
+            <text x="300" y="26" text-anchor="middle">comunico</text>
+          </g>
+          <g class="nodo" data-skill="creo" tabindex="0" role="button" aria-pressed="false" aria-label="Encender la habilidad creo">
+            <circle class="nodo-aura" cx="470" cy="140" r="30"></circle>
+            <circle class="nodo-punto" cx="470" cy="140" r="7"></circle>
+            <text x="470" y="108" text-anchor="middle">creo</text>
+          </g>
+          <g class="nodo" data-skill="resuelvo" tabindex="0" role="button" aria-pressed="false" aria-label="Encender la habilidad resuelvo">
+            <circle class="nodo-aura" cx="420" cy="320" r="30"></circle>
+            <circle class="nodo-punto" cx="420" cy="320" r="7"></circle>
+            <text x="420" y="356" text-anchor="middle">resuelvo</text>
+          </g>
+          <g class="nodo" data-skill="lidero" tabindex="0" role="button" aria-pressed="false" aria-label="Encender la habilidad lidero">
+            <circle class="nodo-aura" cx="230" cy="360" r="30"></circle>
+            <circle class="nodo-punto" cx="230" cy="360" r="7"></circle>
+            <text x="230" y="396" text-anchor="middle">lidero</text>
+          </g>
+          <g class="nodo" data-skill="conecto" tabindex="0" role="button" aria-pressed="false" aria-label="Encender la habilidad conecto">
+            <circle class="nodo-aura" cx="60" cy="280" r="30"></circle>
+            <circle class="nodo-punto" cx="60" cy="280" r="7"></circle>
+            <text x="60" y="316" text-anchor="middle">conecto</text>
+          </g>
+        </svg>
+      </div>
+
+      <p class="constelacion-marcador" aria-live="polite">
+        <span data-encendidas>0</span> de 6 habilidades encendidas
+        <button class="reiniciar" id="reiniciar-constelacion" hidden>reiniciar</button>
+      </p>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── MI CONSTELACIÓN (panel) ───────────────────────── -->
+  <section class="panel" id="mi-constelacion" hidden aria-labelledby="panel-titulo">
+    <div class="panel-orbita" aria-hidden="true">
+      <div class="panel-orbita-anillo"></div>
+      <div class="panel-orbita-anillo dos"></div>
+      <div class="panel-orbita-nucleo" id="panel-nucleo">✦</div>
+    </div>
+    <div class="panel-cuerpo">
+      <p class="eyebrow">Tu espacio constela</p>
+      <h2 id="panel-titulo">Hola, <span data-nombre>exploradora</span>.</h2>
+      <p class="panel-arquetipo" data-arquetipo>Tu constelación está lista para empezar a brillar.</p>
+
+      <div class="medidor">
+        <div class="medidor-texto">
+          <span>Nivel <strong data-nivel-num>1</strong></span>
+          <span><strong data-estrellas>0</strong> estrellas</span>
+        </div>
+        <div class="medidor-barra" role="progressbar" aria-valuemin="0" aria-valuemax="40" aria-valuenow="0" aria-label="Progreso al siguiente nivel">
+          <span data-barra></span>
+        </div>
+        <p class="medidor-pista" data-pista>Te faltan 40 estrellas para tu siguiente nivel.</p>
+      </div>
+
+      <ul class="insignias" aria-label="Insignias">
+        <li class="insignia" data-insignia="primera">
+          <span class="insignia-icono" aria-hidden="true">✦</span>
+          <span class="insignia-nombre">Primera estrella</span>
+        </li>
+        <li class="insignia" data-insignia="test">
+          <span class="insignia-icono" aria-hidden="true">✧</span>
+          <span class="insignia-nombre">Me descubrí</span>
+        </li>
+        <li class="insignia" data-insignia="reto">
+          <span class="insignia-icono" aria-hidden="true">✺</span>
+          <span class="insignia-nombre">Primer reto</span>
+        </li>
+        <li class="insignia" data-insignia="constelacion">
+          <span class="insignia-icono" aria-hidden="true">❋</span>
+          <span class="insignia-nombre">Constelación completa</span>
+        </li>
+      </ul>
+
+      <div class="panel-acciones">
+        <button class="boton-primario chico" data-ir="test">Hacer el test</button>
+        <button class="boton-ghost chico" data-ir="retos">Ver retos</button>
+        <button class="boton-texto" id="salir-panel">Cerrar sesión</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── MARQUEE ───────────────────────── -->
+  <div class="cinta" aria-hidden="true">
+    <div class="cinta-pista">
+      <span>liderazgo</span><span>✦</span><span>comunicación</span><span>✧</span><span>organización</span><span>✦</span><span>creatividad</span><span>✧</span><span>resolución de problemas</span><span>✦</span><span>empatía</span><span>✧</span>
+      <span>liderazgo</span><span>✦</span><span>comunicación</span><span>✧</span><span>organización</span><span>✦</span><span>creatividad</span><span>✧</span><span>resolución de problemas</span><span>✦</span><span>empatía</span><span>✧</span>
+    </div>
+  </div>
+
+  <!-- ───────────────────────── PROBLEMA ───────────────────────── -->
+  <section class="seccion" id="problema">
+    <div class="seccion-cabeza revelar">
+      <p class="eyebrow"><span class="chispa" aria-hidden="true">✧</span> El vacío que nadie llena</p>
+      <h2>El problema no es tu talento.<br><em>Es que nadie lo ve.</em></h2>
+      <p class="seccion-intro">
+        Existe una brecha entre lo que una mujer sabe hacer y las oportunidades a las que
+        realmente puede acceder. No falta iniciativa: faltan mecanismos que reconozcan,
+        conecten y financien ese potencial.
+      </p>
+    </div>
+
+    <div class="brecha revelar" aria-hidden="true">
+      <div class="brecha-lado">
+        <span class="brecha-etiqueta">Talento</span>
+        <div class="brecha-esfera"></div>
+      </div>
+      <div class="brecha-hueco">
+        <span>la brecha</span>
+        <div class="brecha-linea"></div>
+      </div>
+      <div class="brecha-lado derecha">
+        <span class="brecha-etiqueta">Oportunidad</span>
+        <div class="brecha-esfera apagada"></div>
+      </div>
+    </div>
+
+    <div class="cifras">
+      <article class="cifra revelar">
+        <p class="cifra-numero"><span data-contar="4.1" data-decimales="1">4.1</span><small>pts</small></p>
+        <p class="cifra-texto">de brecha de género en el acceso a servicios financieros.</p>
+        <p class="fuente">Instituto Peruano de Economía, 2026</p>
+      </article>
+      <article class="cifra revelar">
+        <p class="cifra-numero"><span data-contar="72">72</span><small>%</small></p>
+        <p class="cifra-texto">de las mujeres peruanas declaró no ahorrar.</p>
+        <p class="fuente">Instituto Peruano de Economía, 2026</p>
+      </article>
+      <article class="cifra revelar">
+        <p class="cifra-numero"><span data-contar="77.3" data-decimales="1">77.3</span><small>%</small></p>
+        <p class="cifra-texto">de las mujeres emprendedoras opera en el sector informal.</p>
+        <p class="fuente">Aranibar Ramos et al., 2021</p>
+      </article>
+      <article class="cifra revelar">
+        <p class="cifra-numero"><span data-contar="84.9" data-decimales="1">84.9</span><small>%</small></p>
+        <p class="cifra-texto">de los jóvenes ocupados trabaja en la informalidad.</p>
+        <p class="fuente">INEI, 2025</p>
+      </article>
+    </div>
+
+    <p class="nota-problema revelar">
+      Y hay un riesgo del que conviene hablar: las plataformas digitales, si no se diseñan con
+      enfoque de género, pueden <strong>reforzar</strong> estas brechas en lugar de cerrarlas
+      <span class="fuente-en-linea">(UNU-WIDER, 2025)</span>.
+    </p>
+  </section>
+
+  <!-- ───────────────────────── CÓMO FUNCIONA ───────────────────────── -->
+  <section class="seccion" id="como">
+    <div class="seccion-cabeza revelar">
+      <p class="eyebrow"><span class="chispa" aria-hidden="true">✦</span> El recorrido central</p>
+      <h2>Cuatro pasos.<br><em>Una constelación que crece contigo.</em></h2>
+      <p class="seccion-intro">
+        El piloto se concentra en un recorrido que cuatro personas pueden probar de punta a punta.
+        Sin promesas de más: cada paso deja una evidencia concreta.
+      </p>
+    </div>
+
+    <ol class="pasos" id="pasos">
+      <li class="paso revelar abierto" data-paso="1">
+        <button class="paso-boton" aria-expanded="true">
+          <span class="paso-numero">01</span>
+          <span class="paso-titulo">Te descubres</span>
+          <span class="paso-signo" aria-hidden="true">−</span>
+        </button>
+        <div class="paso-cuerpo">
+          <p>Un test breve sobre situaciones cotidianas —organizar una reunión, mediar un desacuerdo,
+          rescatar una idea a última hora—. No mide cuánto sabes de memoria: observa cómo haces las cosas.</p>
+          <p class="paso-detalle">Sales con un perfil inicial y un arquetipo. <em>Ninguno te encasilla:</em> son un punto de partida, y puedes cambiarlos cuando quieras.</p>
+        </div>
+      </li>
+
+      <li class="paso revelar" data-paso="2">
+        <button class="paso-boton" aria-expanded="false">
+          <span class="paso-numero">02</span>
+          <span class="paso-titulo">Tu constelación se enciende</span>
+          <span class="paso-signo" aria-hidden="true">+</span>
+        </button>
+        <div class="paso-cuerpo">
+          <p>Cada habilidad que reconoces en ti ocupa un punto de luz. Tu constelación personal
+          cambia de forma a medida que participas, y distingue entre lo que <strong>declaras</strong>
+          y lo que has <strong>demostrado</strong>.</p>
+          <p class="paso-detalle">Esa distinción es la que da credibilidad a tu perfil frente a una organización.</p>
+        </div>
+      </li>
+
+      <li class="paso revelar" data-paso="3">
+        <button class="paso-boton" aria-expanded="false">
+          <span class="paso-numero">03</span>
+          <span class="paso-titulo">Resuelves un reto real</span>
+          <span class="paso-signo" aria-hidden="true">+</span>
+        </button>
+        <div class="paso-cuerpo">
+          <p>Un afiche para una feria, una estrategia de difusión, una mejora de proceso.
+          Los retos vienen de organizaciones y emprendedoras que necesitan algo concreto, no de un examen.</p>
+          <p class="paso-detalle">Presentas tu propuesta, recibes retroalimentación y, si ganas, puede haber recompensa o colaboración remunerada.</p>
+        </div>
+      </li>
+
+      <li class="paso revelar" data-paso="4">
+        <button class="paso-boton" aria-expanded="false">
+          <span class="paso-numero">04</span>
+          <span class="paso-titulo">Muestras evidencias, no un CV</span>
+          <span class="paso-signo" aria-hidden="true">+</span>
+        </button>
+        <div class="paso-cuerpo">
+          <p>Tu portafolio reúne proyectos, habilidades demostradas y reconocimientos. Una empresa
+          puede ver <strong>cómo</strong> aplicaste lo que sabes, incluso si nunca tuviste un empleo formal.</p>
+          <p class="paso-detalle">Ahí donde antes había un CV vacío, ahora hay una historia verificable.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ───────────────────────── TEST ───────────────────────── -->
+  <section class="seccion seccion-test" id="test">
+    <div class="seccion-cabeza revelar">
+      <p class="eyebrow"><span class="chispa" aria-hidden="true">✧</span> Cuatro preguntas, cero notas</p>
+      <h2>¿Qué constelación<br><em>te nombra hoy?</em></h2>
+      <p class="seccion-intro">
+        Responde con lo primero que harías. No hay respuestas correctas y no quedas
+        marcada para siempre: esto solo te da un punto de partida para conversar contigo.
+      </p>
+    </div>
+
+    <div class="test revelar" id="test-caja">
+      <div class="test-cabeza">
+        <p class="test-paso" id="test-paso">Pregunta 1 de 4</p>
+        <div class="test-barra" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" aria-label="Avance del test">
+          <span id="test-barra"></span>
+        </div>
+      </div>
+
+      <div id="test-contenido">
+        <p class="test-pregunta" id="test-pregunta">Cargando…</p>
+        <div class="test-opciones" id="test-opciones"></div>
+        <p class="test-ayuda">Elige una opción para continuar.</p>
+      </div>
+
+      <div class="test-resultado" id="test-resultado" hidden>
+        <p class="eyebrow">Tu arquetipo de hoy</p>
+        <h3 class="resultado-nombre" id="resultado-nombre">La Creadora</h3>
+        <p class="resultado-desc" id="resultado-desc"></p>
+        <p class="resultado-fuerzas" id="resultado-fuerzas"></p>
+        <div class="test-resultado-acciones">
+          <button class="boton-primario chico" id="guardar-test">Guardar en mi cuenta</button>
+          <button class="boton-ghost chico" id="repetir-test">Repetir el test</button>
+        </div>
+        <p class="test-aviso">
+          Un arquetipo no es una etiqueta. Es una forma de empezar a nombrar lo que ya haces;
+          puedes cambiarlo, combinarlo o ignorarlo.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── RETOS ───────────────────────── -->
+  <section class="seccion" id="retos">
+    <div class="seccion-cabeza revelar">
+      <p class="eyebrow"><span class="chispa" aria-hidden="true">✦</span> Retos de ejemplo</p>
+      <h2>Practica con algo<br><em>que alguien necesita.</em></h2>
+      <p class="seccion-intro">
+        Retos ilustrativos, inspirados en el piloto. Cada uno deja una evidencia que puedes
+        sumar a tu portafolio. Los nombres son ficticios y sirven para mostrar el flujo.
+      </p>
+    </div>
+
+    <div class="filtros revelar" role="group" aria-label="Filtrar retos por categoría">
+      <button class="filtro activo" data-filtro="todos" aria-pressed="true">Todos</button>
+      <button class="filtro" data-filtro="diseno" aria-pressed="false">Diseño</button>
+      <button class="filtro" data-filtro="negocio" aria-pressed="false">Negocio</button>
+      <button class="filtro" data-filtro="tecnologia" aria-pressed="false">Tecnología</button>
+    </div>
+
+    <div class="retos" id="retos-lista">
+      <article class="reto revelar" data-categoria="diseno">
+        <header class="reto-cabeza">
+          <span class="reto-categoria">Diseño</span>
+          <span class="reto-recompensa">40 ✦</span>
+        </header>
+        <h3>Afiche para la Feria Manos que Crean</h3>
+        <p>Diseña una pieza que invite a visitar la feria y destaque a las emprendedoras participantes.</p>
+        <ul class="reto-habilidades">
+          <li>creatividad</li><li>comunicación visual</li>
+        </ul>
+        <p class="reto-meta">Cierra en 14 días · Organización aliada (demo)</p>
+        <div class="reto-acciones">
+          <button class="boton-primario chico" data-postular="Afiche para la Feria Manos que Crean">Postular</button>
+          <button class="boton-ghost chico" data-guardar="Afiche para la Feria Manos que Crean">Guardar</button>
+        </div>
+      </article>
+
+      <article class="reto revelar" data-categoria="negocio">
+        <header class="reto-cabeza">
+          <span class="reto-categoria">Negocio</span>
+          <span class="reto-recompensa">30 ✦</span>
+        </header>
+        <h3>Estrategia de difusión para Café de Barrio</h3>
+        <p>Propón un plan de dos semanas para que más vecinas y vecinos conozcan el local.</p>
+        <ul class="reto-habilidades">
+          <li>organización</li><li>resolución de problemas</li>
+        </ul>
+        <p class="reto-meta">Cierra en 10 días · Emprendedora aliada (demo)</p>
+        <div class="reto-acciones">
+          <button class="boton-primario chico" data-postular="Estrategia de difusión para Café de Barrio">Postular</button>
+          <button class="boton-ghost chico" data-guardar="Estrategia de difusión para Café de Barrio">Guardar</button>
+        </div>
+      </article>
+
+      <article class="reto revelar" data-categoria="tecnologia">
+        <header class="reto-cabeza">
+          <span class="reto-categoria">Tecnología</span>
+          <span class="reto-recompensa">35 ✦</span>
+        </header>
+        <h3>Página simple para Taller Semilla</h3>
+        <p>Arma una página de una sola pantalla con horarios, ubicación y cómo inscribirse.</p>
+        <ul class="reto-habilidades">
+          <li>curiosidad técnica</li><li>orden</li>
+        </ul>
+        <p class="reto-meta">Cierra en 21 días · Organización aliada (demo)</p>
+        <div class="reto-acciones">
+          <button class="boton-primario chico" data-postular="Página simple para Taller Semilla">Postular</button>
+          <button class="boton-ghost chico" data-guardar="Página simple para Taller Semilla">Guardar</button>
+        </div>
+      </article>
+
+      <article class="reto revelar" data-categoria="diseno">
+        <header class="reto-cabeza">
+          <span class="reto-categoria">Diseño</span>
+          <span class="reto-recompensa">25 ✦</span>
+        </header>
+        <h3>Guion para redes de Tejidos Aurora</h3>
+        <p>Escribe tres publicaciones que cuenten el proceso detrás de cada pieza tejida a mano.</p>
+        <ul class="reto-habilidades">
+          <li>creatividad</li><li>escucha</li>
+        </ul>
+        <p class="reto-meta">Cierra en 7 días · Emprendedora aliada (demo)</p>
+        <div class="reto-acciones">
+          <button class="boton-primario chico" data-postular="Guion para redes de Tejidos Aurora">Postular</button>
+          <button class="boton-ghost chico" data-guardar="Guion para redes de Tejidos Aurora">Guardar</button>
+        </div>
+      </article>
+    </div>
+
+    <p class="retos-nota revelar" id="retos-nota" hidden></p>
+  </section>
+
+  <!-- ───────────────────────── IMPACTO ───────────────────────── -->
+  <section class="seccion seccion-impacto" id="impacto">
+    <div class="seccion-cabeza revelar">
+      <p class="eyebrow"><span class="chispa" aria-hidden="true">✧</span> Por qué importa</p>
+      <h2>Una mujer empoderada<br><em>mueve a muchas más.</em></h2>
+    </div>
+
+    <div class="impacto-rejilla">
+      <article class="impacto-grande revelar">
+        <p class="impacto-dato"><span data-contar="20">20</span><small>%</small></p>
+        <p>Las empresas lideradas por mujeres contratan un 20% más de mujeres en puestos
+        de tiempo completo que las lideradas por hombres.</p>
+        <p class="fuente">Gomez &amp; Siegrist, 2020</p>
+      </article>
+
+      <article class="impacto-texto revelar">
+        <p>Constela no busca sumar otra plataforma de empleabilidad. Busca ser un tejido:
+        retos, mentorías y visibilidad en un mismo lugar, porque las intervenciones que combinan
+        financiamiento y capacitación funcionan mejor que las que se aplican por separado
+        <span class="fuente-en-linea">(Siegrist, 2025)</span>.</p>
+        <p>Y ese efecto se multiplica: cuando una emprendedora crece, su negocio genera
+        puestos de trabajo para otras mujeres.</p>
+      </article>
+    </div>
+
+    <div class="piloto revelar">
+      <p class="eyebrow">Propuesta de metas para el piloto · por validar</p>
+      <ul class="piloto-metas">
+        <li><strong>40</strong><span>exploradoras en el recorrido central</span></li>
+        <li><strong>12</strong><span>retos completados con evidencia</span></li>
+        <li><strong>5</strong><span>organizaciones aliadas publicando</span></li>
+        <li><strong>1</strong><span>prueba al cierre de cada etapa</span></li>
+      </ul>
+      <p class="piloto-nota">Metas planteadas como hipótesis de trabajo, no como resultados alcanzados.</p>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── COMUNIDAD ───────────────────────── -->
+  <section class="seccion" id="comunidad">
+    <div class="seccion-cabeza revelar">
+      <p class="eyebrow"><span class="chispa" aria-hidden="true">✦</span> Un ecosistema, no una app suelta</p>
+      <h2>Tres formas de estar<br><em>en la misma constelación.</em></h2>
+    </div>
+
+    <div class="roles">
+      <article class="rol revelar">
+        <span class="rol-icono" aria-hidden="true">✦</span>
+        <h3>Exploradoras</h3>
+        <p>Descubren sus habilidades, resuelven retos y construyen un portafolio de evidencias.</p>
+      </article>
+      <article class="rol revelar">
+        <span class="rol-icono" aria-hidden="true">✧</span>
+        <h3>Emprendedoras y organizaciones</h3>
+        <p>Publican retos con necesidades reales, ofrecen recompensas y encuentran talento.</p>
+      </article>
+      <article class="rol revelar">
+        <span class="rol-icono" aria-hidden="true">✺</span>
+        <h3>Mentoras y profesionales</h3>
+        <p>Acompañan con orientación y acercan a las participantes a sectores concretos.</p>
+      </article>
+    </div>
+
+    
+  </section>
+
+  <!-- ───────────────────────── CIERRE ───────────────────────── -->
+  <section class="cierre revelar">
+    <div class="cierre-halo" aria-hidden="true"></div>
+    <p class="eyebrow">Tu primera estrella te espera</p>
+    <h2>Lo que ya sabes hacer<br><em>merece ser visto.</em></h2>
+    <p>Empieza con una pregunta, un reto o una conversación. La constelación se arma sola.</p>
+    <div class="cierre-acciones">
+      <button class="boton-primario" data-abrir="registro"><span>Crear mi cuenta</span><span aria-hidden="true">✦</span></button>
+      <button class="boton-ghost grande" data-abrir="login">Ya tengo cuenta</button>
+    </div>
+  </section>
+
+</main>
+
+<footer class="pie">
+  <div class="pie-marca">
+    <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 1l5.2 13.8L39 20l-13.8 5.2L20 39l-5.2-13.8L1 20l13.8-5.2z"/></svg>
+    <span>constela<span class="punto">.</span></span>
+    <p>Talento visible y autonomía económica · Eje 2</p>
+  </div>
+
+  <div class="pie-equipo">
+    <p class="pie-titulo">Grupo 1 · Warmi Innovathon</p>
+    <p>Fatima de los Angeles Chavez Arce · Mikella Cueva Marca · Maricielo Antúnez de Mayolo Seminario · Tyra Rivera Delgado</p>
+  </div>
+
+  <div class="pie-legal">
+    <p>Prototipo conceptual. Los retos, organizaciones y perfiles son ficticios y sirven para mostrar el flujo.</p>
+    <p>Demo sin backend: las cuentas se guardan solo en este navegador. No uses contraseñas reales.</p>
+  </div>
+</footer>
+
+<!-- ───────────────────────── DIÁLOGO DE ACCESO ───────────────────────── -->
+<dialog class="acceso" id="acceso" aria-labelledby="acceso-titulo">
+  <div class="acceso-caja">
+    <button class="acceso-cerrar" id="cerrar-acceso" aria-label="Cerrar ventana de acceso">✕</button>
+
+    <div class="acceso-arte" aria-hidden="true">
+      <div class="acceso-arte-anillo"></div>
+      <div class="acceso-arte-anillo dos"></div>
+      <div class="acceso-arte-nucleo">✦</div>
+      <p class="acceso-arte-frase">Cada cuenta<br>enciende una<br>constelación.</p>
+    </div>
+
+    <div class="acceso-form">
+      <p class="eyebrow">Tu espacio constela</p>
+      <h2 id="acceso-titulo">Qué bueno verte.</h2>
+      <p class="acceso-sub" id="acceso-sub">Entra para guardar tus estrellas y tu constelación.</p>
+
+      <div class="pestanas" role="tablist" aria-label="Elige cómo entrar">
+        <button role="tab" id="pestana-login" aria-selected="true" aria-controls="panel-login" data-modo="login">Iniciar sesión</button>
+        <button role="tab" id="pestana-registro" aria-selected="false" aria-controls="panel-registro" data-modo="registro" tabindex="-1">Crear cuenta</button>
+      </div>
+
+      <p class="aviso-demo">
+        Demo local: tu cuenta se guarda solo en este navegador. No uses una contraseña real.
+      </p>
+
+      <p class="acceso-error" id="acceso-error" role="alert" hidden></p>
+
+      <form id="form-login" class="formulario" novalidate role="tabpanel" aria-labelledby="pestana-login">
+        <div class="campo">
+          <label for="login-correo">Correo electrónico</label>
+          <input id="login-correo" name="correo" type="email" autocomplete="username" placeholder="tu@correo.com" maxlength="254" required>
+          <p class="campo-error" data-error-de="login-correo" aria-live="polite"></p>
+        </div>
+        <div class="campo">
+          <label for="login-clave">Contraseña</label>
+          <div class="campo-clave">
+            <input id="login-clave" name="clave" type="password" autocomplete="current-password" placeholder="Tu contraseña" maxlength="128" required>
+            <button type="button" class="ojo" data-ver="login-clave" aria-label="Mostrar contraseña" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="tachado" d="m4 3 16 18"/></svg></button>
+          </div>
+          <p class="campo-error" data-error-de="login-clave" aria-live="polite"></p>
+        </div>
+        <button type="submit" class="boton-primario"><span>Entrar a mi constelación</span><span aria-hidden="true">✦</span></button>
+        <p class="formulario-pie">¿Todavía no tienes cuenta? <button type="button" class="enlace" data-modo="registro">Empieza aquí</button></p>
+      </form>
+
+      <form id="form-registro" class="formulario" novalidate hidden role="tabpanel" aria-labelledby="pestana-registro">
+        <div class="campo">
+          <label for="registro-nombre">¿Cómo te llamas?</label>
+          <input id="registro-nombre" name="nombre" type="text" autocomplete="name" placeholder="Tu nombre" minlength="2" maxlength="100" required>
+          <p class="campo-error" data-error-de="registro-nombre" aria-live="polite"></p>
+        </div>
+        <div class="campo">
+          <label for="registro-correo">Correo electrónico</label>
+          <input id="registro-correo" name="correo" type="email" autocomplete="email" placeholder="tu@correo.com" maxlength="254" required>
+          <p class="campo-error" data-error-de="registro-correo" aria-live="polite"></p>
+        </div>
+        <div class="campo">
+          <label for="registro-clave">Crea una contraseña</label>
+          <div class="campo-clave">
+            <input id="registro-clave" name="clave" type="password" autocomplete="new-password" placeholder="Una frase de al menos 12 caracteres" minlength="12" maxlength="128" aria-describedby="clave-ayuda" required>
+            <button type="button" class="ojo" data-ver="registro-clave" aria-label="Mostrar contraseña" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="tachado" d="m4 3 16 18"/></svg></button>
+          </div>
+          <div class="fuerza" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+          <p class="campo-ayuda" id="clave-ayuda">Usa una frase fácil de recordar y difícil de adivinar.</p>
+          <p class="campo-error" data-error-de="registro-clave" aria-live="polite"></p>
+        </div>
+        <div class="campo">
+          <label for="registro-confirmar">Repite tu contraseña</label>
+          <div class="campo-clave">
+            <input id="registro-confirmar" name="confirmar" type="password" autocomplete="new-password" placeholder="Escríbela otra vez" minlength="12" maxlength="128" required>
+            <button type="button" class="ojo" data-ver="registro-confirmar" aria-label="Mostrar contraseña" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="tachado" d="m4 3 16 18"/></svg></button>
+          </div>
+          <p class="campo-error" data-error-de="registro-confirmar" aria-live="polite"></p>
+        </div>
+        <button type="submit" class="boton-primario"><span>Crear mi cuenta</span><span aria-hidden="true">✦</span></button>
+        <p class="formulario-pie">Al crear tu cuenta aceptas que esta es una demo y que tus datos viven solo en tu navegador.</p>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<div class="avisos" id="avisos" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
