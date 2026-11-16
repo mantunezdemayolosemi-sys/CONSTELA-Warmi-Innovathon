@@ -16,9 +16,9 @@ El talento de muchas mujeres no se refleja en un CV tradicional, especialmente c
 
 Contexto y fuentes: [reto](docs/RETO.md) y [documento de trabajo del Grupo 1](https://docs.google.com/document/d/1ChiZJkQcohItuXl21GZ8o8ZgV1FMcWghAtaYn8sB8TY/edit).
 
-## Nuestra solución
+## Constela: tu universo de oportunidades
 
-Constela es una plataforma web para descubrir habilidades, practicarlas y convertir experiencias en evidencias. El primer recorrido invita a reconocer fortalezas mediante situaciones cotidianas: la usuaria toma decisiones y conecta su constelación personal.
+Constela es una plataforma gamificada que ayuda a las mujeres a descubrir sus fortalezas, explorar intereses y practicar habilidades. Después del registro, la usuaria elige sus galaxias de interés y completa seis misiones de autodescubrimiento. Luego explora una luna 3D con estaciones de Eventos, Retos, Portafolio y Perfil, donde convierte sus experiencias en evidencias.
 
 **¿Para quién es?** Mujeres que desean reconocer sus capacidades y acercarse a nuevas oportunidades, desde celular o computadora.
 
