@@ -7,9 +7,26 @@ export const stations = [
   {id:'perfil', name:'Mi perfil', path:'/cuenta', icon:'◇', tint:0xfa9fc8, x:5.8, z:3.6},
 ];
 
-const radius = 14.6;
-export const walkRadius = 12.4;
-export const elevation = (x,z) => 4.2 * (Math.sqrt(Math.max(0, 1 - (x*x + z*z) / radius**2)) - 1);
+export const radius = 11.5;
+export const stationScale = 1.32;
+const up = new T.Vector3(0,1,0);
+
+// The map coordinates are arc lengths from the north pole, in lunar units.
+export function surfaceNormal(x,z) {
+  const distance = Math.hypot(x,z);
+  if (distance < 0.00001) return up.clone();
+  const angle = distance / radius;
+  return new T.Vector3(x / distance * Math.sin(angle), Math.cos(angle), z / distance * Math.sin(angle));
+}
+
+export function surfaceFrame(parent, normal, height = 0) {
+  const group = new T.Group();
+  group.position.copy(normal).multiplyScalar(radius + height);
+  group.quaternion.setFromUnitVectors(up, normal);
+  parent.add(group);
+  return group;
+}
+
 const pastel = (color, roughness = 0.68, metalness = 0.06) =>
   new T.MeshStandardMaterial({color, roughness, metalness});
 const glow = color => new T.MeshBasicMaterial({color});
@@ -49,15 +66,15 @@ function lunarTexture() {
   const canvas = document.createElement('canvas');
   canvas.width=1024; canvas.height=512;
   const ctx=canvas.getContext('2d'), random=seededRandom(74);
-  ctx.fillStyle='#b5a6ca'; ctx.fillRect(0,0,1024,512);
+  ctx.fillStyle='#c3bace'; ctx.fillRect(0,0,1024,512);
   for(let i=0;i<95;i++) {
     const x=random()*1024, y=random()*512, r=15+random()*100;
     const gradient=ctx.createRadialGradient(x,y,1,x,y,r);
-    gradient.addColorStop(0,i%2?'#47386375':'#fff0ee83'); gradient.addColorStop(1,'#52457500');
+    gradient.addColorStop(0,i%2?'#62567243':'#fff0ee55'); gradient.addColorStop(1,'#52457500');
     ctx.fillStyle=gradient; ctx.fillRect(x-r,y-r,2*r,2*r);
   }
-  for(let i=0;i<18000;i++) {
-    ctx.fillStyle=i%3?'#36274932':'#fff4f765';
+  for(let i=0;i<9000;i++) {
+    ctx.fillStyle=i%3?'#36274918':'#fff4f730';
     const size=random()*2.8+0.5;
     ctx.fillRect(random()*1024,random()*512,size,size);
   }
@@ -65,93 +82,138 @@ function lunarTexture() {
   texture.colorSpace=T.SRGBColorSpace;
   return texture;
 }
-function stars(scene) {
-  const random=seededRandom(402);
-  const positions=[], colors=[];
-  for(let i=0;i<1500;i++) {
-    const angle=random()*Math.PI*2, vertical=random()*2-1, radial=Math.sqrt(1-vertical*vertical);
-    positions.push(Math.cos(angle)*radial*105,vertical*105,Math.sin(angle)*radial*105);
-    const value=0.26+random()*0.60;
-    colors.push(value*0.88,value*0.8,value);
-  }
-  const geometry=new T.BufferGeometry();
-  geometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));
-  geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));
-  const textureCanvas=document.createElement('canvas');textureCanvas.width=32;textureCanvas.height=32;
-  const ctx=textureCanvas.getContext('2d'), gradient=ctx.createRadialGradient(16,16,0,16,16,16);
-  gradient.addColorStop(0,'#ffffff');gradient.addColorStop(0.16,'#ffffffee');gradient.addColorStop(0.5,'#c2acff54');gradient.addColorStop(1,'#ffffff00');
-  ctx.fillStyle=gradient;ctx.fillRect(0,0,32,32);
-  scene.add(new T.Points(geometry,new T.PointsMaterial({
-    size:2.7, sizeAttenuation:false, vertexColors:true, map:new T.CanvasTexture(textureCanvas),
-    alphaTest:0.05, transparent:true, depthWrite:false,
-  })));
-}
-
-export function makeLandscape(scene) {
-  const random=seededRandom(108);
-  stars(scene);
-  const moon=mesh(scene,new T.SphereGeometry(1,128,72),
-    new T.MeshStandardMaterial({map:lunarTexture(), roughness:0.98, color:0xf5e5ff}),0,-4.2,0);
-  moon.scale.set(radius,4.2,radius);
-
-  // Thin flight paths and a small ringed planet beyond the lunar surface.
-  const orbit=ring(scene,new T.MeshBasicMaterial({color:0xbc9ff1,transparent:true,opacity:0.32}),0,-2.6,0,17.8,0.023);
-  orbit.scale.set(1,0.83,1);orbit.rotation.set(1.23,-0.26,0.37);
-  const orbit2=ring(scene,new T.MeshBasicMaterial({color:0x8c70d6,transparent:true,opacity:0.19}),0,-2.6,0,18.9,0.014);
-  orbit2.rotation.copy(orbit.rotation);orbit2.scale.copy(orbit.scale);
-  const planet=new T.Group();planet.position.set(13.5,1.1,-12.0);scene.add(planet);
-  sphere(planet,pastel(0xa480bf),0,0,0,2.25,2.25,2.25);
-  const planetaryRing=ring(planet, new T.MeshBasicMaterial({color:0xefb6d4,transparent:true,opacity:0.48}),0,0,0,3.15,0.065);
-  planetaryRing.rotation.set(1.2,-0.26,0.28);
-  const outer=ring(planet,new T.MeshBasicMaterial({color:0x936dbe,transparent:true,opacity:0.6}),0,0,0,3.48,0.027);
-  outer.rotation.copy(planetaryRing.rotation);
-
-  const craterDark=pastel(0x7f709a), craterLight=pastel(0xa497b8);
-  const rockMaterials=[pastel(0x9782ae),pastel(0xcbbcce),pastel(0x7e7499)];
-  for (const [x,z,r] of [[-10,-2,1.65],[-9.9,5.9,1.25],[9.9,1.2,1.4],[0,10.8,1.65],[9.1,-7.2,1.15],[-2.2,-10.5,1.2],[4.2,11.3,0.75],[-2.7,8.5,0.62]]) {
-    const y=elevation(x,z);
-    sphere(scene,craterDark,x,y-0.045,z,r,0.08,r*0.84);
-    const edge=ring(scene,craterLight,x,y+0.045,z,r,0.105);edge.scale.y=0.84;
-    edge.rotation.y += z * -0.024;edge.rotation.z = x * 0.024;
-  }
-  for(let i=0;i<170;i++) {
-    const angle=random()*Math.PI*2, distance=3+random()*10.7;
-    const x=Math.cos(angle)*distance, z=Math.sin(angle)*distance;
-    if(stations.some(s=>Math.hypot(s.x-x,s.z-z)<3.1 || Math.hypot(s.x-x,s.z+2.4-z)<1.7))continue;
-    const size=0.07+random()**3*0.42;
-    const stone=mesh(scene,new T.DodecahedronGeometry(size,0),rockMaterials[i%rockMaterials.length],x,elevation(x,z)+size*0.28,z);
-    stone.scale.y=0.5+random()*0.4;stone.rotation.set(random()*3,random()*3,random()*3);
+export function makeLandscape(world) {
+  const random = seededRandom(108);
+  const craterCenters = [];
+  for (let i = 0; i < 48; i++) {
+    const angle = random() * Math.PI * 2;
+    const vertical = random() * 2 - 1;
+    const radial = Math.sqrt(1 - vertical * vertical);
+    const normal = new T.Vector3(Math.cos(angle)*radial,vertical,Math.sin(angle)*radial);
+    if (stations.some(s => normal.angleTo(surfaceNormal(s.x,s.z))*radius < 3.5)) continue;
+    if (normal.y > 0.84) continue;
+    craterCenters.push({normal, size:0.65+random()*1.25});
   }
 
-  const pavement=pastel(0x524466);
-  const guide=glow(0xffdfad);
-  disk(scene,pavement,0,0,0,1.9,0.075);
-  ring(scene,glow(0xc9b1ff),0,0.06,0,1.72,0.026);
-  ring(scene,glow(0xecb2ea),0,0.057,0,1.26,0.014);
-  for(const s of stations){
-    const from=new T.Vector3(0,0,0), to=new T.Vector3(s.x,0,s.z+2.4);
-    const direction=to.clone().normalize(), side=new T.Vector3(direction.z,0,-direction.x);
-    const steps=Math.ceil(to.length()/0.45);
-    for(let i=4;i<steps;i++){
-      const pos=from.clone().lerp(to,i/steps);pos.y=elevation(pos.x,pos.z)+0.038;
-      const slab=box(scene,pavement,pos.x,pos.y,pos.z,0.95,0.07,0.40);slab.rotation.y=Math.atan2(direction.x,direction.z);
-      if(i%2===0) for(const sign of [-1,1]){
-        const marker=pos.clone().addScaledVector(side,sign*0.46);
-        box(scene,guide,marker.x,marker.y+0.04,marker.z,0.085,0.055,0.085);
+  const geometry = new T.SphereGeometry(radius,160,100);
+  const vertices = geometry.attributes.position;
+  const point = new T.Vector3();
+  for (let i=0; i<vertices.count; i++) {
+    point.fromBufferAttribute(vertices,i).normalize();
+    let depth=0;
+    for (const crater of craterCenters) {
+      const distance=point.distanceTo(crater.normal)*radius/crater.size;
+      if(distance>1.5) continue;
+      depth += -0.18*Math.exp(-distance*distance*3)
+        + 0.08*Math.exp(-(((distance-0.92)/0.17)**2));
+    }
+    point.multiplyScalar(radius+depth);
+    vertices.setXYZ(i,point.x,point.y,point.z);
+  }
+  geometry.computeVertexNormals();
+  mesh(world,geometry,new T.MeshStandardMaterial({
+    map:lunarTexture(),roughness:0.93,color:0xe2d8ea,
+  }),0,0,0);
+
+  const craterInside=pastel(0x897a9e), craterEdge=pastel(0xb4a5c8);
+  for (const crater of craterCenters) {
+    const frame=surfaceFrame(world,crater.normal,-0.055);
+    const lip=ring(frame,craterEdge,0,0,0,crater.size,0.055);
+    lip.scale.y=0.91;
+    const basin=mesh(frame,new T.CircleGeometry(crater.size*0.77,48),craterInside,0,-0.062,0);
+    basin.rotation.x=-Math.PI/2;
+  }
+
+  const stones=[pastel(0xafa1c1),pastel(0xc7b9cf),pastel(0x81738f)];
+  const rockGeometry=new T.DodecahedronGeometry(1,0);
+  const crystalGeometry=new T.ConeGeometry(0.24,1.15,5);
+  const crystals=[
+    new T.MeshStandardMaterial({color:0xb7e5dd,emissive:0x365c60,emissiveIntensity:0.5,roughness:0.3,metalness:0.16}),
+    new T.MeshStandardMaterial({color:0xd9baff,emissive:0x5c3588,emissiveIntensity:0.4,roughness:0.35}),
+  ];
+  for(let i=0;i<210;i++){
+    const angle=random()*Math.PI*2, vertical=random()*2-1;
+    const normal=new T.Vector3(Math.cos(angle)*Math.sqrt(1-vertical*vertical),vertical,Math.sin(angle)*Math.sqrt(1-vertical*vertical));
+    if(stations.some(s=>normal.angleTo(surfaceNormal(s.x,s.z))*radius<3.5) || normal.y>0.90)continue;
+    const frame=surfaceFrame(world,normal,-0.025);
+    const size=0.12+random()**2*0.51;
+    const rock=mesh(frame,rockGeometry,stones[i%3],0,size*0.3,0);
+    rock.scale.set(size,size*0.65,size);rock.rotation.y=random()*Math.PI;
+    if(i%5===0){
+      for(let j=0;j<3;j++){
+        const crystal=mesh(frame,crystalGeometry,crystals[i%2],(j-1)*0.24,0.27+j*0.09,0.20);
+        crystal.scale.setScalar(0.65+random()*0.8);
+        crystal.rotation.z=(j-1)*0.20;
       }
     }
   }
 
-  const beacon=mesh(scene,new T.OctahedronGeometry(0.43),glow(0xffdfa2),0,0.8,0);
+  // Pavement and markers follow great-circle routes to the four doorways.
+  const pavement=pastel(0x84748e), guide=glow(0xffdfad);
+  const plaza=surfaceFrame(world,up,0.025);
+  disk(plaza,pastel(0x554667),0,0,0,1.6,0.10);
+  ring(plaza,glow(0xc9b1ff),0,0.065,0,1.45,0.022);
+  ring(plaza,glow(0xecb2ea),0,0.065,0,1.06,0.016);
+  for(const station of stations){
+    const target=surfaceNormal(station.x,station.z);
+    const frame=new T.Quaternion().setFromUnitVectors(up,target);
+    const door=target.clone().multiplyScalar(radius)
+      .add(new T.Vector3(0,0,2.5*stationScale).applyQuaternion(frame)).normalize();
+    const route=new T.Quaternion().setFromUnitVectors(up,door);
+    const steps=Math.ceil(up.angleTo(door)*radius/0.45);
+    for(let i=4;i<=steps;i++){
+      const normal=up.clone().applyQuaternion(new T.Quaternion().slerp(route,i/steps));
+      const local=surfaceFrame(world,normal,0.014);
+      const tangent=door.clone().addScaledVector(normal,-door.dot(normal)).normalize();
+      tangent.applyQuaternion(local.quaternion.clone().invert());
+      local.rotateY(Math.atan2(tangent.x,tangent.z));
+      box(local,pavement,0,0,0,0.94,0.045,0.38);
+      if(i%3===0)for(const side of [-1,1]){
+        disk(local,shade,side*0.64,0.12,0,0.063,0.25);
+        sphere(local,guide,side*0.64,0.27,0,0.065,0.065,0.065);
+      }
+    }
+  }
+  for(const [x,z,kind] of [[-9,1,'solar'],[8,0,'dish'],[0,-10,'solar'],[10,10,'flag'],[-12,-10,'flag'],[3,9,'rover']]){
+    const frame=surfaceFrame(world,surfaceNormal(x,z));
+    if(kind==='solar'){
+      disk(frame,shade,0,0.48,0,0.09,0.96);
+      const panel=new T.Group();panel.position.y=0.9;panel.rotation.x=-0.34;frame.add(panel);
+      box(panel,milk,0,0,0,2,0.12,1.25);
+      for(let col=0;col<4;col++)for(let row=0;row<2;row++)
+        box(panel,pastel(0x51458a,0.3,0.4),-0.72+col*0.48,0.08,-0.3+row*0.6,0.42,0.02,0.52);
+    }else if(kind==='dish'){
+      disk(frame,shade,0,0.5,0,0.12,1);
+      const bowl=new T.Group();bowl.position.y=1;bowl.rotation.z=-0.5;frame.add(bowl);
+      const dish=mesh(bowl,new T.SphereGeometry(0.85,24,12,0,Math.PI*2,0,0.42*Math.PI),
+        new T.MeshStandardMaterial({color:0xd1c8e2,side:T.DoubleSide}),0,0.6,0);
+      dish.rotation.x=Math.PI;
+      mast(bowl,shade,glow(0x93eddf),0,0.1,0,1.0);
+    }else if(kind==='flag'){
+      disk(frame,milk,0,1.05,0,0.045,2.1);
+      box(frame,pastel(0xb79bda),0.4,1.75,0,0.8,0.48,0.04);
+      const emblem=mesh(frame,new T.OctahedronGeometry(0.14),glow(0xffdfaa),0.38,1.75,0.055);
+      emblem.scale.y=1.25;
+    }else{
+      box(frame,milk,0,0.4,0,0.9,0.40,1.15);
+      for(const x of [-0.56,0.56])for(const z of [-0.35,0.35]){
+        const wheel=disk(frame,shade,x,0.23,z,0.24,0.17);wheel.rotation.z=Math.PI/2;
+      }
+      box(frame,glass,0,0.66,-0.06,0.72,0.15,0.58);
+      mast(frame,milk,glow(0xffd4a0),0.28,0.6,-0.3,0.7);
+    }
+  }
+  const beacon=mesh(plaza,new T.OctahedronGeometry(0.35),glow(0xffdfa2),0,0.8,0);
   beacon.scale.y=1.5;
-  const pedestal=disk(scene,shade,0,0.12,0,0.45,0.24);
-  ring(scene,glow(0xfcd1ff),0,pedestal.position.y+0.14,0,0.35,0.026);
+  disk(plaza,shade,0,0.11,0,0.39,0.22);
   return beacon;
 }
 
 export function makeStation(scene, station) {
   const {id,x,z,tint}=station;
-  const model=new T.Group();model.position.set(x,elevation(x,z)+0.14,z);scene.add(model);
+  const normal=surfaceNormal(x,z);
+  const model=surfaceFrame(scene,normal,0.10);
+  model.scale.setScalar(stationScale);
   const color=pastel(tint,0.46,0.17), light=glow(tint);
   disk(model,shade,0,-0.13,0.28,2.35,0.22);
   ring(model,light,0,-0.008,0.28,2.18,0.032);
@@ -207,7 +269,11 @@ export function makeStation(scene, station) {
     ring(model,light,0,3.10,-0.17,1.04,0.046);
     mast(model,shade,light,0.52,3.34,-0.37,0.51);
   }
-  return {...station, doors, label:new T.Vector3(x,model.position.y+height+0.2,z), doorZ:z+1.9};
+  const label=new T.Object3D();label.position.set(0,height+0.32,0);model.add(label);
+  const doorNormal=normal.clone().multiplyScalar(radius).add(
+    new T.Vector3(0,0,2.0*stationScale).applyQuaternion(model.quaternion),
+  ).normalize();
+  return {...station,model,normal,doors,label,doorNormal,inverseFrame:model.quaternion.clone().invert()};
 }
 
 function mast(group, material, light, x,y,z,h) {

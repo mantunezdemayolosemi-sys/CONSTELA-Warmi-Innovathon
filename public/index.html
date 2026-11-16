@@ -56,10 +56,14 @@
         <p id="moon-error" class="moon-error" role="alert" hidden></p>
         <button type="button" id="moon-retry" class="secondary-button" hidden>Volver a intentar</button>
       </aside>
-      <div id="moon-stage" class="moon-stage">
+      <div id="moon-stage" class="moon-stage" tabindex="-1" aria-label="Mundo lunar. WASD para caminar, Espacio para saltar y E para entrar.">
         <div class="moon-viewport"><div class="moon-labels" aria-hidden="true"></div></div>
         <p id="moon-loading" class="moon-loading" role="status">Preparando tu luna…</p>
         <div class="moon-controls" hidden>
+          <div class="moon-camera-controls" aria-label="Vista y movimiento ambiental">
+            <button type="button" data-moon-action="overview">Acercarme</button>
+            <button type="button" data-moon-action="calm" aria-pressed="false">Calma</button>
+          </div>
           <div class="moon-key-guide" aria-label="Controles de teclado">
             <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Moverse</span>
             <span><kbd>Espacio</kbd> Saltar</span>

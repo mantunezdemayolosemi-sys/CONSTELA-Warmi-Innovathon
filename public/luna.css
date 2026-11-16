@@ -61,7 +61,7 @@
 .moon-access button,.moon-touch button{color:#190d2a;background:#d6bbff;border:1px solid #b291e5;border-radius:7px;min-height:34px;padding:5px 8px;font:700 12px/1.1 system-ui,sans-serif;cursor:pointer}
 .moon-access button:disabled{display:none}
 .moon-touch{display:none}
-.moon-view[data-pending] .moon-stations,.moon-view[data-pending] .moon-progress{visibility:hidden}
+.moon-view[data-pending] .moon-stations,.moon-view[data-pending] .moon-progress,.moon-view[data-pending] .moon-labels{visibility:hidden}
 .portfolio-view{width:100%;padding-block:12px 24px}
 .portfolio-view>.explore-description{max-width:62ch}
 .portfolio-feedback{font-size:14px;color:#dcc9f2;margin:12px 0}
@@ -116,6 +116,8 @@ button.portfolio-event-link{border:1px solid #694b8e;border-radius:8px;padding:8
 }
 @media(max-width:400px){
   .moon-sidebar{gap:5px 7px;padding:12px}
+  .moon-level-emblem{display:none}
+  .moon-level strong{white-space:nowrap}
   .auth-layout.explore-layout:has(.moon-view:not([hidden])){padding-inline:9px}
   .moon-stations{gap:4px}
   .moon-progress{padding-inline:8px}
@@ -128,4 +130,15 @@ button.portfolio-event-link{border:1px solid #694b8e;border-radius:8px;padding:8
   .moon-stage{min-height:clamp(355px,55svh,455px)}
   .moon-pad{grid-template-columns:repeat(3,44px)}
   .moon-touch button{min-width:44px;height:44px}
+}
+
+.moon-stage:focus{outline:none}
+.moon-camera-controls{position:absolute;top:14px;left:14px;display:flex;gap:6px}
+.moon-camera-controls button{font:600 11px/1.2 system-ui,sans-serif;color:#e9d9fa;background:#171024e6;border:1px solid #685084;border-radius:9px;padding:9px 11px;min-height:34px}
+.moon-camera-controls button[aria-pressed=true]{background:#3d2c55;border-color:#bea1e3}
+.moon-access{top:auto;bottom:62px;left:50%;right:auto;transform:translateX(-50%);white-space:nowrap;background:#151020e3}
+@media(max-width:600px){
+  .moon-camera-controls{top:8px;left:8px}
+  .moon-access{bottom:112px;font-size:10px;max-width:calc(100% - 16px);white-space:normal;text-align:center}
+  .moon-stage{min-height:440px}
 }
