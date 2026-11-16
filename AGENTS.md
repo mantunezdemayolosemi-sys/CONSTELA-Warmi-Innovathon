@@ -4,7 +4,7 @@
 
 Constela es el prototipo web del Grupo 1 de la Warmi Innovathon, Eje 2: orientación laboral, talento visible y autonomía económica. Antes de proponer cambios, leer [README.md](README.md), [docs/RETO.md](docs/RETO.md), [docs/constitution.md](docs/constitution.md) y la spec relacionada en [specs/](specs/README.md).
 
-La aplicación ya existía al adoptar SDD. Las specs 001 y 002 describen su comportamiento implementado y requieren revisión humana; no afirmar que fueron aprobadas previamente. La rama funcional es `codex/registro-usuarias` y su PR #1 sigue pendiente de merge. La adaptación documental se desarrolla en `codex/adaptar-plantilla-warmi`.
+La aplicación ya existía al adoptar SDD. Las specs 001 y 002 describen su comportamiento implementado y requieren revisión humana; no afirmar que fueron aprobadas previamente. La versión integrada, incluida la luna esférica y el portafolio, está en `main`. El 16 de noviembre de 2026 Maricielo pidió subir esta versión a `main` y trabajar desde esa rama en adelante. No asumir que los PRs históricos fueron revisados o aprobados.
 
 ## Comandos y estructura
 
@@ -20,9 +20,9 @@ La aplicación ya existía al adoptar SDD. Las specs 001 y 002 describen su comp
 1. Relacionar cada nuevo comportamiento con una spec, un requisito y una tarea. Si falta una decisión funcional, aclararla o actualizar la spec antes de implementar ese comportamiento. Se puede avanzar trabajo independiente de la aclaración.
 2. Mantener cambios acotados al pedido. La visión en `docs/ALCANCE.md` no autoriza a implementar automáticamente avatar, scraping, retos, portafolio ni pagos.
 3. Explicar qué cambiará y por qué en español. Evitar afirmar tareas, aprobaciones, issues, despliegues o pruebas que no existan.
-4. Usar ramas y PRs. Conservar el historial y los cambios ajenos; no usar `push --force`, `reset --hard`, `clean -fd` ni descartes masivos sin autorización explícita.
+4. Trabajar directamente en `main`, según la instrucción de Maricielo. Antes de integrar o publicar, actualizar las referencias remotas y conservar el trabajo ajeno. Usar ramas y PRs solo si se solicitan. Conservar el historial; no usar `push --force`, `reset --hard`, `clean -fd` ni descartes masivos sin autorización explícita.
 5. Comprobar la autorización de la conversación antes de acciones remotas. Una acción ya autorizada no requiere una confirmación repetida. No modificar colaboradores, permisos, configuración de protección ni credenciales como parte de una tarea ordinaria de código.
-6. El equipo decide reparto, revisiones y merge. No asignar tareas a personas, aprobar PRs propios, fusionar PRs ni cerrar trabajo ajeno por iniciativa del asistente.
+6. El equipo decide reparto, revisiones y publicación. No asignar tareas a personas, aprobar PRs propios ni cerrar trabajo ajeno por iniciativa del asistente. La instrucción de trabajar en `main` no autoriza por sí sola cada push; comprobar el alcance autorizado en la conversación.
 
 ## Código y datos
 

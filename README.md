@@ -24,7 +24,7 @@ Constela es una plataforma web para descubrir habilidades, practicarlas y conver
 
 **¿Qué la hace distinta?** «La estrella que no veías» compara lo que la usuaria reconocía al inicio con las habilidades que aparecieron en sus decisiones. Los resultados son posibilidades por explorar, no un diagnóstico ni una certificación.
 
-La versión integrada reúne la portada visual de Tyra, el acceso y perfil privado de Supabase, galaxias, misión de habilidades, eventos públicos de Lima y retos/empleos simulados. «Mi universo» conecta los pasos y muestra las estrellas, los puntos y el nivel. Empresas y emprendedoras tienen su panel para publicar simulaciones. La luna 3D da acceso a Eventos, Retos, Portafolio y Perfil. El portafolio reúne prácticas y participaciones registradas por la usuaria. La personalización del avatar y la evaluación externa se describen en [siguientes etapas](docs/ALCANCE.md).
+La versión integrada reúne la portada visual de Tyra, el acceso y perfil privado de Supabase, galaxias, misión de habilidades, eventos públicos de Lima y retos/empleos simulados. «Mi universo» conecta los pasos y muestra las estrellas, los puntos y el nivel. Empresas y emprendedoras tienen su panel para publicar simulaciones. La luna esférica 3D da acceso a Eventos, Retos, Portafolio y Perfil. La astronauta recorre su superficie mientras el mundo y la cámara acompañan sus pasos; cráteres, cristales, estaciones espaciales y estrellas fugaces completan la experiencia. El portafolio reúne prácticas y participaciones registradas por la usuaria. La personalización del avatar y la evaluación externa se describen en [siguientes etapas](docs/ALCANCE.md).
 
 ## Demo
 
@@ -34,7 +34,7 @@ Pruébala en tres pasos:
 
 1. Inicia el servidor con `npm start` y abre la [portada de Constela](http://localhost:3000/). Desde «Crear cuenta» se abre el registro conectado a Supabase.
 2. Confirma el correo e [inicia sesión](http://localhost:3000/ingresar). El proveedor de correo actual admite pruebas con direcciones autorizadas del equipo de Supabase; falta SMTP para otras usuarias.
-3. Abre [Mi luna](http://localhost:3000/luna). Si es tu primera vez, elige galaxias y termina el test. Mueve a la astronauta con WASD o flechas, salta con Espacio y pulsa E junto a una puerta. También puedes abrir cada estación desde el menú. En Portafolio puedes revisar tus prácticas, anotar tus participaciones y descargar el PDF.
+3. Abre [Mi luna](http://localhost:3000/luna). Si es tu primera vez, elige galaxias y termina el test. Mueve a la astronauta con WASD o flechas, salta con Espacio y pulsa E junto a una puerta. También puedes abrir cada estación desde el menú. Usa «Acercarme» o «Vista completa» para cambiar la cámara y «Calma» para detener el movimiento ambiental. En Portafolio puedes revisar tus prácticas y descargar el PDF; el registro de participaciones en eventos se habilita al aplicar la migración 008.
 
 También puedes abrir **Retos** para explorar seis casos ficticios, guardar los que quieres practicar y encender estrellas al registrar una propuesta y reflexión, o **Empleos** para ver dos vacantes de ejemplo. Al crear una cuenta puedes elegir **Usuaria**, **Empresa** o **Emprendedora**. Las dos últimas requieren organización y entran a **Mis publicaciones** después de confirmar el correo e iniciar sesión. Todas las publicaciones son simulaciones; no se reciben CV ni postulaciones reales. [Recorridos y permisos](docs/RETOS.md).
 
@@ -56,6 +56,9 @@ Las casillas indican implementación existente, no aprobación humana ni desplie
 - [x] Recomendaciones por intereses, catálogo completo, filtros, enlace original y fecha de consulta. (003:RF-7–8)
 - [x] Registro por tipo de cuenta, retos guardados, propuestas privadas con estrellas de práctica y publicación de retos/empleos simulados con permisos por propietario. (004:RF-1–9)
 - [x] Portada de Tyra integrada, ruta guiada y niveles a partir de prácticas: 25 puntos por estrella y un nivel cada 75 puntos. (005:RF-1–5)
+- [x] Mundo lunar esférico 3D con astronauta, estaciones, colisiones, salto y puertas; controles de teclado, táctiles y accesos directos. (006:RF-1–3, RF-6)
+- [x] Giro lento, cámara de seguimiento, decoración lunar, estrellas y fugaces ocasionales; vista completa y modo Calma. (006:RF-6–7)
+- [x] Portafolio privado con propuestas, aprendizajes y descarga en PDF. El registro de eventos requiere la migración 008, pendiente en el Supabase compartido. (006:RF-4–5)
 
 La demo muestra únicamente sedes presenciales o híbridas identificadas en **Lima Metropolitana, Perú**, incluso en «Todo Lima». La cobertura inicial está concentrada en tecnología. No se inventan oportunidades para llenar otras galaxias. Fechas de eventos y afinidad temática no garantizan inscripción abierta ni elegibilidad. [Fuentes, datos y funcionamiento](docs/OPORTUNIDADES.md).
 
@@ -75,18 +78,16 @@ Detalles y estado de revisión: [índice de especificaciones](specs/README.md).
 
 ## Cómo ejecutarlo
 
-La versión con la luna se desarrolla en `codex/luna-portafolio`. Trabaja desde esa rama local para probar los pasos de arriba.
-
-La integración está en `integracion-galaxia`, basada en `codex/retos-empresas` y con la portada del PR #5 de Tyra. `main` todavía no contiene la aplicación del PR #1. La integración requiere revisión del equipo.
+La versión integrada está en `main`. Desde el 16 de noviembre de 2026 trabajamos directamente sobre esa rama, por decisión de Maricielo. Antes de empezar, actualiza tu copia y coordina los archivos que modificarás con el equipo.
 
 ```bash
-git clone --branch integracion-galaxia https://github.com/mantunezdemayolosemi-sys/CONSTELA-Warmi-Innovathon.git CONSTELA
+git clone --branch main https://github.com/mantunezdemayolosemi-sys/CONSTELA-Warmi-Innovathon.git CONSTELA
 cd CONSTELA
 npm ci
 cp .env.example .env
 ```
 
-Completa `.env` en tu computadora con la URL y la clave **publishable** de un proyecto Supabase autorizado. Nunca copies `.env` al repositorio ni uses una clave administrativa. En un proyecto nuevo aplica las migraciones de `supabase/migrations/` por orden de nombre. En un proyecto que ya usa Constela, aplica solo las que falten. La versión de la luna requiere la migración `202611160008_lunar_portfolio.sql` para habilitar el portafolio.
+Completa `.env` en tu computadora con la URL y la clave **publishable** de un proyecto Supabase autorizado. Nunca copies `.env` al repositorio ni uses una clave administrativa. En un proyecto nuevo aplica las migraciones de `supabase/migrations/` por orden de nombre. En un proyecto que ya usa Constela, aplica solo las que falten. La migración `202611160008_lunar_portfolio.sql` habilita el registro de participaciones en eventos y la lectura de retos cerrados en el portafolio. Sigue pendiente de aplicar en el Supabase compartido; subir el código a GitHub no ejecuta migraciones.
 
 ```bash
 npm start
@@ -132,9 +133,10 @@ Nombre propio del equipo, mentora, usuarios de GitHub restantes y tablero de Pro
 ## Cómo trabajamos
 
 - Cada cambio funcional se relaciona con una spec y requisitos identificables.
-- Las nuevas tareas se gestionan con un issue, una rama y un PR revisado por una compañera.
+- Trabajamos directamente en `main`: `git pull --ff-only origin main`, cambios y comprobaciones, commit y `git push origin main`. Si el pull no puede avanzar, integramos los cambios sin sobrescribir el trabajo ajeno.
+- Coordinamos las tareas y revisiones entre compañeras; las ramas y PRs quedan como opción cuando el equipo los solicite.
 - El trabajo histórico conserva el vínculo al [PR #1](https://github.com/mantunezdemayolosemi-sys/CONSTELA-Warmi-Innovathon/pull/1); no se inventan issues ni aprobaciones retroactivas.
-- La IA asiste; el equipo decide responsabilidades, aprobación y merge.
+- La IA asiste; el equipo decide responsabilidades y autoriza la publicación. Trabajar en `main` no implica publicar automáticamente cada cambio.
 
 Reglas: [CONTRIBUTING.md](CONTRIBUTING.md) y [AGENTS.md](AGENTS.md). Flujo: [SDD](docs/FLUJO-SDD.md). Detalle de la incorporación del kit: [adaptación](docs/ADAPTACION-PLANTILLA.md).
 
@@ -146,7 +148,8 @@ Reglas: [CONTRIBUTING.md](CONTRIBUTING.md) y [AGENTS.md](AGENTS.md). Flujo: [SDD
 - [x] Repositorio público y archivos de entorno excluidos de Git.
 - [ ] Confirmar briefing, fechas, criterios del jurado y mentora.
 - [ ] Confirmar GitHub de cada integrante y acordar tareas y revisiones.
-- [ ] Revisar y aprobar specs y PRs; integrar a `main` mediante revisión humana.
+- [x] Integrar la versión funcional y la luna 3D en `main` por solicitud de Maricielo.
+- [ ] Completar la revisión humana de specs y del trabajo histórico; la integración no equivale a aprobarlo todo.
 - [ ] Crear tablero y tareas del siguiente incremento.
 - [ ] Configurar SMTP y publicar demo HTTPS funcional.
 - [ ] Ensayar pitch y demo, contrastando cifras de investigación con sus fuentes.

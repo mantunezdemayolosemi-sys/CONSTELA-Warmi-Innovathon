@@ -9,13 +9,13 @@ Adaptación del kit: [créditos](../NOTICE.md). SDD significa acordar el comport
 3. **Clarificación:** registrar preguntas, resolver las decisiones que bloquean el trabajo y revisar la spec en equipo.
 4. **Plan:** describir stack, módulos, datos y estrategia de pruebas. Mantener el stack actual salvo una razón acordada.
 5. **Tareas e issues:** dividir por área, declarar dependencias y acordar quién las toma. No inventar responsables ni issues.
-6. **Implementación y comprobación:** trabajar en una rama y conservar evidencia de lo comprobado.
-7. **Revisión y merge:** abrir un PR; una compañera revisa y el equipo decide integrar.
+6. **Implementación y comprobación:** actualizar `main`, trabajar en esa rama y conservar evidencia de lo comprobado, según la decisión de Maricielo del 16 de noviembre de 2026.
+7. **Revisión y publicación:** revisar el diff, ejecutar las comprobaciones y publicar en `main` cuando esté autorizado. Usar una rama y un PR cuando el equipo los solicite.
 8. **Demo y pitch:** verificar el recorrido en el entorno de presentación y explicar con claridad qué está construido.
 
 ## Cómo se incorpora el trabajo anterior
 
-Las specs 001 y 002 se documentaron después de implementar el registro y el test. Las casillas terminadas reflejan código y pruebas existentes. El PR #1 sirve como referencia histórica; su revisión y merge continúan pendientes. A partir de esta adaptación, los nuevos comportamientos se acuerdan primero en su spec.
+Las specs 001 y 002 se documentaron después de implementar el registro y el test. Las casillas terminadas reflejan código y pruebas existentes. El PR #1 sirve como referencia histórica. La aplicación se integró en `main`; esto no acredita revisión ni aprobación del PR o de sus specs. A partir de esta adaptación, los nuevos comportamientos se acuerdan primero en su spec.
 
 ## Preguntas útiles para trabajar con un asistente
 
