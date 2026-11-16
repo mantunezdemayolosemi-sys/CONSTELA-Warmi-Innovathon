@@ -140,18 +140,6 @@ Nombre propio del equipo, mentora, usuarios de GitHub restantes y tablero de Pro
 
 Reglas: [CONTRIBUTING.md](CONTRIBUTING.md) y [AGENTS.md](AGENTS.md). Flujo: [SDD](docs/FLUJO-SDD.md). Detalle de la incorporación del kit: [adaptación](docs/ADAPTACION-PLANTILLA.md).
 
-## Checklist de entrega
-
-- [x] Problema, solución, integrantes y estado del prototipo documentados.
-- [x] Specs, planes, tareas y matriz de pruebas del comportamiento existente.
-- [x] Comandos locales de comprobación y CI existentes.
-- [x] Repositorio público y archivos de entorno excluidos de Git.
-- [ ] Confirmar briefing, fechas, criterios del jurado y mentora.
-- [ ] Confirmar GitHub de cada integrante y acordar tareas y revisiones.
-- [x] Integrar la versión funcional y la luna 3D en `main` por solicitud de Maricielo.
-- [ ] Completar la revisión humana de specs y del trabajo histórico; la integración no equivale a aprobarlo todo.
-- [ ] Crear tablero y tareas del siguiente incremento.
-- [ ] Configurar SMTP y publicar demo HTTPS funcional.
 - [ ] Ensayar pitch y demo, contrastando cifras de investigación con sus fuentes.
 - [ ] Completar aportes y PRs revisados de todas las integrantes.
 
