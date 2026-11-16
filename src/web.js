@@ -5,9 +5,11 @@ import { ServiceError } from './supabase.js';
 import { registerBody, loginBody, profileBody, accepted } from './validation.js';
 import { discoveryBody, summarizeDiscovery, skills, missions } from './discovery.js';
 import { galaxies, interestsBody } from './interests.js';
-import { opportunitiesQuery, recommend } from './opportunities.js';
+import { opportunitiesQuery, recommend, safePublicUrl } from './opportunities.js';
 import { publisher, communityQuery, publicationBody, practiceBody, postId, filterCommunity, suggestChallenge } from './community.js';
 import { summarizeProgress } from '../public/progreso.js';
+import { catalogEvent, eventId, eventParticipation, eventReflection, portfolioEntries } from './portfolio.js';
+import { renderPortfolioPdf } from './portfolio-pdf.js';
 
 const accessName = 'constela_access';
 const refreshName = 'constela_refresh';
@@ -20,8 +22,12 @@ export async function registerWeb(app, { gateway, opportunities, publicOrigin, s
     index: false,
     dotfiles: 'deny',
   });
+  for (const name of ['three.module.js', 'three.core.js']) {
+    app.get('/vendor/' + name, (_request, reply) =>
+      reply.sendFile(name, fileURLToPath(new URL('../node_modules/three/build/', import.meta.url))));
+  }
   app.get('/', (_request, reply) => reply.sendFile('portada.html'));
-  for (const path of ['/ingresar', '/registro', '/cuenta', '/confirmacion', '/descubrir', '/galaxias', '/oportunidades', '/retos', '/empleos', '/publicar', '/universo', '/explorar']) {
+  for (const path of ['/ingresar', '/registro', '/cuenta', '/confirmacion', '/descubrir', '/galaxias', '/oportunidades', '/retos', '/empleos', '/publicar', '/universo', '/explorar', '/luna', '/portafolio']) {
     app.get(path, (_request, reply) => reply.sendFile('index.html'));
   }
 
@@ -112,6 +118,43 @@ export async function registerWeb(app, { gateway, opportunities, publicOrigin, s
       const byId = new Map(posts.filter(post => post.kind === 'challenge').map(post => [post.id,post.title]));
       return {interests,discovery,skills,galaxies,suggestion,missionCount:missions.length,progress:summarizeProgress(practices),
         practices:practices.map(({post_id,completed_at,practiced_skills}) => ({post_id,completed_at,practiced_skills,title:byId.get(post_id)??null}))};
+    });
+    async function portfolio(token, userId) {
+      const [practices, events] = await Promise.all([
+        gateway.getPortfolioPractices(token, userId), gateway.getPortfolioEvents(token, userId),
+      ]);
+      return {entries:portfolioEntries(practices, events??[]), can_record_events:events!==null};
+    }
+    web.get('/web/portfolio', async request => {
+      const {token,user}=await communityIdentity(request,'learner');
+      const id = request.query.event === undefined ? null : eventId.parse(request.query.event);
+      return {...await portfolio(token, user.id), event: id ? catalogEvent(opportunities.get(), id) : null};
+    });
+    web.put('/web/portfolio/events/:id', async (request, reply) => {
+      const {token,user}=await communityIdentity(request,'learner');
+      const id = eventId.parse(request.params.id);
+      const {attended_on, learning, ...manual} = eventParticipation.parse(request.body);
+      const snapshot = opportunities.get();
+      const metadata = catalogEvent(snapshot, id) ?? (manual.title ? {
+        event_id: id, title: manual.title, kind: manual.kind, source_url: safePublicUrl(manual.source_url),
+      } : null);
+      if (!metadata) throw new ServiceError(404, 'EVENT_NOT_FOUND', 'Esta ficha ya no está en el catálogo. Puedes registrarla como evento anterior.');
+      const starts = snapshot.items.find(item => item.id === id)?.starts_at?.slice(0, 10);
+      if (starts && attended_on < starts)
+        throw new ServiceError(400, 'INVALID_EVENT_DATE', 'Usa la fecha en que participaste, a partir del inicio del evento.');
+      await gateway.registerPortfolioEvent(token, user.id, {...metadata, attended_on, learning});
+      return reply.code(204).send();
+    });
+    web.patch('/web/portfolio/events/:id', async (request, reply) => {
+      const {token,user}=await communityIdentity(request,'learner');
+      await gateway.updatePortfolioEvent(token, user.id, eventId.parse(request.params.id), eventReflection.parse(request.body));
+      return reply.code(204).send();
+    });
+    web.get('/web/portfolio.pdf', async (request, reply) => {
+      const {token,user,profile}=await communityIdentity(request,'learner');
+      const {entries} = await portfolio(token, user.id);
+      const pdf = await renderPortfolioPdf(profile.display_name, entries);
+      return reply.type('application/pdf').header('Content-Disposition', 'attachment; filename="portafolio-constela.pdf"').send(pdf);
     });
     web.get('/web/community/:id/practice',async request=>{
       const {token,user}=await communityIdentity(request,'learner');

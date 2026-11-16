@@ -2,6 +2,8 @@ import { createDiscovery } from './discovery.js';
 import { createExplorer } from './explore.js';
 import { createCommunity } from './community.js';
 import { createUniverse } from './universo.js';
+import { createMoon } from './luna.js';
+import { createPortfolio } from './portafolio.js';
 
 const $ = (id) => document.getElementById(id);
 let currentUser = null;
@@ -19,7 +21,7 @@ const confirmation = $('register-confirm');
 if (location.hash) history.replaceState(null, '', location.pathname + location.search);
 $('year').textContent = String(new Date().getFullYear());
 
-async function send(path, { method = 'GET', body, refresh = false } = {}) {
+async function send(path, { method = 'GET', body, refresh = false, format = 'json' } = {}) {
   let response;
   try {
     response = await fetch(path, {
@@ -31,13 +33,14 @@ async function send(path, { method = 'GET', body, refresh = false } = {}) {
   } catch {
     throw new Error('No pudimos conectarnos. Revisa tu conexión e inténtalo de nuevo.');
   }
+  if (response.ok && format === 'blob') return response.blob();
   const data = response.status === 204 ? null : await response.json().catch(() => null);
   if (response.status === 401 && refresh && data?.error === 'SESSION_EXPIRED') {
     if (!refreshPromise) {
       refreshPromise = send('/web/refresh', { method: 'POST', body: {} }).finally(() => { refreshPromise = null; });
     }
     await refreshPromise;
-    return send(path, { method, body });
+    return send(path, { method, body, format });
   }
   if (!response.ok) {
     const error = new Error(data?.message || 'No pudimos completar la operación. Inténtalo otra vez.');
@@ -50,14 +53,14 @@ async function send(path, { method = 'GET', body, refresh = false } = {}) {
 const discovery = createDiscovery({
   send,
   showAccount: () => renderAccount(currentUser),
-  showOpportunities: () => goSpace('/universo'),
+  showOpportunities: () => goSpace('/luna'),
   sessionExpired: () => {
     renderMode('login');
     showAuthError('Tu sesión terminó. Inicia sesión otra vez para continuar tu misión.');
   },
 });
 const explorer = createExplorer({
-  send, showAccount: () => renderAccount(currentUser),
+  send, showAccount: () => renderAccount(currentUser), openPortfolio: id => goSpace('/portafolio?evento='+encodeURIComponent(id)),
   showDiscovery: () => goSpace('/descubrir'), showOpportunities: () => goSpace('/oportunidades'),
   navigate: path => { changeAddress(path); activateSpace(path); },
   sessionExpired: () => { renderMode('login'); showAuthError('Tu sesión terminó. Inicia sesión para continuar.'); },
@@ -67,37 +70,60 @@ const community = createCommunity({send,
   sessionExpired:()=>{renderMode('login');showAuthError('Tu sesión terminó. Inicia sesión para continuar.');},
 });
 const isPublisher=()=>['company','entrepreneur'].includes(currentUser?.profile.account_type);
-const privatePaths = ['/universo','/explorar','/cuenta','/galaxias','/descubrir','/oportunidades','/retos','/empleos','/publicar'];
+const privatePaths = ['/luna','/portafolio','/universo','/explorar','/cuenta','/galaxias','/descubrir','/oportunidades','/retos','/empleos','/publicar'];
 const universe = createUniverse({send, navigate:goSpace, sessionExpired:() => {
   renderMode('login'); showAuthError('Tu sesión terminó. Inicia sesión para continuar.');
 }});
 
+function sessionExpired() {
+  renderMode('login');
+  showAuthError('Tu sesión terminó. Inicia sesión para continuar.');
+}
+const moon=createMoon({send,navigate:goSpace,sessionExpired});
+const portfolio=createPortfolio({send,navigate:goSpace,sessionExpired});
+
 function closeSpaces() {
-  discovery.close(); explorer.close(); community.close(); universe.close();
+  discovery.close(); explorer.close(); community.close(); universe.close(); moon.close(); portfolio.close();
+  document.body.classList.remove('moon-active');
   $('journey-explore').hidden = true;
   $('main').classList.remove('explore-layout');
   $('navigation-error').hidden = true;
 }
 
 function activateSpace(path) {
-  const section = ['/retos','/empleos','/oportunidades'].includes(path) ? '/explorar'
-    : ['/descubrir','/galaxias'].includes(path) ? '/universo' : path;
+  const section = path === '/empleos' ? '/oportunidades' : path;
   document.querySelectorAll('#member-nav a').forEach(link => {
     if (link.dataset.space === section) link.setAttribute('aria-current','page');
     else link.removeAttribute('aria-current');
   });
 }
 async function goSpace(target, options = {}) {
-  if (!currentUser || discovery.isSaving() || explorer.isSaving() || community.isSaving()) return;
+  if (!currentUser || discovery.isSaving() || explorer.isSaving() || community.isSaving() || portfolio.isSaving()) return;
   const url = new URL(target, location.origin);
   const path = url.pathname;
   const suggested = url.searchParams.get('reto');
   const focusPost = path === '/retos' && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(suggested ?? '') ? suggested : null;
   const active = ++spaceEpoch;
-  if (path === '/cuenta') return renderAccount(currentUser);
+  if (path === '/cuenta') {
+    renderAccount(currentUser);
+    $('account-title').focus();
+    window.scrollTo(0,0);
+    return;
+  }
   closeSpaces();
   if(['/retos','/empleos','/publicar'].includes(path))return community.open(path,{profile:currentUser.profile,focusPost});
-  if(isPublisher() && ['/universo','/descubrir','/galaxias','/oportunidades'].includes(path))return community.open('/publicar',{profile:currentUser.profile});
+  if(isPublisher() && ['/luna','/portafolio','/universo','/descubrir','/galaxias','/oportunidades'].includes(path))return community.open('/publicar',{profile:currentUser.profile});
+  if (path === '/luna' || path === '/portafolio') {
+    $('account-view').hidden = true;
+    $('main').classList.add('explore-layout');
+    changeAddress(url.pathname + url.search, options.replace); activateSpace(path); window.scrollTo(0,0);
+    if(path === '/portafolio'){
+      const event=url.searchParams.get('evento');
+      return portfolio.open(/^[A-Za-z0-9_-]{1,100}$/.test(event??'')?event:null);
+    }
+    document.body.classList.add('moon-active');
+    return moon.open();
+  }
   if (path === '/universo' || path === '/explorar') {
     $('account-view').hidden = true;
     $('main').classList.add('explore-layout');
@@ -121,9 +147,9 @@ async function goSpace(target, options = {}) {
     else await explorer.openGalaxies({onboarding:true});
   }
 }
-async function enter(data, { path = '/universo', query = '' } = {}) {
+async function enter(data, { path = '/luna', query = '' } = {}) {
   renderAccount(data, {navigate:path==='/cuenta'});
-  if (path !== '/cuenta') await goSpace(privatePaths.includes(path)?path+query:isPublisher()?'/publicar':'/universo');
+  if (path !== '/cuenta') await goSpace(privatePaths.includes(path)?path+query:isPublisher()?'/publicar':'/luna');
 }
 $('open-discovery').addEventListener('click', event => {
   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -159,6 +185,8 @@ function renderMode(mode, { navigate = true, focus = false } = {}) {
   explorer.reset();
   community.reset();
   universe.close();
+  moon.reset(); portfolio.close();
+  document.body.classList.remove('moon-active');
   $('journey-explore').hidden = true;
   $('navigation-error').hidden = true;
   $('main').classList.remove('explore-layout');
@@ -270,7 +298,7 @@ loginForm.addEventListener('submit', async event => {
   try {
     await send('/web/login', { method: 'POST', body: Object.fromEntries(new FormData(loginForm)) });
     await enter(await send('/web/session', { refresh: true }), {
-      path:loginDestination?.path ?? '/universo', query:loginDestination?.query ?? '',
+      path:loginDestination?.path ?? '/luna', query:loginDestination?.query ?? '',
     });
     loginDestination = null;
     loginForm.reset();
@@ -334,7 +362,7 @@ $('logout').addEventListener('click', async () => {
     $('greeting-name').textContent = '';
     renderMode('login', { focus: true });
   } catch (error) {
-    const notice = !$('community-view').hidden ? $('community-error') : !$('explore-view').hidden ? $('explore-error') : !$('discovery-view').hidden ? $('discovery-error') : !$('universe-view').hidden || !$('journey-explore').hidden ? $('navigation-error') : $('profile-notice');
+    const notice = !$('community-view').hidden ? $('community-error') : !$('explore-view').hidden ? $('explore-error') : !$('discovery-view').hidden ? $('discovery-error') : !$('universe-view').hidden || !$('journey-explore').hidden || !$('moon-view').hidden || !$('portfolio-view').hidden ? $('navigation-error') : $('profile-notice');
     notice.textContent = error.message;
     notice.classList.add('error-notice');
     notice.hidden = false;

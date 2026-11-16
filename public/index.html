@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="/assets/explore.css">
   <link rel="stylesheet" href="/assets/community.css">
   <link rel="stylesheet" href="/assets/galaxia.css">
+  <link rel="stylesheet" href="/assets/luna.css">
   <script type="module" src="/assets/app.js"></script>
 </head>
 <body>
@@ -26,14 +27,61 @@
     <button class="quiet-button" id="logout" hidden>Cerrar sesión <span aria-hidden="true">↗</span></button>
   </header>
   <nav id="member-nav" class="member-nav" aria-label="Tu recorrido en Constela" hidden>
-    <a href="/universo" data-space="/universo" class="learner-link">Mi universo</a>
-    <a href="/explorar" data-space="/explorar">Explorar</a>
+    <a href="/luna" data-space="/luna" class="learner-link moon-return">← Mi luna</a>
+    <a href="/oportunidades" data-space="/oportunidades" class="learner-link">Eventos</a>
+    <a href="/retos" data-space="/retos">Retos</a>
+    <a href="/portafolio" data-space="/portafolio" class="learner-link">Portafolio</a>
     <a href="/cuenta" data-space="/cuenta">Mi perfil</a>
     <a href="/publicar" data-space="/publicar" class="publisher-link" hidden>Mis publicaciones</a>
   </nav>
 
   <p class="notice error-notice navigation-error" id="navigation-error" role="alert" hidden></p>
   <main id="main" class="auth-layout">
+    <section id="moon-view" class="moon-view" aria-labelledby="moon-title" hidden>
+      <aside class="moon-sidebar">
+        <p class="moon-eyebrow"><span aria-hidden="true">✦</span> TU UNIVERSO CONSTELA</p>
+        <h1 id="moon-title" tabindex="-1">Mi luna<span>.</span></h1>
+        <p class="moon-intro">Explora las estaciones, practica con retos y guarda lo que aprendes.</p>
+        <section class="moon-progress" aria-label="Tu progreso">
+          <div class="moon-level"><span class="moon-level-emblem" aria-hidden="true">✧</span><div><strong id="moon-level">Nivel 1</strong><small id="moon-points">0 puntos</small></div><span id="moon-stars">✦ 0 estrellas</span></div>
+          <progress id="moon-progress" max="75" value="0" aria-label="Puntos hacia el próximo nivel"></progress>
+          <small id="moon-next-level">75 puntos para el próximo nivel</small>
+        </section>
+        <nav class="moon-stations" aria-label="Accesos a las estaciones">
+          <a href="/oportunidades" data-space="/oportunidades" data-station="eventos"><span aria-hidden="true">◎</span><div><strong>Eventos</strong><small>Convocatorias de Lima</small></div><span aria-hidden="true">↗</span></a>
+          <a href="/retos" data-space="/retos" data-station="retos"><span aria-hidden="true">✦</span><div><strong>Retos</strong><small>Práctica y estrellas</small></div><span aria-hidden="true">↗</span></a>
+          <a href="/portafolio" data-space="/portafolio" data-station="portafolio"><span aria-hidden="true">▤</span><div><strong>Portafolio</strong><small>Aprendizajes y descarga</small></div><span aria-hidden="true">↗</span></a>
+          <a href="/cuenta" data-space="/cuenta" data-station="perfil"><span aria-hidden="true">◇</span><div><strong>Mi perfil</strong><small>Cuenta y constelación</small></div><span aria-hidden="true">↗</span></a>
+        </nav>
+        <p id="moon-error" class="moon-error" role="alert" hidden></p>
+        <button type="button" id="moon-retry" class="secondary-button" hidden>Volver a intentar</button>
+      </aside>
+      <div id="moon-stage" class="moon-stage">
+        <div class="moon-viewport"><div class="moon-labels" aria-hidden="true"></div></div>
+        <p id="moon-loading" class="moon-loading" role="status">Preparando tu luna…</p>
+        <div class="moon-controls" hidden>
+          <div class="moon-key-guide" aria-label="Controles de teclado">
+            <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Moverse</span>
+            <span><kbd>Espacio</kbd> Saltar</span>
+            <span><kbd>E</kbd> Abrir</span>
+          </div>
+          <div class="moon-touch">
+            <div class="moon-pad">
+              <button type="button" data-moon-move="up" aria-label="Mover arriba">↑</button>
+              <button type="button" data-moon-move="left" aria-label="Mover a la izquierda">←</button>
+              <button type="button" data-moon-move="down" aria-label="Mover abajo">↓</button>
+              <button type="button" data-moon-move="right" aria-label="Mover a la derecha">→</button>
+            </div>
+            <button type="button" data-moon-action="jump" aria-label="Saltar">↟</button>
+          </div>
+          <div class="moon-access">
+            <p class="moon-prompt" role="status">Acércate a la entrada de una estación.</p>
+            <button type="button" data-moon-action="enter" disabled>Abrir puerta</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="portfolio-view" class="portfolio-view" aria-labelledby="portfolio-title" hidden></section>
     <section id="universe-view" aria-labelledby="universe-title" hidden></section>
     <section id="journey-explore" aria-labelledby="journey-explore-title" hidden>
       <p class="eyebrow">NUEVAS ÓRBITAS</p>
@@ -110,6 +158,7 @@
         <aside class="welcome-card"><span class="welcome-star" aria-hidden="true">✧</span><p class="eyebrow">ESTE ES TU PUNTO DE PARTIDA</p><h2>Todo empieza<br>con una<br><em>conexión.</em></h2><p>Tu cuenta está lista. Hoy comienza una nueva parte de tu historia.</p><span class="welcome-signature">constela.</span></aside>
       </div>
       <p class="account-kind" id="profile-account-kind"></p>
+      <a class="discovery-profile-link learner-link" href="/universo" data-space="/universo"><span aria-hidden="true">✧</span><span><strong>Mi constelación</strong><br>Consulta tus habilidades, prácticas y nivel.</span><span aria-hidden="true">↗</span></a>
       <a class="discovery-profile-link learner-link" href="/descubrir" id="open-discovery"><span aria-hidden="true">✦</span><span><strong>Tu universo de habilidades</strong><br>Descubre tus estrellas o vuelve a ver tu constelación.</span><span aria-hidden="true">↗</span></a>
       <a class="discovery-profile-link" href="/galaxias" data-space="/galaxias"><span aria-hidden="true">🌌</span><span><strong>Editar mis galaxias</strong><br>Tus intereses pueden cambiar. Descubre nuevos caminos.</span><span aria-hidden="true">↗</span></a>
       <a class="discovery-profile-link" href="/oportunidades" data-space="/oportunidades"><span aria-hidden="true">↗</span><span><strong>Explorar oportunidades</strong><br>Encuentra convocatorias relacionadas con tus intereses.</span><span aria-hidden="true">↗</span></a>

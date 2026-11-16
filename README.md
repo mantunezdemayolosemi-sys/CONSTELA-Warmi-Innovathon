@@ -24,7 +24,7 @@ Constela es una plataforma web para descubrir habilidades, practicarlas y conver
 
 **¿Qué la hace distinta?** «La estrella que no veías» compara lo que la usuaria reconocía al inicio con las habilidades que aparecieron en sus decisiones. Los resultados son posibilidades por explorar, no un diagnóstico ni una certificación.
 
-La versión integrada reúne la portada visual de Tyra, el acceso y perfil privado de Supabase, galaxias, misión de habilidades, eventos públicos de Lima y retos/empleos simulados. «Mi universo» conecta los pasos y muestra las estrellas, los puntos y el nivel. Empresas y emprendedoras tienen su panel para publicar simulaciones. La personalización del avatar, la evaluación y el portafolio pertenecen a [siguientes etapas](docs/ALCANCE.md).
+La versión integrada reúne la portada visual de Tyra, el acceso y perfil privado de Supabase, galaxias, misión de habilidades, eventos públicos de Lima y retos/empleos simulados. «Mi universo» conecta los pasos y muestra las estrellas, los puntos y el nivel. Empresas y emprendedoras tienen su panel para publicar simulaciones. La luna 3D da acceso a Eventos, Retos, Portafolio y Perfil. El portafolio reúne prácticas y participaciones registradas por la usuaria. La personalización del avatar y la evaluación externa se describen en [siguientes etapas](docs/ALCANCE.md).
 
 ## Demo
 
@@ -34,7 +34,7 @@ Pruébala en tres pasos:
 
 1. Inicia el servidor con `npm start` y abre la [portada de Constela](http://localhost:3000/). Desde «Crear cuenta» se abre el registro conectado a Supabase.
 2. Confirma el correo e [inicia sesión](http://localhost:3000/ingresar). El proveedor de correo actual admite pruebas con direcciones autorizadas del equipo de Supabase; falta SMTP para otras usuarias.
-3. Abre [Mi universo](http://localhost:3000/universo) y pulsa «Continuar mi viaje». Elige galaxias, retoma tus misiones o abre un reto recomendado. En «Explorar» están los retos, eventos de Lima y empleos simulados. El progreso guardado se recupera al volver.
+3. Abre [Mi luna](http://localhost:3000/luna). Si es tu primera vez, elige galaxias y termina el test. Mueve a la astronauta con WASD o flechas, salta con Espacio y pulsa E junto a una puerta. También puedes abrir cada estación desde el menú. En Portafolio puedes revisar tus prácticas, anotar tus participaciones y descargar el PDF.
 
 También puedes abrir **Retos** para explorar seis casos ficticios, guardar los que quieres practicar y encender estrellas al registrar una propuesta y reflexión, o **Empleos** para ver dos vacantes de ejemplo. Al crear una cuenta puedes elegir **Usuaria**, **Empresa** o **Emprendedora**. Las dos últimas requieren organización y entran a **Mis publicaciones** después de confirmar el correo e iniciar sesión. Todas las publicaciones son simulaciones; no se reciben CV ni postulaciones reales. [Recorridos y permisos](docs/RETOS.md).
 
@@ -65,7 +65,7 @@ Detalles y estado de revisión: [índice de especificaciones](specs/README.md).
 
 | Parte | Herramienta |
 | --- | --- |
-| Frontend | HTML, CSS, JavaScript y SVG |
+| Frontend | HTML, CSS, JavaScript, SVG y Three.js |
 | Backend | Node.js 22 o superior y Fastify |
 | Autenticación y datos | Supabase Auth y PostgreSQL con RLS |
 | Pruebas | `node:test`, Fastify inject y PGlite |
@@ -74,6 +74,8 @@ Detalles y estado de revisión: [índice de especificaciones](specs/README.md).
 | Asistencia de IA | Codex para implementación y verificación; reglas del repositorio para cualquier asistente |
 
 ## Cómo ejecutarlo
+
+La versión con la luna se desarrolla en `codex/luna-portafolio`. Trabaja desde esa rama local para probar los pasos de arriba.
 
 La integración está en `integracion-galaxia`, basada en `codex/retos-empresas` y con la portada del PR #5 de Tyra. `main` todavía no contiene la aplicación del PR #1. La integración requiere revisión del equipo.
 
@@ -84,7 +86,7 @@ npm ci
 cp .env.example .env
 ```
 
-Completa `.env` en tu computadora con la URL y la clave **publishable** de un proyecto Supabase autorizado. Nunca copies `.env` al repositorio ni uses una clave administrativa. En un proyecto nuevo aplica las siete migraciones por orden de nombre; en el proyecto de desarrollo actual **ya están aplicadas**. No las repitas.
+Completa `.env` en tu computadora con la URL y la clave **publishable** de un proyecto Supabase autorizado. Nunca copies `.env` al repositorio ni uses una clave administrativa. En un proyecto nuevo aplica las migraciones de `supabase/migrations/` por orden de nombre. En un proyecto que ya usa Constela, aplica solo las que falten. La versión de la luna requiere la migración `202611160008_lunar_portfolio.sql` para habilitar el portafolio.
 
 ```bash
 npm start
@@ -97,7 +99,7 @@ npm run check
 npm test
 ```
 
-La suite actual tiene **81 pruebas automatizadas** y no necesita credenciales ni correos reales. Para actualizar manualmente el catálogo público: `npm run opportunities:sync`. Instrucciones completas de conexión, API y publicación: [guía técnica](docs/DESARROLLO.md).
+La suite automatizada no necesita credenciales ni correos reales. Para actualizar manualmente el catálogo público: `npm run opportunities:sync`. Instrucciones completas de conexión, API y publicación: [guía técnica](docs/DESARROLLO.md).
 
 ## Cómo lo construimos
 

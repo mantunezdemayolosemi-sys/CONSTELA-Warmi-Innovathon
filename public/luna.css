@@ -1,0 +1,131 @@
+.auth-layout.explore-layout:has(.moon-view:not([hidden])){
+  display:block;max-width:1600px;width:100%;padding:18px clamp(18px,3vw,46px) 0;
+}
+.moon-active .site-header{height:66px;max-width:1600px;padding-inline:clamp(18px,3vw,46px)}
+.moon-active .site-header .header-note{display:none}
+.moon-active #member-nav{display:none}
+.moon-return{font-weight:750}
+.moon-view{
+  --moon-panel:#151024;--moon-border:#382a51;--moon-muted:#c2b4d1;
+  display:grid;grid-template-columns:minmax(245px,286px) minmax(0,1fr);
+  border:1px solid var(--moon-border);border-radius:24px;overflow:hidden;background:var(--moon-panel);
+  color:#f7eefc;min-height:clamp(550px,calc(100svh - 138px),770px);
+}
+.moon-sidebar{
+  padding:clamp(20px,2.6vw,34px) clamp(18px,2vw,28px);z-index:1;
+  border-right:1px solid var(--moon-border);
+  background:radial-gradient(ellipse at 8% -20%,#382455 0%,transparent 65%),var(--moon-panel);
+}
+.moon-eyebrow{font:650 10px/1.4 system-ui,sans-serif;color:#c5b0f7;letter-spacing:.15em;margin:0 0 7px}
+.moon-eyebrow span{color:#ffda9f;margin-right:5px}
+#moon-title{font:400 clamp(44px,5vw,62px)/.99 Georgia,serif;letter-spacing:-.052em;margin:0 0 .28em}
+#moon-title span{color:#c3a3ff}
+.moon-intro{margin:0 0 22px;font-size:13px;line-height:1.55;color:var(--moon-muted);max-width:240px}
+.moon-progress{border:1px solid #553f76;border-radius:15px;padding:13px 12px 12px;background:#1d142e;margin-bottom:24px}
+.moon-level{display:flex;gap:8px;align-items:center}
+.moon-level-emblem{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#38244e;color:#dcc4ff;font-size:22px}
+.moon-level strong{font-size:15px;display:block}
+.moon-level small,.moon-progress>small{display:block;color:var(--moon-muted);font-size:11px;line-height:1.45}
+#moon-stars{margin-left:auto;color:#ffe0a8;font-size:11px;white-space:nowrap}
+#moon-progress{display:block;width:100%;height:6px;accent-color:#cba7ff;margin:12px 0 5px;border:0;background:#342346;border-radius:8px}
+#moon-progress::-webkit-progress-bar{border-radius:8px;background:#342346}
+#moon-progress::-webkit-progress-value{border-radius:8px;background:#cba7ff}
+.moon-stations{display:grid;gap:8px}
+[data-station="eventos"]{--station:#8cead9;--station-dark:#173837}
+[data-station="retos"]{--station:#ffda9e;--station-dark:#403024}
+[data-station="portafolio"]{--station:#d1b4ff;--station-dark:#35274b}
+[data-station="perfil"]{--station:#ffb3d6;--station-dark:#422639}
+.moon-stations a{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:center;
+  min-height:58px;padding:8px 10px;text-decoration:none;border:1px solid #3b2c51;border-radius:12px;background:#21172f;touch-action:manipulation}
+.moon-stations a:hover,.moon-stations a:focus-visible{border-color:var(--station);background:#2e2043}
+.moon-stations a>span:first-child{display:grid;place-items:center;width:33px;height:33px;color:var(--station);background:var(--station-dark);border-radius:9px;font-size:19px}
+.moon-stations a>span:last-child{color:var(--station);font-size:13px}
+.moon-stations strong{display:block;font-size:13px}
+.moon-stations small{display:block;color:var(--moon-muted);font-size:11px;margin-top:2px}
+.moon-stage{position:relative;min-width:0;min-height:520px;isolation:isolate;overflow:hidden;
+  background:radial-gradient(ellipse at 70% 21%,#3b1b573c,transparent 55%),radial-gradient(ellipse at 28% 70%,#3f286f66 0%,transparent 64%),#090613}
+.moon-viewport,.moon-labels,.moon-viewport canvas{position:absolute;inset:0;width:100%;height:100%}
+.moon-labels{pointer-events:none}
+.moon-station-label{position:absolute;white-space:nowrap;transform:translate(-50%,-104%);font:700 12px/1.2 system-ui,sans-serif;
+  padding:5px 9px;border-radius:7px;color:var(--station);background:#110c20eb;
+  border:1px solid color-mix(in srgb,var(--station) 56%,transparent);box-shadow:0 2px 9px #100b1c84}
+.moon-station-label.is-nearby{border-color:var(--station);background:var(--station-dark)}
+.moon-loading{position:absolute;top:43%;left:50%;transform:translate(-50%,-50%);width:min(75%,360px);text-align:center;color:#ecddff;font-size:15px;line-height:1.6}
+.moon-error{color:#ffc8d5;margin:12px 0;font-size:13px}
+.moon-access,.moon-key-guide{display:flex;gap:9px;align-items:center;border:1px solid #5a417a;border-radius:12px;background:#151020ed;padding:8px 10px}
+.moon-key-guide{position:absolute;left:16px;bottom:14px;flex-wrap:wrap;justify-content:center;font-size:11px;color:#e4d6f4;pointer-events:none}
+.moon-key-guide span{white-space:nowrap}
+.moon-key-guide kbd{display:inline-block;padding:2px 4px;background:#2a1e42;color:#ffe8ff;border:1px solid #654c87;border-radius:4px;margin-right:2px;min-width:16px;text-align:center}
+.moon-access{position:absolute;right:16px;top:14px;font-size:12px;color:#ecdcfb}
+.moon-prompt{margin:0}
+.moon-access button,.moon-touch button{color:#190d2a;background:#d6bbff;border:1px solid #b291e5;border-radius:7px;min-height:34px;padding:5px 8px;font:700 12px/1.1 system-ui,sans-serif;cursor:pointer}
+.moon-access button:disabled{display:none}
+.moon-touch{display:none}
+.moon-view[data-pending] .moon-stations,.moon-view[data-pending] .moon-progress{visibility:hidden}
+.portfolio-view{width:100%;padding-block:12px 24px}
+.portfolio-view>.explore-description{max-width:62ch}
+.portfolio-feedback{font-size:14px;color:#dcc9f2;margin:12px 0}
+.portfolio-feedback:empty,.portfolio-editor:empty{display:none}
+.portfolio-feedback.is-error{color:#ffb9c4}
+.portfolio-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:12px 0}
+.portfolio-actions .primary-button{width:auto;padding-inline:18px}
+.portfolio-actions .primary-button:disabled{opacity:.5;cursor:default}
+.portfolio-list{display:grid;gap:14px;margin:24px 0}
+.portfolio-entry,.portfolio-empty{padding:22px}
+.portfolio-entry h2,.portfolio-empty h2{font-size:clamp(20px,3vw,26px);margin:5px 0 9px;overflow-wrap:anywhere}
+.portfolio-entry h3{font-size:14px;margin:16px 0 7px}
+.portfolio-kind{font-size:11px;color:#d4b8ff;text-transform:uppercase;letter-spacing:.08em;font-weight:720;margin:0}
+.portfolio-meta{color:#cbbeda;font-size:13px;line-height:1.5;margin:5px 0}
+.portfolio-learning{white-space:pre-wrap;overflow-wrap:anywhere;color:#efe1fb;font-size:14px;line-height:1.65;margin:0 0 14px}
+.portfolio-entry summary{cursor:pointer;font-size:14px;color:#d5b7fb;margin-bottom:8px}
+.portfolio-source,.portfolio-event-link{display:inline-flex;font:650 13px/1.3 system-ui,sans-serif;margin:8px 10px 8px 0;color:#e8d5ff;cursor:pointer}
+button.portfolio-event-link{border:1px solid #694b8e;border-radius:8px;padding:8px 10px;background:#2c1e42}
+.portfolio-form{display:grid;gap:12px;padding:20px;border:1px solid #634881;background:#211531;border-radius:14px;margin:16px 0 8px;max-width:760px}
+.portfolio-form h3{margin:0 0 6px}
+.portfolio-form .portfolio-actions{margin:0}
+.portfolio-field{display:grid;gap:5px;font-size:13px;color:#f0e0ff}
+.portfolio-field input,.portfolio-field select,.portfolio-field textarea{
+  width:100%;font:inherit;font-size:16px;color:#fff2ff;background:#140e20;border:1px solid #614b82;
+  border-radius:8px;padding:9px 10px
+}
+.portfolio-field textarea{resize:vertical}
+@media(max-width:840px){
+  .moon-view{grid-template-columns:1fr}
+  .moon-sidebar{display:grid;grid-template-columns:1fr minmax(158px,220px);align-items:start;gap:4px 14px;border:0;padding:16px}
+  .moon-eyebrow{grid-column:1}
+  #moon-title{grid-column:1;font-size:44px;margin-bottom:1px}
+  .moon-intro{grid-column:1;margin-bottom:5px;font-size:12px}
+  .moon-progress{grid-column:2;grid-row:1/4;margin:0}
+  .moon-stations{grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:6px}
+  .moon-stations a{grid-template-columns:22px minmax(0,1fr);gap:4px;min-height:39px;padding:4px}
+  .moon-stations a>span:first-child{width:22px;height:23px;font-size:15px}
+  .moon-stations a>span:last-child,.moon-stations small{display:none}
+  .moon-stations strong{font-size:11px}
+  .moon-stage{min-height:clamp(385px,59svh,520px);border-top:1px solid var(--moon-border)}
+}
+@media(pointer:coarse),(max-width:600px){
+  .moon-touch{display:flex;position:absolute;justify-content:space-between;align-items:end;bottom:12px;left:12px;right:12px;pointer-events:none}
+  .moon-pad{display:grid;grid-template-columns:repeat(3,40px);gap:4px}
+  .moon-pad [data-moon-move=up]{grid-column:2}
+  .moon-pad [data-moon-move=left]{grid-column:1}
+  .moon-touch button{pointer-events:auto;touch-action:none;background:#291d44ec;color:#fff1ff;min-width:40px;height:39px;font-size:18px}
+  .moon-touch [data-moon-action=jump]{border-radius:50%;width:46px;height:46px}
+  .moon-key-guide{display:none}
+  .moon-station-label{font-size:10px;padding:3px 5px}
+  .moon-access{top:8px;right:8px;left:8px;justify-content:center;padding:6px;font-size:11px}
+}
+@media(max-width:400px){
+  .moon-sidebar{gap:5px 7px;padding:12px}
+  .auth-layout.explore-layout:has(.moon-view:not([hidden])){padding-inline:9px}
+  .moon-stations{gap:4px}
+  .moon-progress{padding-inline:8px}
+}
+
+#moon-title:focus{outline:none}
+@media(max-width:600px){
+  .moon-sidebar{grid-template-columns:minmax(0,1fr) minmax(139px,163px)}
+  #moon-title{font-size:38px;white-space:nowrap}
+  .moon-stage{min-height:clamp(355px,55svh,455px)}
+  .moon-pad{grid-template-columns:repeat(3,44px)}
+  .moon-touch button{min-width:44px;height:44px}
+}

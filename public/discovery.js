@@ -236,7 +236,7 @@ export function createDiscovery({ send, showAccount, showOpportunities, sessionE
     const stages = element('ol', 'skill-stages');
     ['Identificada en tus elecciones', 'Por practicar en un reto', 'Por demostrar con evidencia'].forEach(text => stages.append(element('li', '', text))); content.append(stages);
     const actions = element('div', 'result-actions');
-    actions.append(button('Volver a explorar mis respuestas', () => { step = 0; mission(); focusTitle(true); }, 'secondary-button'), button('Ver mi universo y seguir el viaje ↗', showOpportunities)); content.append(actions);
+    actions.append(button('Volver a explorar mis respuestas', () => { step = 0; mission(); focusTitle(true); }, 'secondary-button'), button('Entrar a mi luna ↗', showOpportunities)); content.append(actions);
     paragraph('Tu constelación no es una etiqueta definitiva. Puede crecer y cambiar con nuevas experiencias.', 'mission-fine-print');
   }
   async function open() {

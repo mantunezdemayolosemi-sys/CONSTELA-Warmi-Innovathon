@@ -51,6 +51,19 @@ export function createGateway(config, fetchImpl = globalThis.fetch) {
     finally { await supabase.auth.dispose(); }
   };
 
+  const eventFields = 'event_id, title, kind, source_url, attended_on, learning';
+  async function portfolioRows(query, order, {missingTableAllowed = false} = {}) {
+    const pageSize = 500;
+    const rows = [];
+    for (let from = 0; ; from += pageSize) {
+      const {data, error} = await query().order(order).range(from, from + pageSize - 1);
+      if (missingTableAllowed && ['PGRST205','42P01'].includes(error?.code)) return null;
+      if (error) throw new ServiceError(503, 'PORTFOLIO_UNAVAILABLE', 'No pudimos cargar tu portafolio.');
+      rows.push(...data);
+      if (data.length < pageSize) return rows;
+    }
+  }
+
   return {
     async register({ name, email, password, account_type='learner', organization_name='' }) {
       return useClient(undefined, async (supabase) => {
@@ -136,6 +149,30 @@ export function createGateway(config, fetchImpl = globalThis.fetch) {
         const {data,error}=await supabase.from('challenge_practices').select('post_id, completed_at, practiced_skills').eq('user_id',userId);
         if(error)throw new ServiceError(503,'PRACTICE_UNAVAILABLE','No pudimos cargar tus estrellas de práctica.');
         return data;
+      });
+    },
+    async getPortfolioPractices(token, userId) {
+      return useClient(token, supabase => portfolioRows(() => supabase.from('challenge_practices')
+        .select('post_id, proposal, reflection, practiced_skills, completed_at, community_posts(title, organization_name)')
+        .eq('user_id', userId), 'post_id'));
+    },
+    async getPortfolioEvents(token, userId) {
+      return useClient(token, supabase => portfolioRows(() => supabase.from('event_participations')
+        .select(eventFields).eq('user_id', userId), 'event_id', {missingTableAllowed:true}));
+    },
+    async registerPortfolioEvent(token, userId, event) {
+      return useClient(token, async supabase => {
+        const {error} = await supabase.from('event_participations')
+          .upsert({...event, user_id: userId}, {onConflict: 'user_id,event_id', ignoreDuplicates: true});
+        if (error) throw new ServiceError(503, 'PORTFOLIO_UNAVAILABLE', 'No pudimos guardar tu participación.');
+      });
+    },
+    async updatePortfolioEvent(token, userId, eventId, reflection) {
+      return useClient(token, async supabase => {
+        const {data, error} = await supabase.from('event_participations').update(reflection)
+          .eq('user_id', userId).eq('event_id', eventId).select('event_id').maybeSingle();
+        if (error) throw new ServiceError(503, 'PORTFOLIO_UNAVAILABLE', 'No pudimos guardar tus aprendizajes.');
+        if (!data) throw new ServiceError(404, 'EVENT_NOT_FOUND', 'Todavía no registraste esta participación.');
       });
     },
     async getPractice(token,userId,id) {

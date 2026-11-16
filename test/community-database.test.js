@@ -12,7 +12,7 @@ before(async()=>{
   create table auth.users(id uuid primary key,raw_user_meta_data jsonb not null);
   create function auth.jwt() returns jsonb language sql stable as $$ select coalesce(nullif(current_setting('request.jwt.claims',true),''),'{}')::jsonb $$;
   create function auth.uid() returns uuid language sql stable as $$ select (auth.jwt()->>'sub')::uuid $$;`);
-  for(const name of ['202611120001_create_profiles.sql','202611130006_community_demo.sql','202611130007_practice_stars.sql'])await db.exec(await readFile(new URL('../supabase/migrations/'+name,import.meta.url),'utf8'));
+  for(const name of ['202611120001_create_profiles.sql','202611130006_community_demo.sql','202611130007_practice_stars.sql','202611160008_lunar_portfolio.sql'])await db.exec(await readFile(new URL('../supabase/migrations/'+name,import.meta.url),'utf8'));
   for(const [id,metadata] of [[learner,{display_name:'Ana'}],[company,{display_name:'Bea',account_type:'company',organization_name:'Empresa de prueba'}],[entrepreneur,{display_name:'Luz',account_type:'entrepreneur',organization_name:'Proyecto de prueba'}]])await db.query('insert into auth.users values($1,$2)',[id,JSON.stringify(metadata)]);
 });
 after(()=>db.close());
@@ -91,4 +91,45 @@ test('estrellas y propuestas son privadas y no admiten manipular contador, fecha
   }finally{await db.exec('rollback');}
   await db.exec('begin');try{await db.query("select set_config('request.jwt.claims',$1,true)",[JSON.stringify({sub:learner,email:'test@example.invalid'})]);await practice();await db.exec('set local role authenticated');await db.query("select set_config('request.jwt.claims',$1,true)",[JSON.stringify({sub:company,email:'test@example.invalid'})]);assert.equal((await db.query('select * from public.challenge_practices')).rows.length,0);}finally{await db.exec('rollback');}
   await assert.rejects(asRole(learner,()=>db.query('insert into public.challenge_practices(user_id,post_id,proposal,reflection,practiced_skills) values($1,$2,$3,$4,$5)',[learner,challenge,proposal,reflection,[]])),/permission denied/);
+});
+
+
+test('008 guarda eventos privados y solo admite editar fecha y aprendizajes', async()=>{
+  const insert=owner=>db.query(`insert into public.event_participations
+    (user_id,event_id,title,kind,attended_on,learning)
+    values ($1,'lima-evento','Laboratorio local','event','2026-11-14','Aprendí a preparar un prototipo.') on conflict do nothing`,[owner]);
+  await asRole(learner,async()=>{
+    await insert(learner);await insert(learner);
+    await db.exec("update public.event_participations set learning='Iteré el prototipo con nuevas ideas.'");
+    const rows=(await db.query('select event_id,learning from public.event_participations')).rows;
+    assert.deepEqual(rows,[{event_id:'lima-evento',learning:'Iteré el prototipo con nuevas ideas.'}]);
+    await assert.rejects(db.exec("update public.event_participations set title='Otro título'"),/permission denied/);
+  });
+  await assert.rejects(asRole(company,()=>insert(company)),/row-level security/);
+  await assert.rejects(asRole(learner,()=>insert(company)),/row-level security/);
+  await assert.rejects(asRole(learner,()=>insert(learner),{anonymous:true}),/row-level security/);
+  await assert.rejects(asRole(null,()=>db.query('select * from public.event_participations'),{role:'anon'}),/permission denied/);
+
+  await db.exec('begin');
+  try {
+    await insert(learner);
+    await db.exec('set local role authenticated');
+    await db.query("select set_config('request.jwt.claims',$1,true)",[JSON.stringify({sub:company,email:'other@example.invalid'})]);
+    assert.deepEqual((await db.query('select * from public.event_participations')).rows,[]);
+    assert.deepEqual((await db.query("update public.event_participations set learning='Texto privado que otra cuenta no puede cambiar.' returning *")).rows,[]);
+  } finally { await db.exec('rollback'); }
+});
+
+test('008 conserva metadatos del reto cerrado solo para la persona que practicó', async()=>{
+  await db.exec('begin');
+  try {
+    await db.query("select set_config('request.jwt.claims',$1,true)",[JSON.stringify({sub:learner,email:'test@example.invalid'})]);
+    await practice();
+    await db.query("update public.community_posts set status='closed' where id=$1",[challenge]);
+    await db.exec('set local role authenticated');
+    const read=()=>db.query('select title from public.community_posts where id=$1',[challenge]);
+    assert.equal((await read()).rows.length,1);
+    await db.query("select set_config('request.jwt.claims',$1,true)",[JSON.stringify({sub:company,email:'other@example.invalid'})]);
+    assert.equal((await read()).rows.length,0);
+  } finally { await db.exec('rollback'); }
 });

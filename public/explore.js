@@ -8,7 +8,7 @@ const date = value => {
   const plain=value.length===10;
   return new Intl.DateTimeFormat('es-PE',{day:'numeric',month:'short',year:'numeric',timeZone:plain?'UTC':'America/Lima',...(!plain?{hour:'2-digit',minute:'2-digit'}:{})}).format(new Date(value));
 };
-export function createExplorer({send,showDiscovery,showAccount,showOpportunities,sessionExpired,navigate}) {
+export function createExplorer({send,showDiscovery,showAccount,showOpportunities,sessionExpired,navigate,openPortfolio}) {
   const view=$('explore-view'), content=$('explore-content'), notice=$('explore-error');
   let epoch=0, saving=false, catalog=[], state=null, selected=[], onboarding=false;
   let filters={scope:'recommended',type:'all',mode:'all'};
@@ -142,6 +142,7 @@ export function createExplorer({send,showDiscovery,showAccount,showOpportunities
     const grid=el('div','opportunity-grid');
     const modes={online:'En línea',in_person:'Presencial',hybrid:'Híbrida',unknown:'Modalidad por confirmar'};
     const types={hackathon:'Hackathon',event:'Evento',challenge:'Reto'};
+    const today=new Intl.DateTimeFormat('sv-SE',{timeZone:'America/Lima'}).format(new Date());
     data.items.forEach(o=>{
       const card=el('article','opportunity-card');
       const meta=el('div','opportunity-meta');meta.append(el('span','',types[o.type]),el('span','',modes[o.mode]));
@@ -152,6 +153,8 @@ export function createExplorer({send,showDiscovery,showAccount,showOpportunities
       const source=data.sources.find(s=>s.id===o.source_id);
       card.append(el('p','opportunity-source',`${source?.name??'Fuente pública'} · Consultado ${date(o.checked_at)}${o.stale?' · Copia sin actualización reciente':''}`));
       if(o.source_url) { const provenance=el('a','opportunity-provenance','Ver ficha de la agenda ↗');provenance.href=o.source_url;provenance.target='_blank';provenance.rel='noopener noreferrer';card.append(provenance); }
+      if(!o.starts_at || o.starts_at.slice(0,10)<=today)
+        card.append(button('Registrar mi participación',()=>openPortfolio(o.id),'portfolio-event-link'));
       card.append(el('p','explore-fine',o.deadline?`Cierre de inscripción: ${date(o.deadline)}`:'Cierre de inscripción por verificar en la convocatoria.'));
       const link=el('a','opportunity-link','Ver convocatoria original ↗'); link.href=o.url;link.target='_blank';link.rel='noopener noreferrer';link.setAttribute('aria-label',`Ver convocatoria original: ${o.title} (abre otra pestaña)`);card.append(link);grid.append(card);
     });results.append(grid);
@@ -165,6 +168,8 @@ export function createExplorer({send,showDiscovery,showAccount,showOpportunities
       if(!data.interests) return openGalaxies({onboarding:true});
       const interestLine=el('p','opportunity-interests');interestLine.id='opportunity-interests';
       content.append(el('p','opportunity-area','📍 Lima, Perú · También al explorar todo el catálogo'),interestLine,button('Editar mis galaxias',()=>openGalaxies(),'text-action'));
+      const jobs=el('a','portfolio-event-link','Ver vacantes simuladas ↗');jobs.href='/empleos';
+      content.append(jobs);
       const controls=el('div','opportunity-filters');
       controls.append(filter('Mostrar','scope',[['recommended','Para mis galaxias'],['all','Todo Lima']]),filter('Tipo','type',[['all','Todos los tipos'],['hackathon','Hackathones'],['event','Eventos'],['challenge','Retos']]),filter('Modalidad','mode',[['all','Presencial e híbrida'],['in_person','Presencial'],['hybrid','Híbrida']]));
       const sources=el('details','opportunity-sources');sources.id='opportunity-sources';

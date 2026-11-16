@@ -9,6 +9,7 @@ La incorporación a SDD se realiza el 12 de noviembre de 2026 sobre funcionalida
 | [003 · Galaxias y oportunidades](003-galaxias-oportunidades/spec.md) | Intereses privados, scraping y catálogo recomendado | Incremento solicitado por Maricielo; rama `codex/galaxias-oportunidades` | Pendiente |
 | [004 · Retos y organizaciones](004-retos-empresas/spec.md) | Tipos de cuenta, retos guardados, empleos y publicación de simulaciones | Rama `codex/retos-empresas`; demo local | Pendiente |
 | [005 · De una chispa a una constelación](005-universo-integrado/spec.md) | Portada de Tyra, Mi universo y niveles de práctica | Rama `integracion-galaxia` | Pendiente |
+| [006 · Luna explorable y portafolio](006-luna-portafolio/spec.md) | Estaciones 3D, historial privado y exportación PDF | Rama local `codex/luna-portafolio` | Pendiente |
 | [000 · Plantilla](000-plantilla/spec.md) | Punto de partida para nuevas funcionalidades | Plantilla sin completar | No aplica |
 
 Cada spec documenta requisitos, plan y tareas, juntos o en archivos separados. Al citar un requisito fuera de su carpeta, usar **001:RF-1** o **002:RF-1** para evitar ambigüedades.
