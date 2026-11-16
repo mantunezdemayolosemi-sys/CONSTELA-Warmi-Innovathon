@@ -1,0 +1,19 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "npm ci",
+  "buildCommand": "npm run check",
+  "outputDirectory": "vercel-static",
+  "functions": {
+    "api/serverless.js": {
+      "includeFiles": "{public/**,data/opportunities.json,node_modules/three/build/**,node_modules/pdfkit/js/data/**}",
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/serverless"
+    }
+  ]
+}

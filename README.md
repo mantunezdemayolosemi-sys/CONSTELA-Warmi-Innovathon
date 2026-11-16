@@ -28,7 +28,7 @@ La versión integrada reúne la portada visual de Tyra, el acceso y perfil priva
 
 ## Demo
 
-**Todavía no hay un enlace remoto publicado.** La aplicación funciona en la computadora donde se ejecuta el servidor.
+**Todavía no hay un enlace remoto verificado.** La aplicación funciona localmente y tiene preparado un adaptador para Vercel. Consulta la [guía de despliegue](docs/VERCEL.md) para configurar main, las variables y el dominio de Supabase.
 
 Pruébala en tres pasos:
 
