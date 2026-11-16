@@ -4,9 +4,9 @@
 >
 > **Eje 2: Orientación laboral — Talento visible y autonomía económica**
 >
-> Demo actual: local · Demo publicada: pendiente · Mentora: por confirmar
+> Demo actual: local · Demo publicada: pendiente · Mentora: Fiorela
 
-![Tu universo de habilidades en Constela](docs/captura.png)
+
 
 *Captura de la implementación local. La identidad visual es provisional.*
 
