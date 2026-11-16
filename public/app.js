@@ -1,11 +1,13 @@
 import { createDiscovery } from './discovery.js';
 import { createExplorer } from './explore.js';
 import { createCommunity } from './community.js';
+import { createUniverse } from './universo.js';
 
 const $ = (id) => document.getElementById(id);
 let currentUser = null;
 let spaceEpoch = 0;
 let refreshPromise = null;
+let loginDestination = null;
 const loginForm = $('login-form');
 const registerForm = $('register-form');
 const profileForm = $('profile-form');
@@ -48,7 +50,7 @@ async function send(path, { method = 'GET', body, refresh = false } = {}) {
 const discovery = createDiscovery({
   send,
   showAccount: () => renderAccount(currentUser),
-  showOpportunities: () => goSpace('/oportunidades'),
+  showOpportunities: () => goSpace('/universo'),
   sessionExpired: () => {
     renderMode('login');
     showAuthError('Tu sesión terminó. Inicia sesión otra vez para continuar tu misión.');
@@ -61,25 +63,52 @@ const explorer = createExplorer({
   sessionExpired: () => { renderMode('login'); showAuthError('Tu sesión terminó. Inicia sesión para continuar.'); },
 });
 const community = createCommunity({send,
-  navigate:path=>{changeAddress(path);activateSpace(path);},
+  navigate:target=>{changeAddress(target);activateSpace(target.split('?')[0]);},
   sessionExpired:()=>{renderMode('login');showAuthError('Tu sesión terminó. Inicia sesión para continuar.');},
 });
 const isPublisher=()=>['company','entrepreneur'].includes(currentUser?.profile.account_type);
+const privatePaths = ['/universo','/explorar','/cuenta','/galaxias','/descubrir','/oportunidades','/retos','/empleos','/publicar'];
+const universe = createUniverse({send, navigate:goSpace, sessionExpired:() => {
+  renderMode('login'); showAuthError('Tu sesión terminó. Inicia sesión para continuar.');
+}});
+
+function closeSpaces() {
+  discovery.close(); explorer.close(); community.close(); universe.close();
+  $('journey-explore').hidden = true;
+  $('main').classList.remove('explore-layout');
+  $('navigation-error').hidden = true;
+}
 
 function activateSpace(path) {
+  const section = ['/retos','/empleos','/oportunidades'].includes(path) ? '/explorar'
+    : ['/descubrir','/galaxias'].includes(path) ? '/universo' : path;
   document.querySelectorAll('#member-nav a').forEach(link => {
-    if (link.dataset.space === path) link.setAttribute('aria-current','page');
+    if (link.dataset.space === section) link.setAttribute('aria-current','page');
     else link.removeAttribute('aria-current');
   });
 }
-async function goSpace(path) {
-  if (!currentUser || explorer.isSaving() || community.isSaving()) return;
+async function goSpace(target, options = {}) {
+  if (!currentUser || discovery.isSaving() || explorer.isSaving() || community.isSaving()) return;
+  const url = new URL(target, location.origin);
+  const path = url.pathname;
+  const suggested = url.searchParams.get('reto');
+  const focusPost = path === '/retos' && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(suggested ?? '') ? suggested : null;
   const active = ++spaceEpoch;
   if (path === '/cuenta') return renderAccount(currentUser);
-  discovery.close(); explorer.close(); community.close();
-  if(['/retos','/empleos','/publicar'].includes(path))return community.open(path,{profile:currentUser.profile});
-  if(isPublisher() && ['/descubrir','/galaxias','/oportunidades'].includes(path))return community.open('/publicar',{profile:currentUser.profile});
-  if (path === '/galaxias') return explorer.openGalaxies();
+  closeSpaces();
+  if(['/retos','/empleos','/publicar'].includes(path))return community.open(path,{profile:currentUser.profile,focusPost});
+  if(isPublisher() && ['/universo','/descubrir','/galaxias','/oportunidades'].includes(path))return community.open('/publicar',{profile:currentUser.profile});
+  if (path === '/universo' || path === '/explorar') {
+    $('account-view').hidden = true;
+    $('main').classList.add('explore-layout');
+    changeAddress(path); activateSpace(path); window.scrollTo(0,0);
+    if (path === '/universo') return universe.open(currentUser.profile);
+    $('journey-explore').hidden = false;
+    document.title = 'Explorar · Constela';
+    $('journey-explore-title').focus({preventScroll:true});
+    return;
+  }
+  if (path === '/galaxias') return explorer.openGalaxies({onboarding:options.onboarding});
   if (path === '/oportunidades') return explorer.openOpportunities();
   try {
     const { interests } = await send('/web/interests', {refresh:true});
@@ -92,9 +121,9 @@ async function goSpace(path) {
     else await explorer.openGalaxies({onboarding:true});
   }
 }
-async function enter(data, { path = '/descubrir' } = {}) {
-  renderAccount(data);
-  if (path !== '/cuenta') await goSpace(['/galaxias','/oportunidades','/retos','/empleos','/publicar'].includes(path)?path:isPublisher()?'/publicar':'/descubrir');
+async function enter(data, { path = '/universo', query = '' } = {}) {
+  renderAccount(data, {navigate:path==='/cuenta'});
+  if (path !== '/cuenta') await goSpace(privatePaths.includes(path)?path+query:isPublisher()?'/publicar':'/universo');
 }
 $('open-discovery').addEventListener('click', event => {
   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -129,6 +158,10 @@ function renderMode(mode, { navigate = true, focus = false } = {}) {
   discovery.reset();
   explorer.reset();
   community.reset();
+  universe.close();
+  $('journey-explore').hidden = true;
+  $('navigation-error').hidden = true;
+  $('main').classList.remove('explore-layout');
   $('member-nav').hidden = true;
   const isRegister = mode === 'register';
   if(isRegister)updateRegistrationType();
@@ -177,11 +210,9 @@ function renderFeedback(kind, message) {
   $('feedback-title').focus({ preventScroll: true });
 }
 
-function renderAccount(data) {
+function renderAccount(data, {navigate = true} = {}) {
   spaceEpoch++;
-  discovery.close();
-  explorer.close();
-  community.close();
+  closeSpaces();
   currentUser = data;
   const publishing=isPublisher();
   document.querySelectorAll('.publisher-link').forEach(link=>{link.hidden=!publishing;});
@@ -201,7 +232,7 @@ function renderAccount(data) {
   $('profile-account-kind').textContent=publishing?`${data.profile.account_type==='company'?'Empresa':'Emprendedora'} · ${data.profile.organization_name} · Cuenta sin verificación empresarial`:'Cuenta de usuaria · Tu recorrido de descubrimiento';
   $('profile-notice').hidden = true;
   document.title = 'Tu espacio · Constela';
-  changeAddress('/cuenta', true);
+  if(navigate) changeAddress('/cuenta');
 }
 
 document.querySelectorAll('[data-mode]').forEach(link => {
@@ -238,7 +269,10 @@ loginForm.addEventListener('submit', async event => {
   busy(loginForm, true, 'Entrando…');
   try {
     await send('/web/login', { method: 'POST', body: Object.fromEntries(new FormData(loginForm)) });
-    await enter(await send('/web/session', { refresh: true }));
+    await enter(await send('/web/session', { refresh: true }), {
+      path:loginDestination?.path ?? '/universo', query:loginDestination?.query ?? '',
+    });
+    loginDestination = null;
     loginForm.reset();
   } catch (error) { showAuthError(error.message); }
   finally { busy(loginForm, false, 'Iniciar sesión'); }
@@ -300,7 +334,7 @@ $('logout').addEventListener('click', async () => {
     $('greeting-name').textContent = '';
     renderMode('login', { focus: true });
   } catch (error) {
-    const notice = !$('community-view').hidden ? $('community-error') : !$('explore-view').hidden ? $('explore-error') : $('discovery-view').hidden ? $('profile-notice') : $('discovery-error');
+    const notice = !$('community-view').hidden ? $('community-error') : !$('explore-view').hidden ? $('explore-error') : !$('discovery-view').hidden ? $('discovery-error') : !$('universe-view').hidden || !$('journey-explore').hidden ? $('navigation-error') : $('profile-notice');
     notice.textContent = error.message;
     notice.classList.add('error-notice');
     notice.hidden = false;
@@ -309,7 +343,7 @@ $('logout').addEventListener('click', async () => {
 
 function renderLocation() {
   if (currentUser) {
-    goSpace(location.pathname);
+    goSpace(location.pathname + location.search);
     return;
   }
   const query = new URLSearchParams(location.search);
@@ -323,11 +357,13 @@ function renderLocation() {
 window.addEventListener('popstate', renderLocation);
 renderLocation();
 
-try { const path=location.pathname; await enter(await send('/web/session', { refresh: true }), { path }); }
+try { const path=location.pathname, query=location.search; await enter(await send('/web/session', { refresh: true }), { path, query }); }
 catch (error) {
   if (error.status !== 401) showAuthError(error.message);
-  else if (['/cuenta', '/descubrir', '/galaxias', '/oportunidades', '/retos', '/empleos', '/publicar'].includes(location.pathname)) {
-    renderMode('login', { navigate: true });
+  else if (privatePaths.includes(location.pathname)) {
+    loginDestination = {path:location.pathname,query:location.search};
+    changeAddress('/ingresar', true);
+    renderMode('login', { navigate: false });
     showAuthError('Inicia sesión para entrar a tu espacio.');
   }
 }

@@ -1,0 +1,58 @@
+/* Superficies y paleta de la portada de Tyra (PR #5), aplicadas a las secciones reales. */
+:root {
+  color-scheme:dark;
+  --noche:#07030f; --noche-2:#0c0619; --lila:#b79cff; --cian:#6fe3ff; --oro:#ffd479;
+  --paper:var(--noche); --ink:#f1ecff; --muted:#c4b8dd; --purple:#a486ff; --purple-dark:#c6b1ff;
+  --lavender:#282044; --line:#3c2d59; --white:#171027; --orange:var(--oro); --green:#a0e2b8;
+  --surface:#160e28; --surface-hover:#251743; --button:#a184ff;
+}
+body {background:radial-gradient(ellipse 70% 50% at 48% -10%,#32205e 0,transparent 70%),radial-gradient(ellipse at 95% 70%,#1b1030 0,transparent 45%),var(--noche);color:var(--ink);}
+::selection{background:#503777;color:#fff}
+.site-header{border-bottom:1px solid #2a2141;background:#0b0518a8}
+.site-header .brand{font-family:Georgia,serif}.site-header .brand svg{filter:drop-shadow(0 0 11px #a486ffa6)}
+.member-nav{padding-top:16px}.member-nav a[aria-current=page]{box-shadow:inset 0 0 0 1px #7154a5}
+.navigation-error{width:calc(100% - 32px);max-width:1080px;margin:10px auto}
+.eyebrow,.story .eyebrow,.card-eyebrow,.account-heading .eyebrow,.explore-view .eyebrow,.mission-eyebrow,.reflection-panel .eyebrow{color:#c2a9f0}
+.auth-card,.profile-card,.perception-box,.option-card,.strength-card,.score-details,.publication-panel,.opportunity-card,.opportunity-empty,.galaxy-card,.account-types label{color:var(--ink);background:var(--surface);border-color:var(--line)}
+.auth-card{box-shadow:0 28px 75px #0008}.welcome-card,.universe-panel,.galaxy-banner,.practice-stars{background:radial-gradient(ellipse at 75% 0%,#412568,transparent 80%),#1d1132;color:var(--ink);border:1px solid var(--line)}
+.welcome-card .eyebrow,.welcome-signature,.story-footnote strong,.card-footer,.form-note,.field-hint,.account-kind,.opportunity-reason,.community-status,.community-organization,.account-types small,.discovery-privacy,.mission-fine-print{color:var(--muted)}
+input:not([type=checkbox]):not([type=radio]),.field input[readonly],select,textarea,.publication-form textarea,.practice-form textarea,.community-toolbar select,.publication-form select{background:#10091e;color:var(--ink);border-color:var(--line)}
+input::placeholder,textarea::placeholder{color:#aa9bc3}
+.mode-switch,.feedback-panel .feedback-hint,.avatar,.account-badge{background:#251937;color:var(--muted)}
+.mode-switch a[aria-current=page]{background:#3a2956;color:#fff}
+.account-types label:has(:checked),.galaxy-card[aria-pressed=true],.option-card[aria-pressed=true],.skill-chip[aria-pressed=true],.reflection-choice[aria-pressed=true]{background:#2c1c4a;color:#fff;border-color:#9e79da}
+.primary-button,.primary-button:hover:not(:disabled){background:var(--button);color:#100a20}
+.primary-button:hover:not(:disabled){background:#beabff}.primary-button:focus-visible,.secondary-button:focus-visible,.journey-step:focus-visible{outline:2px solid var(--cian);outline-offset:4px}
+.secondary-button,.reflection-choice,.skill-chip,.discovery-profile-link{background:#231537;color:var(--ink);border-color:var(--line)}
+.secondary-button:hover:not(:disabled),.reflection-choice:hover:not(:disabled),.discovery-profile-link:hover,.option-card:hover:not(:disabled),.galaxy-card:hover:not(:disabled){background:var(--surface-hover);color:#fff;border-color:var(--lila)}
+.option-symbol,.option-card[aria-pressed=true] .option-symbol,.opportunity-meta span,.option-card.toolkit .option-symbol{background:#31224b;color:var(--lila)}
+.unseen-star,.demo-banner{background:linear-gradient(125deg,#392456,#201335);color:var(--ink);border-color:#916ac4}
+.unseen-star .eyebrow,.community-link,.community-detail summary,.opportunity-tags span{color:var(--lila)}
+.notice,.practice-earned{color:#b6edc8;background:#172c29;border-color:#35534c}
+.error-notice{color:#ffd0df;background:#38182e;border-color:#824961}
+.practice-celebration,.community-card .opportunity-meta span:last-child{background:#372847;color:var(--oro);border-color:#755c8f}
+.community-detail,.community-tags span,.publication-form fieldset,.practice-form{border-color:var(--line)}
+.action-list,.toolkit-grid,.paths-grid,.rank-room,.mini-challenge{color:var(--ink)}
+.practice-level{color:var(--oro);font-weight:700}
+
+/* Mi universo */
+#universe-view,#journey-explore{padding-bottom:20px}
+.journey-heading{margin:12px 0 26px}.journey-heading h1{margin:4px 0 5px}
+.journey-identity{display:flex;align-items:center;gap:20px}.journey-identity>div{min-width:0}.journey-identity h1{overflow-wrap:anywhere}
+.journey-avatar{flex:none;width:65px;height:65px;display:grid;place-items:center;border:1px solid #624c88;border-radius:50%;color:#e9d9ff;background:radial-gradient(circle,#493475,#211137 70%);box-shadow:0 0 28px #a486ff36;font-size:36px;text-shadow:0 0 18px #c6a6ff}
+.journey-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:16px}
+.space-panel{min-width:0;padding:23px;border:1px solid var(--line);border-radius:19px;background:linear-gradient(145deg,#201333,#120b23);color:var(--ink)}
+.space-panel h2{font:clamp(21px,3vw,28px)/1.2 Georgia,serif;margin:8px 0;overflow-wrap:anywhere}
+.journey-muted,.space-panel p:not(.eyebrow){color:var(--muted);font-size:13px;line-height:1.7}
+.next-orbit .primary-button{margin-top:17px;width:fit-content;max-width:100%}.space-panel .secondary-button{margin-top:16px;text-align:left}
+.light-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}.light-stats strong{display:block;color:var(--oro);font:clamp(22px,4vw,31px)/1.25 Georgia,serif}.light-stats span{color:var(--muted);font-size:11px}
+.light-bar{display:block;width:100%;height:9px;margin:14px 0 9px;border:0;border-radius:10px;overflow:hidden;appearance:none;background:#302146;accent-color:var(--lila)}
+.light-bar::-webkit-progress-bar{background:#302146}.light-bar::-webkit-progress-value{background:linear-gradient(90deg,#a184ff,#ffcf87);border-radius:10px}.light-bar::-moz-progress-bar{background:var(--lila);border-radius:10px}
+.journey-path{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:0;margin:18px 0;list-style:none}
+.journey-step{display:grid;gap:4px;width:100%;height:100%;padding:14px;border:1px solid var(--line);border-radius:14px;background:#160c27;color:var(--ink);text-align:left;font-size:13px}.journey-step:hover{background:var(--surface-hover);border-color:var(--lila)}.journey-number{font-size:10px;color:var(--cian);letter-spacing:.1em}.journey-step small{color:var(--muted)}
+.journey-tags{padding:0;margin:13px 0 0;display:flex;flex-wrap:wrap;gap:7px;list-style:none}.journey-tags li{font-size:12px;background:#31214a;border-radius:999px;padding:6px 10px}
+.sky-map svg{width:100%;max-height:223px;margin-top:12px;overflow:visible}.sky-path{stroke:#604876;stroke-width:1;stroke-dasharray:2 3}.sky-path-lit{stroke:#b99bf7;stroke-dasharray:none}
+.sky-node{cursor:pointer;outline:none}.sky-node text{font:8.5px system-ui;fill:#cfbee7}.sky-node .sky-ring{fill:#271b3e;stroke:#57426f}.sky-node .map-dot{fill:#917ba8}.sky-node.is-lit .map-dot{fill:var(--lila);filter:drop-shadow(0 0 4px #b79cff)}.sky-node.is-unseen .map-dot{fill:var(--oro)}.sky-node:is(:focus-visible,:hover) .sky-ring{stroke:var(--cian);stroke-width:2}
+.practice-library{grid-column:1/-1}.practice-entry{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}.practice-entry summary{color:var(--oro);cursor:pointer}.practice-copy{padding:10px 0}.practice-copy h3{font-size:14px;margin:8px 0}.practice-copy p{white-space:pre-wrap;overflow-wrap:anywhere}
+.journey-explore-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:25px 0}.explore-door{display:flex;flex-direction:column;gap:11px;text-decoration:none}.explore-door:hover{border-color:var(--lila);background:var(--surface-hover)}.explore-door>span{font-size:26px;color:var(--oro)}.explore-door strong{color:var(--lila);font-size:13px;margin-top:auto}
+@media(max-width:700px){.journey-grid,.journey-explore-grid{grid-template-columns:1fr}.journey-path{grid-template-columns:repeat(2,minmax(0,1fr))}.journey-avatar{width:49px;height:49px;font-size:26px}.journey-identity{gap:12px}.space-panel{padding:19px}}
