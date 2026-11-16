@@ -75,10 +75,10 @@ Detalles y estado de revisión: [índice de especificaciones](specs/README.md).
 
 ## Cómo ejecutarlo
 
-La integración está en `codex/integracion-galaxia`, basada en `codex/retos-empresas` y con la portada del PR #5 de Tyra. `main` todavía no contiene la aplicación del PR #1. La integración requiere revisión del equipo.
+La integración está en `integracion-galaxia`, basada en `codex/retos-empresas` y con la portada del PR #5 de Tyra. `main` todavía no contiene la aplicación del PR #1. La integración requiere revisión del equipo.
 
 ```bash
-git clone --branch codex/integracion-galaxia https://github.com/mantunezdemayolosemi-sys/CONSTELA-Warmi-Innovathon.git CONSTELA
+git clone --branch integracion-galaxia https://github.com/mantunezdemayolosemi-sys/CONSTELA-Warmi-Innovathon.git CONSTELA
 cd CONSTELA
 npm ci
 cp .env.example .env
