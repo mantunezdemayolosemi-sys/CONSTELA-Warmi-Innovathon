@@ -6,7 +6,8 @@ import { registerBody, loginBody, profileBody, accepted } from './validation.js'
 import { discoveryBody, summarizeDiscovery, skills, missions } from './discovery.js';
 import { galaxies, interestsBody } from './interests.js';
 import { opportunitiesQuery, recommend } from './opportunities.js';
-import { publisher, communityQuery, publicationBody, practiceBody, postId, filterCommunity } from './community.js';
+import { publisher, communityQuery, publicationBody, practiceBody, postId, filterCommunity, suggestChallenge } from './community.js';
+import { summarizeProgress } from '../public/progreso.js';
 
 const accessName = 'constela_access';
 const refreshName = 'constela_refresh';
@@ -19,7 +20,8 @@ export async function registerWeb(app, { gateway, opportunities, publicOrigin, s
     index: false,
     dotfiles: 'deny',
   });
-  for (const path of ['/', '/ingresar', '/registro', '/cuenta', '/confirmacion', '/descubrir', '/galaxias', '/oportunidades', '/retos', '/empleos', '/publicar']) {
+  app.get('/', (_request, reply) => reply.sendFile('portada.html'));
+  for (const path of ['/ingresar', '/registro', '/cuenta', '/confirmacion', '/descubrir', '/galaxias', '/oportunidades', '/retos', '/empleos', '/publicar', '/universo', '/explorar']) {
     app.get(path, (_request, reply) => reply.sendFile('index.html'));
   }
 
@@ -97,7 +99,19 @@ export async function registerWeb(app, { gateway, opportunities, publicOrigin, s
         publisher(profile)?[]:gateway.getSavedChallenges(token,user.id),
         publisher(profile)?[]:gateway.getPractices(token,user.id),
       ]);
-      return {posts:filterCommunity(posts,interests,saved,query),catalog:galaxies.filter(g=>g.id!=='explore'),skills,practices,can_publish:publisher(profile)};
+      return {posts:filterCommunity(posts,interests,saved,query),catalog:galaxies.filter(g=>g.id!=='explore'),skills,practices,progress:publisher(profile)?null:summarizeProgress(practices),can_publish:publisher(profile)};
+    });
+    web.get('/web/universe', async request => {
+      const {token,user}=await communityIdentity(request,'learner');
+      const [interests, discoveryRow, practices] = await Promise.all([
+        gateway.getInterests(token,user.id), gateway.getDiscovery(token,user.id), gateway.getPractices(token,user.id),
+      ]);
+      const discovery = summarizeDiscovery(discoveryRow);
+      const posts = interests && discovery?.completed ? await gateway.getCommunityPosts(token,user.id) : [];
+      const suggestion = suggestChallenge(posts,interests,discovery?.result,practices);
+      const byId = new Map(posts.filter(post => post.kind === 'challenge').map(post => [post.id,post.title]));
+      return {interests,discovery,skills,galaxies,suggestion,missionCount:missions.length,progress:summarizeProgress(practices),
+        practices:practices.map(({post_id,completed_at,practiced_skills}) => ({post_id,completed_at,practiced_skills,title:byId.get(post_id)??null}))};
     });
     web.get('/web/community/:id/practice',async request=>{
       const {token,user}=await communityIdentity(request,'learner');

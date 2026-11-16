@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#faf8f5">
+  <meta name="theme-color" content="#07030f">
+  <meta name="color-scheme" content="dark">
   <meta name="description" content="Tu próxima historia empieza en Constela. Crea tu cuenta o inicia sesión.">
   <title>Iniciar sesión · Constela</title>
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
@@ -11,6 +12,7 @@
   <link rel="stylesheet" href="/assets/discovery.css">
   <link rel="stylesheet" href="/assets/explore.css">
   <link rel="stylesheet" href="/assets/community.css">
+  <link rel="stylesheet" href="/assets/galaxia.css">
   <script type="module" src="/assets/app.js"></script>
 </head>
 <body>
@@ -24,16 +26,24 @@
     <button class="quiet-button" id="logout" hidden>Cerrar sesión <span aria-hidden="true">↗</span></button>
   </header>
   <nav id="member-nav" class="member-nav" aria-label="Tu recorrido en Constela" hidden>
+    <a href="/universo" data-space="/universo" class="learner-link">Mi universo</a>
+    <a href="/explorar" data-space="/explorar">Explorar</a>
     <a href="/cuenta" data-space="/cuenta">Mi perfil</a>
-    <a href="/galaxias" data-space="/galaxias">Mis galaxias</a>
-    <a href="/descubrir" data-space="/descubrir">Mis habilidades</a>
-    <a href="/oportunidades" data-space="/oportunidades">Oportunidades</a>
-    <a href="/retos" data-space="/retos">Retos</a>
-    <a href="/empleos" data-space="/empleos">Empleos</a>
     <a href="/publicar" data-space="/publicar" class="publisher-link" hidden>Mis publicaciones</a>
   </nav>
 
+  <p class="notice error-notice navigation-error" id="navigation-error" role="alert" hidden></p>
   <main id="main" class="auth-layout">
+    <section id="universe-view" aria-labelledby="universe-title" hidden></section>
+    <section id="journey-explore" aria-labelledby="journey-explore-title" hidden>
+      <p class="eyebrow">NUEVAS ÓRBITAS</p>
+      <h1 class="explore-title" id="journey-explore-title" tabindex="-1">Elige qué quieres explorar.</h1>
+      <div class="journey-explore-grid">
+        <a class="space-panel explore-door" href="/retos" data-space="/retos"><span aria-hidden="true">✦</span><h2>Retos de práctica</h2><p>Casos simulados para practicar y encender estrellas.</p><strong>Ver retos ↗</strong></a>
+        <a class="space-panel explore-door learner-link" href="/oportunidades" data-space="/oportunidades"><span aria-hidden="true">◎</span><h2>Eventos en Lima</h2><p>Convocatorias de fuentes públicas con enlace original.</p><strong>Ver oportunidades ↗</strong></a>
+        <a class="space-panel explore-door" href="/empleos" data-space="/empleos"><span aria-hidden="true">✧</span><h2>Empleos simulados</h2><p>Vacantes de ejemplo para conocer el recorrido de la demo.</p><strong>Ver ejemplos ↗</strong></a>
+      </div>
+    </section>
     <section class="story" id="story" aria-labelledby="story-title">
       <p class="eyebrow"><span class="tiny-star" aria-hidden="true">✦</span> AQUÍ EMPIEZA ALGO TUYO</p>
       <h1 id="story-title">Tu próxima <br>historia empieza <br><em>contigo.</em><span class="heading-spark" aria-hidden="true">✧</span></h1>

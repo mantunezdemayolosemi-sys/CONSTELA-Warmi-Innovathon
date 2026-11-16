@@ -33,3 +33,14 @@ export function filterCommunity(posts, interests, saved, query) {
     .filter(p=>query.scope!=='recommended'||chosen.includes('explore')||p.matches.length)
     .sort((a,b)=>b.matches.length-a.matches.length||Date.parse(a.deadline)-Date.parse(b.deadline));
 }
+
+export function suggestChallenge(posts, interests, result, practices) {
+  const completed = new Set(practices.map(practice => practice.post_id));
+  const highlighted = new Set(result?.highlighted ?? []);
+  const scored = filterCommunity(posts, interests, [], { kind:'challenge', scope:'all', galaxy:'all' })
+    .filter(post => !completed.has(post.id))
+    .map(post => ({ post, matchingSkills: post.skills.filter(skill => highlighted.has(skill)) }));
+  scored.sort((a,b) => b.post.matches.length - a.post.matches.length || b.matchingSkills.length - a.matchingSkills.length);
+  const first = scored[0];
+  return first ? {id:first.post.id,title:first.post.title,matches:first.post.matches,skills:first.matchingSkills} : null;
+}

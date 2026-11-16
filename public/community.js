@@ -1,3 +1,4 @@
+import { pointsPerLevel, pointsPerStar, summarizeProgress } from './progreso.js';
 const $=id=>document.getElementById(id);
 const el=(tag,cls='',text='')=>{const node=document.createElement(tag);node.className=cls;node.textContent=text;return node;};
 const button=(label,action,cls='primary-button')=>{const b=el('button',cls,label);b.type='button';b.addEventListener('click',action);return b;};
@@ -6,7 +7,7 @@ const levels={beginner:'Para empezar',intermediate:'Con algo de experiencia',all
 const date=value=>new Intl.DateTimeFormat('es-PE',{dateStyle:'medium',timeZone:'America/Lima'}).format(new Date(value));
 export function createCommunity({send,navigate,sessionExpired}){
   const view=$('community-view'),content=$('community-content'),notice=$('community-error');
-  let epoch=0,saving=false,profile=null,route='/retos',catalog=[],skills=[],filters={scope:'all',galaxy:'all',kind:'challenge'},data=null;
+  let epoch=0,saving=false,profile=null,route='/retos',catalog=[],skills=[],filters={scope:'all',galaxy:'all',kind:'challenge'},data=null,target=null;
   const publishing=()=>['company','entrepreneur'].includes(profile?.account_type);
   function error(problem){if(problem.status===401)return sessionExpired();notice.textContent=problem.message;notice.hidden=false;}
   function select(label,name,options,value){const wrapper=el('label','',label),input=el('select');input.name=name;input.setAttribute('aria-label',label);for(const [id,text]of options){const option=el('option','',text);option.value=id;input.append(option);}input.value=value;wrapper.append(input);return wrapper;}
@@ -26,7 +27,8 @@ export function createCommunity({send,navigate,sessionExpired}){
     if(!posts.length){const empty=el('div','community-empty');empty.append(el('h2','','Aquí empieza una nueva posibilidad.'),el('p','',route==='/publicar'?'No hay publicaciones con estos filtros. Puedes crear una con el formulario de arriba.':filters.scope==='saved'?'Aún no guardaste retos activos. Explora el catálogo y elige uno para practicar.':'No hay simulaciones con estos filtros. Puedes explorar otras galaxias o ver todo el catálogo.'));if(route!=='/publicar')empty.append(button('Ver todas las simulaciones',()=>{filters={scope:'all',galaxy:'all',kind:'challenge'};open(route,{profile});},'community-link'));results.append(empty);return;}
     const grid=el('div','opportunity-grid');
     for(const post of posts){
-      const card=el('article','opportunity-card community-card');const meta=el('div','opportunity-meta');meta.append(el('span','',post.kind==='challenge'?'Reto de práctica':'Oportunidad laboral'),el('span','','Simulación'));
+      const card=el('article','opportunity-card community-card');card.id=`reto-${post.id}`;
+      const meta=el('div','opportunity-meta');meta.append(el('span','',post.kind==='challenge'?'Reto de práctica':'Oportunidad laboral'),el('span','','Simulación'));
       card.append(meta,el('p','community-organization',post.organization_name),el('h2','',post.title),el('p','',post.description),el('p','community-status',`${modes[post.mode]} · ${levels[post.level]}`));
       const tags=el('div','community-tags');post.galaxies.forEach(id=>tags.append(el('span','',catalog.find(g=>g.id===id)?.name??id)));card.append(tags);
       if(post.matches?.length)card.append(el('p','opportunity-reason',`Conecta con ${post.matches.map(id=>catalog.find(g=>g.id===id)?.name).join(' y ')}.`));
@@ -63,9 +65,10 @@ export function createCommunity({send,navigate,sessionExpired}){
   }
   function renderStars(){
     const panel=$('practice-stars');if(!panel||!data)return;panel.replaceChildren();
-    const total=data.practices.length,copy=el('div');copy.append(el('p','eyebrow','TU CONSTELACIÓN DE PRÁCTICA'),el('h2','',total?`${total} ${total===1?'estrella encendida':'estrellas encendidas'}`:'Tu primera estrella te espera.'));
-    const next=total<3?`${3-total} ${3-total===1?'práctica':'prácticas'} para conectar tu primera constelación.`:total<6?`${6-total} ${6-total===1?'práctica':'prácticas'} para completar tu primera órbita.`:'Primera órbita conectada. Sigue explorando nuevos retos.';
-    copy.append(el('p','',next),el('p','practice-explanation','1 reto practicado = 1 estrella. Guardar un reto no da estrellas. Son autorregistros de práctica, pendientes de evaluación.'));
+    const progress=data.progress, total=progress.stars,copy=el('div');copy.append(el('p','eyebrow','TU CONSTELACIÓN DE PRÁCTICA'),el('h2','',total?`${total} ${total===1?'estrella encendida':'estrellas encendidas'}`:'Tu primera estrella te espera.'));
+    const bar=el('progress','light-bar');bar.max=pointsPerLevel;bar.value=progress.inLevel;bar.setAttribute('aria-label',`Progreso hacia el nivel ${progress.level+1}`);
+    const next=`${progress.pointsToNext} puntos para el nivel ${progress.level+1}.`;
+    copy.append(el('p','practice-level',`Nivel ${progress.level} · ${progress.points} puntos`),bar,el('p','',next),el('p','practice-explanation',`Cada reto practicado suma 1 estrella y ${pointsPerStar} puntos. Las prácticas quedan pendientes de evaluación.`));
     const practiced=[...new Set(data.practices.flatMap(p=>p.practiced_skills))];
     if(practiced.length)copy.append(el('p','practice-explanation',`Has ejercitado: ${practiced.map(id=>skills.find(s=>s.id===id)?.name??id).join(' · ')}.`));
     const orbit=el('div','practice-orbit');orbit.setAttribute('aria-label',`${total} ${total===1?'estrella':'estrellas'} de práctica. ${next}`);
@@ -83,8 +86,12 @@ export function createCommunity({send,navigate,sessionExpired}){
       event.preventDefault();if(saving||!form.reportValidity())return;const active=epoch;saving=true;submit.disabled=true;submit.textContent='Conectando tu estrella…';notice.hidden=true;
       try{
         const result=await send(`/web/community/${post.id}/practice`,{method:'POST',body:Object.fromEntries(new FormData(form)),refresh:true});if(active!==epoch)return;
+        const previousLevel=data.progress.level;
         if(!data.practices.some(p=>p.post_id===post.id))data.practices.push(result.practice);
-        renderPosts();renderStars();const celebration=$('practice-celebration');celebration.hidden=false;celebration.textContent=result.practice.awarded?'✦ ¡Encendiste una nueva estrella! Tu propuesta y reflexión están guardadas.':'✦ Esta estrella ya estaba en tu constelación. Conservamos tu primera práctica.';celebration.tabIndex=-1;celebration.focus();
+        data.progress=summarizeProgress(data.practices);
+        renderPosts();renderStars();const celebration=$('practice-celebration');celebration.hidden=false;
+        celebration.textContent=result.practice.awarded?`✦ ¡Encendiste una estrella! +${pointsPerStar} puntos. ${data.progress.level>previousLevel?`¡Llegaste al nivel ${data.progress.level}!`:'Tu propuesta y reflexión están guardadas.'}`:'✦ Esta estrella ya estaba en tu constelación. Conservamos tu primera práctica.';
+        celebration.tabIndex=-1;celebration.focus();
       }catch(problem){if(active===epoch)error(problem);}finally{if(active===epoch){saving=false;submit.disabled=false;submit.textContent='Registrar práctica · encender ✦';}}
     });return form;
   }
@@ -113,9 +120,10 @@ export function createCommunity({send,navigate,sessionExpired}){
       catch(problem){if(active===epoch)error(problem);}finally{if(active===epoch){saving=false;submit.disabled=false;submit.textContent='Publicar simulación';}}
     });panel.append(form);return panel;
   }
-  async function open(path,{profile:nextProfile}){
-    close();data=null;profile=nextProfile;route=path;const active=++epoch;
-    $('account-view').hidden=true;$('main').classList.add('explore-layout');view.hidden=false;content.replaceChildren();notice.hidden=true;navigate(path);
+  async function open(path,{profile:nextProfile,focusPost=null}){
+    close();data=null;profile=nextProfile;route=path;target=focusPost;const active=++epoch;
+    if(target) filters={scope:'all',galaxy:'all',kind:'challenge'};
+    $('account-view').hidden=true;$('main').classList.add('explore-layout');view.hidden=false;content.replaceChildren();notice.hidden=true;navigate(target?`${path}?reto=${encodeURIComponent(target)}`:path);window.scrollTo(0,0);
     const heading=el('h1','explore-title',path==='/publicar'?'Conecta tu proyecto con nuevas estrellas.':path==='/empleos'?'Imagina tu siguiente oportunidad.':'Pequeños retos. Nuevas posibilidades.');heading.tabIndex=-1;
     content.append(el('p','eyebrow',path==='/publicar'?'ESPACIO EMPRESAS Y EMPRENDEDORAS':path==='/empleos'?'OPORTUNIDADES LABORALES · DEMO':'PON TUS ESTRELLAS EN MOVIMIENTO'),heading,
       el('p','explore-description',path==='/retos'?'Explora situaciones de empresas y emprendedoras ficticias de Lima. Elige lo que te da curiosidad: no necesitas una puntuación ni experiencia previa.':path==='/publicar'?'Comparte retos de práctica y ejemplos de oportunidades laborales con la comunidad.':'Así se verían las oportunidades compartidas por empresas y emprendedoras de Lima.'));
@@ -139,6 +147,11 @@ export function createCommunity({send,navigate,sessionExpired}){
     const galaxy=select('Galaxia de interés','galaxy',[['all','Todas las galaxias'],...catalog.map(g=>[g.id,g.name])],filters.galaxy);toolbar.append(galaxy);
     toolbar.querySelectorAll('select').forEach(input=>input.addEventListener('change',()=>{filters[input.name]=input.value;load();}));
     if(path==='/publicar'&&data)content.insertBefore(publicationForm(),toolbar);
+    if(target&&data){
+      const card=$(`reto-${target}`), detail=card?.querySelector('details');
+      if(detail){detail.open=true;card.querySelector('h2').tabIndex=-1;card.querySelector('h2').focus();}
+      else{notice.textContent='Ese reto ya no aparece en el catálogo. Puedes elegir otro.';notice.hidden=false;}
+    }
   }
   function close(){epoch++;saving=false;view.hidden=true;content.replaceChildren();notice.hidden=true;}
   function reset(){close();profile=null;data=null;catalog=[];skills=[];filters={scope:'all',galaxy:'all',kind:'challenge'};}

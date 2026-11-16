@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#07030f">
+<meta name="description" content="Constela: descubre fortalezas, practica con retos y explora oportunidades en Lima.">
+<title>Constela · Tu talento, hecho constelación</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/portada-tyra.css">
+<script type="module" src="/assets/portada.js"></script>
+</head>
+<body>
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<canvas id="cielo" aria-hidden="true"></canvas>
+<div class="aurora" aria-hidden="true"><span class="aurora-1"></span><span class="aurora-2"></span><span class="aurora-3"></span></div>
+<div class="grano" aria-hidden="true"></div>
+<div class="brillo-cursor" id="brillo-cursor" aria-hidden="true"></div>
+<header class="barra">
+  <a class="marca" href="/" aria-label="Constela, inicio"><svg class="marca-icono" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 1l5.2 13.8L39 20l-13.8 5.2L20 39l-5.2-13.8L1 20l13.8-5.2z"/></svg>constela<span class="punto">.</span></a>
+  <div class="barra-acciones">
+    <button type="button" class="boton-calma" id="calma" aria-pressed="false"><span aria-hidden="true">✧</span> Calma</button>
+    <a class="boton-ghost" href="/ingresar">Entrar</a>
+    <a class="boton-primario chico" href="/registro">Crear cuenta</a>
+  </div>
+</header>
+<span id="cielo-estado" class="solo-lectura" role="status"></span>
+<main id="contenido">
+  <section class="hero" id="inicio">
+    <div class="hero-halo" aria-hidden="true"></div>
+
+    <div class="hero-texto">
+      <p class="eyebrow revelar"><span class="chispa" aria-hidden="true">✦</span> Warmi Innovathon · Eje 2 · Grupo 1</p>
+      <h1 class="revelar">
+        Tu talento ya <em>existe</em>.<br>
+        Vamos a hacerlo <span class="palabra-luz">constelación</span>.
+      </h1>
+      <p class="hero-sub revelar">
+        Descubre fortalezas que quizá no veías, practícalas con retos y encuentra oportunidades para seguir creciendo en Lima.
+      </p>
+
+      <div class="hero-acciones revelar">
+        <a class="boton-primario" href="/registro">
+          <span>Encender mi primera estrella</span><span aria-hidden="true">✦</span>
+        </a>
+        <a class="boton-ghost grande" href="#recorrido">Ver el recorrido <span aria-hidden="true">↘</span></a>
+      </div>
+
+      <p class="hero-nota revelar">Toca las estrellas del mapa para probar la constelación. Tu progreso empieza al crear una cuenta.</p>
+    </div>
+
+    <div class="hero-visual revelar">
+      <svg class="sello" viewBox="0 0 220 220" aria-hidden="true">
+        <defs>
+          <path id="orbita-texto" d="M110,110 m-86,0 a86,86 0 1,1 172,0 a86,86 0 1,1 -172,0"/>
+        </defs>
+        <text>
+          <textPath href="#orbita-texto" startOffset="0">TALENTO VISIBLE · AUTONOMÍA ECONÓMICA · EVIDENCIAS REALES · </textPath>
+        </text>
+      </svg>
+
+      <div class="constelacion" id="constelacion">
+        <svg viewBox="0 0 560 420" class="constelacion-svg" role="group" aria-label="Constelación de habilidades: enciende las que reconozcas en ti">
+          <line class="arista" data-nodos="organizo comunico" x1="120" y1="90" x2="300" y2="60"></line>
+          <line class="arista" data-nodos="comunico creo" x1="300" y1="60" x2="470" y2="140"></line>
+          <line class="arista" data-nodos="creo resuelvo" x1="470" y1="140" x2="420" y2="320"></line>
+          <line class="arista" data-nodos="resuelvo lidero" x1="420" y1="320" x2="230" y2="360"></line>
+          <line class="arista" data-nodos="lidero organizo" x1="230" y1="360" x2="120" y2="90"></line>
+          <line class="arista" data-nodos="lidero conecto" x1="230" y1="360" x2="60" y2="280"></line>
+          <line class="arista" data-nodos="conecto organizo" x1="60" y1="280" x2="120" y2="90"></line>
+          <line class="arista" data-nodos="comunico resuelvo" x1="300" y1="60" x2="420" y2="320"></line>
+
+          <g class="nodo" data-skill="organizo" tabindex="0" role="button" aria-pressed="false" aria-label="Encender la habilidad organizo">
+            <circle class="nodo-aura" cx="120" cy="90" r="30"></circle>
+            <circle class="nodo-punto" cx="120" cy="90" r="7"></circle>
+            <text x="120" y="126" text-anchor="middle">organizo</text>
+          </g>
+          <g class="nodo" data-skill="comunico" tabindex="0" role="button" aria-pressed="false" aria-label="Encender la habilidad comunico">
+            <circle class="nodo-aura" cx="300" cy="60" r="30"></circle>
+            <circle class="nodo-punto" cx="300" cy="60" r="7"></circle>
+            <text x="300" y="26" text-anchor="middle">comunico</text>
+          </g>
+          <g class="nodo" data-skill="creo" tabindex="0" role="button" aria-pressed="false" aria-label="Encender la habilidad creo">
+            <circle class="nodo-aura" cx="470" cy="140" r="30"></circle>
+            <circle class="nodo-punto" cx="470" cy="140" r="7"></circle>
+            <text x="470" y="108" text-anchor="middle">creo</text>
+          </g>
+          <g class="nodo" data-skill="resuelvo" tabindex="0" role="button" aria-pressed="false" aria-label="Encender la habilidad resuelvo">
+            <circle class="nodo-aura" cx="420" cy="320" r="30"></circle>
+            <circle class="nodo-punto" cx="420" cy="320" r="7"></circle>
+            <text x="420" y="356" text-anchor="middle">resuelvo</text>
+          </g>
+          <g class="nodo" data-skill="lidero" tabindex="0" role="button" aria-pressed="false" aria-label="Encender la habilidad lidero">
+            <circle class="nodo-aura" cx="230" cy="360" r="30"></circle>
+            <circle class="nodo-punto" cx="230" cy="360" r="7"></circle>
+            <text x="230" y="396" text-anchor="middle">lidero</text>
+          </g>
+          <g class="nodo" data-skill="conecto" tabindex="0" role="button" aria-pressed="false" aria-label="Encender la habilidad conecto">
+            <circle class="nodo-aura" cx="60" cy="280" r="30"></circle>
+            <circle class="nodo-punto" cx="60" cy="280" r="7"></circle>
+            <text x="60" y="316" text-anchor="middle">conecto</text>
+          </g>
+        </svg>
+      </div>
+
+      <p class="constelacion-marcador" aria-live="polite">
+        <span data-encendidas>0</span> de 6 habilidades encendidas
+        <button class="reiniciar" id="reiniciar-constelacion" hidden>reiniciar</button>
+      </p>
+    </div>
+  </section>
+  <section class="portada-recorrido" id="recorrido" aria-labelledby="recorrido-titulo">
+    <p class="eyebrow">DE UNA CHISPA A UNA CONSTELACIÓN</p>
+    <h2 id="recorrido-titulo">Tu universo empieza aquí.</h2>
+    <ol class="portada-pasos">
+      <li><span>01 · INTERESES</span><h3>Elige tus galaxias</h3><p>Empieza por lo que te da curiosidad. Puedes cambiar tus intereses cuando quieras.</p></li>
+      <li><span>02 · HABILIDADES</span><h3>Descubre tus estrellas</h3><p>Recorre seis misiones y descubre qué fortalezas aparecen en tus decisiones.</p></li>
+      <li><span>03 · PRÁCTICA</span><h3>Conecta tu constelación</h3><p>Registra una práctica, enciende una estrella y avanza de nivel a tu ritmo.</p></li>
+      <li><span>04 · EXPLORACIÓN</span><h3>Abre nuevas órbitas</h3><p>Explora eventos reales de Lima y practica con retos de empresas y emprendedoras ficticias.</p></li>
+    </ol>
+    <a class="boton-primario" href="/universo">Continuar mi viaje <span aria-hidden="true">↗</span></a>
+  </section>
+</main>
+<footer class="portada-pie"><span>Constela · Warmi Innovathon · Grupo 1</span><a href="/ingresar">Entrar a Constela ↗</a></footer>
+</body>
+</html>

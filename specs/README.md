@@ -8,8 +8,9 @@ La incorporación a SDD se realiza el 12 de noviembre de 2026 sobre funcionalida
 | [002 · Universo de habilidades](002-universo-habilidades/spec.md) | Percepción inicial, seis misiones, resultados y reflexión | Implementada en la rama funcional y PR #1 | Pendiente |
 | [003 · Galaxias y oportunidades](003-galaxias-oportunidades/spec.md) | Intereses privados, scraping y catálogo recomendado | Incremento solicitado por Maricielo; rama `codex/galaxias-oportunidades` | Pendiente |
 | [004 · Retos y organizaciones](004-retos-empresas/spec.md) | Tipos de cuenta, retos guardados, empleos y publicación de simulaciones | Rama `codex/retos-empresas`; demo local | Pendiente |
+| [005 · De una chispa a una constelación](005-universo-integrado/spec.md) | Portada de Tyra, Mi universo y niveles de práctica | Rama `integracion-galaxia` | Pendiente |
 | [000 · Plantilla](000-plantilla/spec.md) | Punto de partida para nuevas funcionalidades | Plantilla sin completar | No aplica |
 
-Cada spec tiene `spec.md` (qué y por qué), `plan.md` (cómo) y `tasks.md` (trabajo y estado). Al citar un requisito fuera de su carpeta, usar **001:RF-1** o **002:RF-1** para evitar ambigüedades.
+Cada spec documenta requisitos, plan y tareas, juntos o en archivos separados. Al citar un requisito fuera de su carpeta, usar **001:RF-1** o **002:RF-1** para evitar ambigüedades.
 
 La [matriz de trazabilidad](../docs/TRAZABILIDAD.md) relaciona requisitos, código, pruebas automatizadas y comprobaciones manuales. Las tareas ya construidas conservan el vínculo al [PR #1](https://github.com/mantunezdemayolosemi-sys/CONSTELA-Warmi-Innovathon/pull/1); no se inventan issues ni aprobaciones retroactivas.
