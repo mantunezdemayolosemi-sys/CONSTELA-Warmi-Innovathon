@@ -24,7 +24,7 @@ Constela es una plataforma web para descubrir habilidades, practicarlas y conver
 
 **¿Qué la hace distinta?** «La estrella que no veías» compara lo que la usuaria reconocía al inicio con las habilidades que aparecieron en sus decisiones. Los resultados son posibilidades por explorar, no un diagnóstico ni una certificación.
 
-La versión actual implementa cuenta, perfil privado, galaxias, misión de habilidades, oportunidades públicas de Lima y retos/empleos simulados. Empresas y emprendedoras tienen un panel para publicar simulaciones. Avatar, archivos/evaluación de retos y portafolio pertenecen a [siguientes etapas](docs/ALCANCE.md).
+La versión integrada reúne la portada visual de Tyra, el acceso y perfil privado de Supabase, galaxias, misión de habilidades, eventos públicos de Lima y retos/empleos simulados. «Mi universo» conecta los pasos y muestra las estrellas, los puntos y el nivel. Empresas y emprendedoras tienen su panel para publicar simulaciones. La personalización del avatar, la evaluación y el portafolio pertenecen a [siguientes etapas](docs/ALCANCE.md).
 
 ## Demo
 
@@ -32,9 +32,9 @@ La versión actual implementa cuenta, perfil privado, galaxias, misión de habil
 
 Pruébala en tres pasos:
 
-1. Inicia el servidor con `npm start` y abre [Crear cuenta](http://localhost:3000/registro). El proyecto local de desarrollo ya está conectado a Supabase.
+1. Inicia el servidor con `npm start` y abre la [portada de Constela](http://localhost:3000/). Desde «Crear cuenta» se abre el registro conectado a Supabase.
 2. Confirma el correo e [inicia sesión](http://localhost:3000/ingresar). El proveedor de correo actual admite pruebas con direcciones autorizadas del equipo de Supabase; falta SMTP para otras usuarias.
-3. Elige hasta cinco galaxias (o «Quiero explorar»), recorre las seis misiones y abre **Oportunidades**. Desde el perfil puedes editar tus intereses sin repetir el test. El progreso guardado se recupera al volver.
+3. Abre [Mi universo](http://localhost:3000/universo) y pulsa «Continuar mi viaje». Elige galaxias, retoma tus misiones o abre un reto recomendado. En «Explorar» están los retos, eventos de Lima y empleos simulados. El progreso guardado se recupera al volver.
 
 También puedes abrir **Retos** para explorar seis casos ficticios, guardar los que quieres practicar y encender estrellas al registrar una propuesta y reflexión, o **Empleos** para ver dos vacantes de ejemplo. Al crear una cuenta puedes elegir **Usuaria**, **Empresa** o **Emprendedora**. Las dos últimas requieren organización y entran a **Mis publicaciones** después de confirmar el correo e iniciar sesión. Todas las publicaciones son simulaciones; no se reciben CV ni postulaciones reales. [Recorridos y permisos](docs/RETOS.md).
 
@@ -55,6 +55,7 @@ Las casillas indican implementación existente, no aprobación humana ni desplie
 - [x] Scraping de la agenda pública de hack0 para Lima, actualización cada 12 horas con el servidor activo y caché por fuente. (003:RF-5–6, RF-9, RF-11)
 - [x] Recomendaciones por intereses, catálogo completo, filtros, enlace original y fecha de consulta. (003:RF-7–8)
 - [x] Registro por tipo de cuenta, retos guardados, propuestas privadas con estrellas de práctica y publicación de retos/empleos simulados con permisos por propietario. (004:RF-1–9)
+- [x] Portada de Tyra integrada, ruta guiada y niveles a partir de prácticas: 25 puntos por estrella y un nivel cada 75 puntos. (005:RF-1–5)
 
 La demo muestra únicamente sedes presenciales o híbridas identificadas en **Lima Metropolitana, Perú**, incluso en «Todo Lima». La cobertura inicial está concentrada en tecnología. No se inventan oportunidades para llenar otras galaxias. Fechas de eventos y afinidad temática no garantizan inscripción abierta ni elegibilidad. [Fuentes, datos y funcionamiento](docs/OPORTUNIDADES.md).
 
@@ -74,10 +75,10 @@ Detalles y estado de revisión: [índice de especificaciones](specs/README.md).
 
 ## Cómo ejecutarlo
 
-El incremento de retos está en `codex/retos-empresas`, basado en `codex/galaxias-oportunidades`, la adaptación y la rama funcional. `main` todavía no contiene la aplicación del PR #1. La integración requiere revisión del equipo.
+La integración está en `codex/integracion-galaxia`, basada en `codex/retos-empresas` y con la portada del PR #5 de Tyra. `main` todavía no contiene la aplicación del PR #1. La integración requiere revisión del equipo.
 
 ```bash
-git clone --branch codex/retos-empresas https://github.com/mantunezdemayolosemi-sys/CONSTELA-Warmi-Innovathon.git CONSTELA
+git clone --branch codex/integracion-galaxia https://github.com/mantunezdemayolosemi-sys/CONSTELA-Warmi-Innovathon.git CONSTELA
 cd CONSTELA
 npm ci
 cp .env.example .env
@@ -96,7 +97,7 @@ npm run check
 npm test
 ```
 
-La suite actual tiene **77 pruebas automatizadas** y no necesita credenciales ni correos reales. Para actualizar manualmente el catálogo público: `npm run opportunities:sync`. Instrucciones completas de conexión, API y publicación: [guía técnica](docs/DESARROLLO.md).
+La suite actual tiene **81 pruebas automatizadas** y no necesita credenciales ni correos reales. Para actualizar manualmente el catálogo público: `npm run opportunities:sync`. Instrucciones completas de conexión, API y publicación: [guía técnica](docs/DESARROLLO.md).
 
 ## Cómo lo construimos
 
