@@ -1,6 +1,6 @@
 # Publicar Constela en Vercel
 
-Configuración preparada en `main`. El despliegue remoto aún debe verificarse.
+Producción verificada el 18 de noviembre de 2026: [abrir Constela](https://constela-warmi-innovathon.vercel.app). El backend responde, la portada interactiva y los formularios cargan, y Three.js se entrega correctamente. Los recursos privados requieren sesión. Queda validar ingreso con una cuenta real, correo de confirmación y descarga del portafolio; no se aplicaron migraciones de Supabase.
 
 ## Primero: subir el código
 
@@ -28,7 +28,7 @@ Configurar en Vercel, para Production:
 | `SUPABASE_URL` | URL del proyecto Supabase de Constela |
 | `SUPABASE_PUBLISHABLE_KEY` | Clave publishable o anon; nunca service_role ni secret |
 | `PUBLIC_API_URL` | Dominio HTTPS definitivo de la demo, por ejemplo `https://TU-PROYECTO.vercel.app` |
-| `NODE_ENV` | `production` |
+| `NODE_ENV` | Opcional: el adaptador fuerza `production` |
 
 El origen debe coincidir con el dominio desde el que se abre Constela. Una Preview con otro dominio requiere su propia configuración de origen. No se acepta automáticamente cualquier Host u Origin enviado por el navegador.
 
