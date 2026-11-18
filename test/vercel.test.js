@@ -36,3 +36,11 @@ test('el adaptador no revela errores de configuración y permite reintentar un a
   assert.ok(!failed.body.includes('fixture-private-configuration'));
   assert.equal((await inject(handler,{url:'/health'})).statusCode,200);
 });
+
+test('las dependencias arrancan sin require(ESM), como en el runtime de Vercel', async () => {
+  const {execFileSync}=await import('node:child_process');
+  const entry=new URL('../api/serverless.js',import.meta.url).href;
+  assert.doesNotThrow(()=>execFileSync(process.execPath,
+    ['--no-experimental-require-module','--input-type=module','-e',`await import(${JSON.stringify(entry)})`],
+    {stdio:'pipe',timeout:15000}));
+});

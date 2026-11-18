@@ -36,6 +36,10 @@ En Supabase Auth → URL Configuration, configurar Site URL y permitir el retorn
 
 Después de guardar las variables, hacer **Redeploy**. Verificar `/health`, portada, registro y confirmación, inicio de sesión, `/luna`, sus assets y descarga del portafolio con una cuenta autorizada. El correo para nuevas usuarias sigue dependiendo de la configuración SMTP de Supabase.
 
+## Compatibilidad de arranque
+
+El runtime observado en Vercel no admite cargar content-disposition 3 (ESM) desde @fastify/static (CommonJS). package.json fija content-disposition 2.0.1 solo para ese paquete mediante overrides, conservando @fastify/static 10.1.10. No quitar ese override sin comprobar el arranque con `node --no-experimental-require-module` y en Vercel. La regresión está cubierta en test/vercel.test.js.
+
 ## Catálogo de oportunidades
 
 Esta preparación usa `data/opportunities.json` como catálogo de demo. El scraping cada 12 horas de `src/server.js` sigue siendo para el servidor local persistente; no se ejecuta en la función. Para renovar la demo, generar el catálogo con el scraper, revisar los resultados y actualizar el snapshot versionado antes del despliegue. La sincronización automática remota requiere un trabajo programado y almacenamiento persistente y queda pendiente.
